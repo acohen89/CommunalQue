@@ -1,0 +1,19 @@
+{
+  "name": "communal-que",
+  "version": "1.0.0",
+  "description": "Allows users to communally add to a que on spotify",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acohen89/CommunalQue.git"
+  },
+  "author": "Adam Cohen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/acohen89/CommunalQue/issues"
+  },
+  "homepage": "https://github.com/acohen89/CommunalQue#readme"
+}
