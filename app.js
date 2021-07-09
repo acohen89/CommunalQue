@@ -25,7 +25,6 @@ const server = http.createServer(function(req, res) {
             res.end();
         });
     }
-    
 });
 
 server.listen(port, function(error){
