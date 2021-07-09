@@ -5,7 +5,7 @@ const port = 3000;
 const server = http.createServer(function(req, res) { 
     res.writeHead(200, {"Content-Type": "text/html"})
     if(req.url == "/gLog"){
-        fs.readFile("Pages/goodLogin.html", function(error, data){
+        fs.readFile("dist/goodLogin.html", function(error, data){
             if(error){ 
                 res.writeHead(404);
                 res.write("Error: file not found");
@@ -15,7 +15,7 @@ const server = http.createServer(function(req, res) {
             res.end();
         });
     } else {
-        fs.readFile("Pages/index.html", function(error, data){
+        fs.readFile("dist/index.html", function(error, data){
             if(error){ 
                 res.writeHead(404);
                 res.write("Error: file not found");
