@@ -19,6 +19,7 @@
   "homepage": "https://github.com/acohen89/CommunalQue#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "netlify-lambda": "^2.0.11",
     "path": "^0.12.7"
   }
 }
