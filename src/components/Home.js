@@ -4,7 +4,7 @@ import './styles/Home.css';
 
 const CLIENT_ID = "35135547562945148a4c9129b244dfe8";
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
-const REDIRECT_URL_AFTER_LOGIN = "http://localhost:3000/gLog";
+const REDIRECT_URL_AFTER_LOGIN = "https://communalque.hostman.site/gLog";
 const SPACE_DELIMITER = "%20";
 const SCOPES = [
   "app-remote-control",
