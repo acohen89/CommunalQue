@@ -1,6 +1,6 @@
 import './App.css';
-import Home from "./Home";
-import GoodLogin from "./GoodLogin";
+import Home from "./components/Home";
+import GoodLogin from "./components/GoodLogin";
 import  {BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {

@@ -1,4 +1,4 @@
-import './App.css';
+import './styles/GoodLogin.css';
 
 function GoodLogin() {
   return (

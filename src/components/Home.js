@@ -1,8 +1,9 @@
-import './App.css';
+import './styles/Home.css';
+
 
 function Home() {
   return (
-    <body>
+    <body >
         <p>Welcome To Communal Que!</p>
     </body >
   );
