@@ -7,3 +7,16 @@ p {
 body{
     background-color:black;
 } 
+button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: black;
+  font-family:Georgia;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 20px;
+  border: 1px solid white;
+  font-size: 18px;
+}
