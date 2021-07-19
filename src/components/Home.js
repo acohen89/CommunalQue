@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import './styles/Home.css';
 
 
@@ -23,6 +23,7 @@ const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
 const login = () => {
   window.location = `${SPOTIFY_AUTHORIZE_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL_AFTER_LOGIN}&scope=${SCOPES_URL_PARAM}&response_type=token&show_dialog=true`;
 };
+
 
 function Home() {
   return (
