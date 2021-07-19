@@ -4,7 +4,7 @@ import './styles/Home.css';
 
 const CLIENT_ID = "161c6b8ff4a9482d962700e1b41cac89"; // QueQue id
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
-const REDIRECT_URL_AFTER_LOGIN = "https://comque.netlify.app/gLog";
+const REDIRECT_URL_AFTER_LOGIN = "https://communalque.hostman.site/gLog";
 const SPACE_DELIMITER = "%20";
 const SCOPES = [
   "app-remote-control",
