@@ -28,7 +28,7 @@ function Home() {
   return (
     <body >
         <p>Welcome To Communal Que!</p>
-        <button onClick={login}>Login to Spotify</button>
+        <button onClick={login}>Login To Spotify</button>
     </body >
   );
 }
