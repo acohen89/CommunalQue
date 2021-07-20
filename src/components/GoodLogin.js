@@ -1,4 +1,6 @@
 import './styles/GoodLogin.css';
+import SpotifyGetPlaylists from "./SpotifyGetPlaylists";
+import InitializeQue from "./InitializeQue";
 import React, { useEffect } from "react";
 
 
@@ -16,19 +18,25 @@ const getReturnedParamsFromSpotifyAuth = (hash) => {
 };
 
 
-
 function GoodLogin() {
   useEffect(() => {
     if (window.location.hash) {
       const { access_token, expires_in, token_type } =
         getReturnedParamsFromSpotifyAuth(window.location.hash);
-        console.log({access_token} );
+        window.history.pushState({}, document.title, "/");
+        localStorage.clear();
+
+      localStorage.setItem("accessToken", access_token);
+      localStorage.setItem("tokenType", token_type);
+      localStorage.setItem("expiresIn", expires_in);
     }
   });
 
   return (
     <body>
         <p>Sucessful Login!</p>
+        <InitializeQue />
+        <SpotifyGetPlaylists />
     </body >
   );
 }
