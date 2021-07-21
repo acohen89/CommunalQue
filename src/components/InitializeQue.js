@@ -1,6 +1,20 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 
+const QUE_ID = makeid(7);
+
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
 var firebaseConfig = {
     apiKey: "AIzaSyAmlYzBkBbB3SGPz3PsdqqXn77fHhixQI8",
     authDomain: "communalque.firebaseapp.com",
@@ -14,13 +28,10 @@ var firebaseConfig = {
   var db = firebase.firestore();
 
 const InitializeQue = () => {
-    db.collection("users").add({
-        first: "Alan",
-        middle: "Mathison",
-        last: "Turing",
-        born: 1912
+    db.collection(QUE_ID).add({
     })
     .then((docRef) => {
+        console.log("Start Que qith ID " + QUE_ID);
         console.log("Document written with ID: ", docRef.id);
     })
     .catch((error) => {
