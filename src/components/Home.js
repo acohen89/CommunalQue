@@ -10,14 +10,11 @@ const REDIRECT_URL_AFTER_LOGIN = WEB_URL + "/Home";
 console.log(REDIRECT_URL_AFTER_LOGIN)
 const SPACE_DELIMITER = "%20";
 const SCOPES = [
-  "app-remote-control",
-  "streaming",
-  "user-read-currently-playing",
-  "playlist-modify-public",
-  "playlist-modify-private",
-  "playlist-read-private",
-  "playlist-read-collaborative",
-  "user-follow-modify"
+ "playlist-modify-private",
+ "playlist-read-private",
+ "app-remote-control",
+ "user-library-modify",
+ "user-library-read"
 
 ];
 const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
