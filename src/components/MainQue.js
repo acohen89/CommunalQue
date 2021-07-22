@@ -2,6 +2,7 @@ import React from 'react';
 import './styles/MainQue.css';
 import firebase from "./firesbase";
 import {WEB_URL} from "./Home";
+import Button from "./Button";
 
 const db = firebase.firestore();
 const hash = getHash(6);
@@ -48,7 +49,7 @@ function MainQue() {
     return (
       <body>
          <p> Que With Id: {hash} </p>
-         <button onClick={endQue}> End Que </button> 
+         <Button text="End Que" onClick={endQue} />
       </body >
     );
   }
