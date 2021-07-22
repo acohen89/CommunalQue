@@ -1,11 +1,13 @@
 import React from "react";
 import './styles/Home.css';
-import MainQue from "./MainQue"
+import MainQue from "./MainQue";
 
-
+const WEB_URL = "http://localhost:3000";
+export {WEB_URL}; 
 const CLIENT_ID = "35135547562945148a4c9129b244dfe8"; // Testing iD
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
-const REDIRECT_URL_AFTER_LOGIN = "http://localhost:3000/Home";
+const REDIRECT_URL_AFTER_LOGIN = WEB_URL + "/Home";
+console.log(REDIRECT_URL_AFTER_LOGIN)
 const SPACE_DELIMITER = "%20";
 const SCOPES = [
   "app-remote-control",

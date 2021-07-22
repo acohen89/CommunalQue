@@ -1,9 +1,11 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import './styles/MainQue.css';
 import firebase from "./firesbase";
+import {WEB_URL} from "./Home";
 
 const db = firebase.firestore();
 const hash = getHash(6);
+
 
 function makeHash(length) {
     var result           = '';
@@ -15,7 +17,10 @@ function makeHash(length) {
    return result;
 }
 const endQue = () => {
-    // delete que here
+    // migrate data to past ques collection 
+    // go to home page
+    window.location.href = WEB_URL;
+
 }
 function getHash(){
   const hash = makeHash(6);
