@@ -35,7 +35,7 @@ function GoodLogin() {
   return (
     <body>
         <p>Sucessful Login!</p>
-        <InitializeQue />
+        {/*<InitializeQue /> */}
         <SpotifyGetPlaylists />
     </body >
   );
