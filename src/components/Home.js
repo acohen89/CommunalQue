@@ -3,9 +3,9 @@ import './styles/Home.css';
 import MainQue from "./MainQue";
 import Button from "./Button"
 
-const WEB_URL = "http://localhost:3000";
+const WEB_URL = "https://communalque.hostman.site";
 export {WEB_URL}; 
-const CLIENT_ID = "35135547562945148a4c9129b244dfe8"; // Testing iD
+const CLIENT_ID = "161c6b8ff4a9482d962700e1b41cac89"; // real ID
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
 const REDIRECT_URL_AFTER_LOGIN = WEB_URL + "/Home";
 const SPACE_DELIMITER = "%20";
