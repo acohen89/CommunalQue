@@ -19,4 +19,5 @@ button{
   border-radius: 20px;
   border: 1px solid white;
   font-size: 18px;
+  cursor: pointer;
 }
