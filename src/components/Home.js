@@ -3,7 +3,8 @@ import './styles/Home.css';
 import MainQue from "./MainQue";
 import Button from "./Button"
 
-const WEB_URL = "http://localhost:3000";
+const port = 3000;
+const WEB_URL = "http://localhost:"  + port;
 export {WEB_URL}; 
 const CLIENT_ID = "35135547562945148a4c9129b244dfe8"; // Testing iD
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
