@@ -1,6 +1,5 @@
 import './styles/GoodLogin.css';
 import SpotifyGetPlaylists from "./SpotifyGetPlaylists";
-import InitializeQue from "./InitializeQue";
 import React, { useEffect } from "react";
 
 
@@ -35,7 +34,7 @@ function GoodLogin() {
   return (
     <body>
         <p>Sucessful Login!</p>
-        {/*<InitializeQue /> */}
+  
         <SpotifyGetPlaylists />
     </body >
   );
