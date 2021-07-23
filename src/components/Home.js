@@ -28,7 +28,7 @@ const login = () => {
 
 
 function Home() {
-  if(window.location.pathname !== "/"){ // checking if just logged into spotify
+  if(window.location.pathname !== "/"){ // checking if just logged into spotify TODO: eventually have
     return (
       <body>
         <MainQue />
