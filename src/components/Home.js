@@ -15,7 +15,9 @@ const SCOPES = [
  "playlist-read-private",
  "app-remote-control",
  "user-library-modify",
- "user-library-read"
+ "user-library-read",
+ "user-read-private",
+ "user-read-email"
 
 ];
 const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
