@@ -55,15 +55,25 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
     const requestOptions = {
       method: 'POST',
       headers: { 'Authorization': "Bearer " + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({name: "Communal Que", description: "This playlist is autimatically created by Communal Que. Please do not delete during a que session. It will autimatically delete once the que is finished", public: true })
-  };
-  fetch(PLAYLIST_ENDPOINT, requestOptions)
-      .then(response => response.json())
-      .then(data => (
-        
-        console.log(data)));
-
+      body: JSON.stringify({name: "Communal Que", description: "This playlist is autimatically created by Communal Que. Please do not delete during a que session. It will autimatically delete once the que is finished", public: true })};
+    fetch(PLAYLIST_ENDPOINT, requestOptions)
+        .then(response => response.json())
+        .then(data => (
+          idToFirebase(data.id))
+        );
     }
+  function idToFirebase(playlistid){
+    db.collection("Active Ques").doc(TEST_HASH).update({
+      playlistID: playlistid
+    })
+    .then((docRef) => {
+      console.log("Added playlist ID: " + playlistid);
+      
+    })
+    .catch((error) => {
+      console.error("Error adding document: ", error);
+    });
+  }
   const refresh = () => {
     docRef.get().then((doc) => {
       if (doc.exists) {
