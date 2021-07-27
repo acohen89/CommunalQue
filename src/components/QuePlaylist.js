@@ -4,7 +4,6 @@ import axios from "axios";
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 
 const QuePlaylist = () => {
- 
 
   const [token, setToken] = useState("");
   const [data, setData] = useState({});
@@ -16,7 +15,7 @@ const QuePlaylist = () => {
   }, []);
 
   const makePlaylist = () => {
-    console.log("in que playlist")
+    console.log("in que playlist : ", token)
     axios
       .post(PLAYLISTS_ENDPOINT, {
         headers: {

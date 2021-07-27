@@ -7,7 +7,7 @@ import Button from "./Button";
 import QueID from "./QueID";
 import InQue from './InQue';
 //import QuePlaylist from "./QuePlaylist";
-const TEST_HASH = "testHash";
+const TEST_HASH = "0001";
 const db = firebase.firestore();
 const hash = getHash(6);
 const docRef = db.collection("Active Ques").doc(TEST_HASH);
@@ -44,7 +44,6 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
       },
     })
     .then((response) => {
-      console.log(response.data.id)
       QuePlaylist(response.data.id, token)
     })
     .catch((error) => {
@@ -52,28 +51,20 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
     });
   }
   function QuePlaylist(userID, token){
-    const PLAYLIST_ENDPOINT = 'https://api.spotify.com/v1/users' + userID  + "/playlists";
-    console.log("QUeing playlist with userID: ",  userID);
-        axios
-        .post(PLAYLIST_ENDPOINT, {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-          body: {
-            "name": "Test Playlist",
-            "description": "New playlist description",
-            "public": true
-            }
-          })
-          .then((response) => {
-            console.log(response.data)
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+    const PLAYLIST_ENDPOINT = 'https://api.spotify.com/v1/users/' + userID  + "/playlists";
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Authorization': "Bearer " + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({name: "Communal Que", description: "This playlist is autimatically created by Communal Que. Please do not delete during a que session. It will autimatically delete once the que is finished", public: true })
+  };
+  fetch(PLAYLIST_ENDPOINT, requestOptions)
+      .then(response => response.json())
+      .then(data => (
+        
+        console.log(data)));
+
     }
   const refresh = () => {
-    console.log("refreshed")
     docRef.get().then((doc) => {
       if (doc.exists) {
         setSongs(songs => (songs = doc.data().songs))
@@ -86,7 +77,6 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
     const stringAfterHashtag = hash.substring(1);
     const paramsInUrl = stringAfterHashtag.split("&");
     const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-      console.log(currentValue);
       const [key, value] = currentValue.split("=");
       accumulater[key] = value;
       return accumulater;
@@ -118,7 +108,6 @@ const endQue = () => {
 
 function getHash(){
   const hash = makeHash(6);
-  console.log("Fire")
   db.collection("Active Ques").doc(hash).set({
     Songs: []
   })
