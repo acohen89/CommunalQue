@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import MainQue from "./MainQue";
 const urlParams = new URLSearchParams(window.location.search);
 
 const ExistingQueue = () => {
