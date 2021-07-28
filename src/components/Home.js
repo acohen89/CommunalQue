@@ -12,6 +12,7 @@ const REDIRECT_URL_AFTER_LOGIN = WEB_URL + "/Home";
 const SPACE_DELIMITER = "%20";
 const SCOPES = [
  "playlist-modify-private",
+ "playlist-modify-public",
  "playlist-read-private",
  "app-remote-control",
  "user-library-modify",

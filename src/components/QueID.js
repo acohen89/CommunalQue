@@ -2,7 +2,7 @@ import React from 'react'
 
 const QueID = ({hash}) => {
     return (
-        <p> Que wit id: {hash} </p>
+        <p> Queue with id: {hash} </p>
     )
 }
 

@@ -6,51 +6,73 @@ import {WEB_URL} from "./Home";
 import Button from "./Button";
 import QueID from "./QueID";
 import InQue from './InQue';
-//import QuePlaylist from "./QuePlaylist";
 const TEST_HASH = "0001";
 const db = firebase.firestore();
-const hash = getHash(6);
+const hash = makeHash(6);
 const docRef = db.collection("Active Ques").doc(TEST_HASH);
-
 const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
 
- function MainQue() {
+function MainQue() {
   const [songs, setSongs] = useState([{id: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
   {id: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
   const [token, setToken] = useState("");
   useEffect(() => {
+    hashToDB(hash);
     if (window.location.hash) {
-      const { access_token, expires_in, token_type } =
-      getReturnedParamsFromSpotifyAuth(window.location.hash);
+      const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
       window.history.pushState({}, document.title, "/");
       localStorage.clear();
-      if (localStorage.getItem("accessToken")) {
-        setToken(localStorage.getItem("accessToken"));
-        localStorage.setItem("accessToken", access_token)
-        localStorage.setItem("expiresIn", expires_in)
-        localStorage.setItem("tokenType", token_type)
-      }
+      localStorage.setItem("token", access_token)
+      setToken(localStorage.getItem("token"));
+      localStorage.setItem("expiresIn", expires_in)
+      localStorage.setItem("tokenType", token_type)
       getUserID(access_token);
     }
   }, []);
-  
-  
-  
-  
+
+  const refresh = () => {
+    const playlistID = localStorage.getItem("playlistID");
+    docRef.get().then((doc) => {
+      if (doc.exists) {
+        setSongs(songs => (songs = doc.data().songs))
+        addSongsToPlaylist(playlistID, doc.data().songs);
+      } else { console.log("No such document!");}
+      }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
+  }
+  async function addSongsToPlaylist(playlistID, songsObj){
+    let uriArray = [];
+    for(let i = 0; i < songsObj.length; i++){
+      uriArray.push(songsObj[i].id);
+    }
+    const ADD_TO_PLAYLIST_ENDPOINT = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks"
+    const token = localStorage.getItem("token");
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Authorization': "Bearer " + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({"uris": uriArray})
+    };
+    await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
+        .then(response => response.json())
+        .then(data => (
+         console.log(data)
+        ))
+  }
   async function getUserID(token){
-   await axios.get(USER_ID_ENDPOINT, {
+    await axios.get(USER_ID_ENDPOINT, {
       headers: {
         Authorization: "Bearer " + token,
       },
     })
     .then((response) => {
-      QuePlaylist(response.data.id, token)
+      QueuePlaylist(response.data.id, token)
     })
     .catch((error) => {
       console.log(error);
     });
   }
-  function QuePlaylist(userID, token){
+  function QueuePlaylist(userID, token){
     const PLAYLIST_ENDPOINT = 'https://api.spotify.com/v1/users/' + userID  + "/playlists";
     const requestOptions = {
       method: 'POST',
@@ -60,9 +82,10 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
         .then(response => response.json())
         .then(data => (
           idToFirebase(data.id))
-        );
-    }
+        )
+  }
   function idToFirebase(playlistid){
+    localStorage.setItem("playlistID", playlistid);
     db.collection("Active Ques").doc(TEST_HASH).update({
       playlistID: playlistid
     })
@@ -74,36 +97,12 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
       console.error("Error adding document: ", error);
     });
   }
-  const refresh = () => {
-    docRef.get().then((doc) => {
-      if (doc.exists) {
-        setSongs(songs => (songs = doc.data().songs))
-      } else { console.log("No such document!");}
-      }).catch((error) => {
-        console.log("Error getting document:", error);
-    });
-  }
-  const getReturnedParamsFromSpotifyAuth = (hash) => {
-    const stringAfterHashtag = hash.substring(1);
-    const paramsInUrl = stringAfterHashtag.split("&");
-    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-      const [key, value] = currentValue.split("=");
-      accumulater[key] = value;
-      return accumulater;
-    }, {});
-    
-    return paramsSplitUp;
-  };
-    
-    return (
-      
-      <>
-    <h>
-      useEffect(() => {
-        <QueID hash = {hash} />
-      }, [])
+  return (
+    <>
+    <h1>
+       <QueID hash = {hash} />
        <Button text="End Que" onClick={endQue} />
-    </h>
+    </h1>
       <InQue songs = {songs}/>
       <Button text="Refresh" onClick={refresh}/> 
     </>
@@ -112,26 +111,20 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
 const endQue = () => {
   // migrate data to past ques collection 
   // go to home page
-  window.location.href = WEB_URL;
-  
+  window.location.href = WEB_URL; 
 }
 
-function getHash(){
-  const hash = makeHash(6);
+function hashToDB(hash){
   db.collection("Active Ques").doc(hash).set({
     Songs: []
   })
   .then((docRef) => {
-    console.log("Document written sucesfully");
-    return hash;
+    console.log("Document with hash " + hash + " written sucesfully");
     
   })
   .catch((error) => {
     console.error("Error adding document: ", error);
-    return hash;
-  });
-  return hash;
-  
+  });  
 }
 function makeHash(length) {
   var result = '';
@@ -142,6 +135,17 @@ function makeHash(length) {
   }
   return result;
 }
+const getReturnedParamsFromSpotifyAuth = (hash) => {
+  const stringAfterHashtag = hash.substring(1);
+  const paramsInUrl = stringAfterHashtag.split("&");
+  const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
+    const [key, value] = currentValue.split("=");
+    accumulater[key] = value;
+    return accumulater;
+  }, {});
+  
+  return paramsSplitUp;
+};
 
 
 export default MainQue;
