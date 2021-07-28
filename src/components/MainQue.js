@@ -4,11 +4,13 @@ import './styles/MainQue.css';
 import firebase from "./firesbase";
 import {WEB_URL} from "./Home";
 import Button from "./Button";
-import QueID from "./QueID";
+import QueID from "./QueID"
 import InQue from './InQue';
 const TEST_HASH = "0001";
+const HASH_LENGTH = 4;
+export {HASH_LENGTH};
 const db = firebase.firestore();
-const hash = makeHash(6);
+const hash = makeHash(HASH_LENGTH);
 const docRef = db.collection("Active Ques").doc(TEST_HASH);
 const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
 
@@ -101,7 +103,7 @@ function MainQue() {
     <>
     <h1>
        <QueID hash = {hash} />
-       <Button text="End Que" onClick={endQue} />
+       <Button text="End Queue" onClick={endQue} />
     </h1>
       <InQue songs = {songs}/>
       <Button text="Refresh" onClick={refresh}/> 
@@ -111,7 +113,7 @@ function MainQue() {
 const endQue = () => {
   // migrate data to past ques collection 
   // go to home page
-  window.location.href = WEB_URL; 
+  window.location.href = WEB_URL + "/home"; 
 }
 
 function hashToDB(hash){
