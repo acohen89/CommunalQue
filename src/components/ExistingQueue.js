@@ -29,7 +29,7 @@ const ExistingQueue = () => {
     if(!urlParams.get("queueID") || urlParams.get("queueID").length !== HASH_LENGTH){
         return (
         <>
-        <p> Enter a  valid Queue ID</p>
+        <p> Enter a valid Queue ID</p>
         <Button text="Back" onClick={back}/>
         </>
         )
