@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import './styles/Home.css';
 // import MainQue from "./MainQue";
 import Button from "./Button"
@@ -23,6 +23,28 @@ const startQueue = () => {
 
 
 function Home() {
+  const [token, setToken] = useState("");
+  useEffect(() => {
+    if (window.location.hash) {
+      const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
+      window.history.pushState({}, document.title, "/");
+      localStorage.clear();
+      localStorage.setItem("token", access_token)
+      setToken(localStorage.getItem("token"));
+      localStorage.setItem("expiresIn", expires_in)
+      localStorage.setItem("tokenType", token_type)
+    }
+  }, []);
+  const getReturnedParamsFromSpotifyAuth = (hash) => {
+    const stringAfterHashtag = hash.substring(1);
+    const paramsInUrl = stringAfterHashtag.split("&");
+    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
+      const [key, value] = currentValue.split("=");
+      accumulater[key] = value;
+      return accumulater;
+    }, {});
+    return paramsSplitUp;
+  };
   const urlParams = new URLSearchParams(window.location.search);
   if(urlParams.get("error")){
     window.location = WEB_URL;
