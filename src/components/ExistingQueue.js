@@ -2,18 +2,20 @@ import React, {useState} from 'react';
 import firebase from "./firesbase";
 import Button from "./Button";
 import InQue from './InQue';
+import SearchBar from "./SearchBar";
+
 import { HASH_LENGTH } from './MainQue';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
+
 let docRef;
 urlParams.get("queueID") ? docRef = db.collection("Active Ques").doc(urlParams.get("queueID")) : docRef = null;
 //TODO: need to get spotify auth form link still 
 
 const ExistingQueue = () => {
-    // const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, 
-    // {id: "", title: "", artist: ""}]);
-    const [songs, setSongs] = useState([{id: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
-    {id: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
+    const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, {id: "", title: "", artist: ""}]);
+    // const [songs, setSongs] = useState([{id: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
+    // {id: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
     const refresh = () => {
         docRef.get().then((doc) => {
             if (doc.exists) {
@@ -39,7 +41,9 @@ const ExistingQueue = () => {
                 <p>Queue with id {urlParams.get("queueID")}</p>
                 <p><u>Current Songs in Queue</u></p>
                 <InQue songs = {songs}/>
+                <p><Button text="Back" onClick={back}/></p>
                 <Button text="Refresh" onClick={refresh}/>
+                <SearchBar/> 
             </div>
         )
 

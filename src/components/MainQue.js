@@ -17,19 +17,17 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
 function MainQue() {
   const [songs, setSongs] = useState([{id: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
   {id: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
-  const [token, setToken] = useState("");
+  // const [token, setToken] = useState("");
   useEffect(() => {
     hashToDB(hash);
-    if (window.location.hash) {
-      const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
-      window.history.pushState({}, document.title, "/");
-      localStorage.clear();
-      localStorage.setItem("token", access_token)
-      setToken(localStorage.getItem("token"));
-      localStorage.setItem("expiresIn", expires_in)
-      localStorage.setItem("tokenType", token_type)
-      getUserID(access_token);
-    }
+      // const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
+      // window.history.pushState({}, document.title, "/");
+      // localStorage.clear();
+      // localStorage.setItem("token", access_token);
+      // setToken(localStorage.getItem("token"));
+      // localStorage.setItem("expiresIn", expires_in);
+      // localStorage.setItem("tokenType", token_type);
+      // getUserID(access_token);
   }, []);
 
   const refresh = () => {
@@ -137,17 +135,7 @@ function makeHash(length) {
   }
   return result;
 }
-const getReturnedParamsFromSpotifyAuth = (hash) => {
-  const stringAfterHashtag = hash.substring(1);
-  const paramsInUrl = stringAfterHashtag.split("&");
-  const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-    const [key, value] = currentValue.split("=");
-    accumulater[key] = value;
-    return accumulater;
-  }, {});
-  
-  return paramsSplitUp;
-};
+
 
 
 export default MainQue;

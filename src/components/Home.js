@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import './styles/Home.css';
 // import MainQue from "./MainQue";
 import Button from "./Button"
@@ -23,6 +23,27 @@ const startQueue = () => {
 
 
 function Home() {
+  const [token, setToken] = useState("");
+  const getReturnedParamsFromSpotifyAuth = (hash) => {
+    const stringAfterHashtag = hash.substring(1);
+    const paramsInUrl = stringAfterHashtag.split("&");
+    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
+      const [key, value] = currentValue.split("=");
+      accumulater[key] = value;
+      return accumulater;
+    }, {});
+    
+    return paramsSplitUp;
+  };
+  useEffect(() => {
+    const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
+    localStorage.clear();
+    localStorage.setItem("token", access_token);
+    setToken(localStorage.getItem("token"));
+    localStorage.setItem("expiresIn", expires_in);
+    localStorage.setItem("tokenType", token_type);
+    window.history.pushState({}, document.title, "/");
+  }, [])
   const urlParams = new URLSearchParams(window.location.search);
   if(urlParams.get("error")){
     window.location = WEB_URL;
@@ -35,28 +56,6 @@ function Home() {
       </div>
     );
   }
-  // if(window.location.pathname !== "/"){ // checking if just logged into spotify TODO: eventually have
-  //   return (
-  //     <body>
-  //       <MainQue />
-  //     </body>
-  //   );
-  // } else {
-  //   return (
-  //     <>
-  //     <body >
-  //         <p>Welcome To Communal Queue!</p>
-  //         <p>Please login</p>
-  //         <Button text = "Login To Spotifty" onClick = {login} />
-  //         <Button text = "Start a Queue" onClick = {login} />
-  //     </body >
-  //     <p>
-  //       <Button text = "Join an existing Queue" onClick = {joinQueue}/>
-  //     </p>
-  //     </>
-  //   );
-  // } 
-  
 }
 
 export default Home;
