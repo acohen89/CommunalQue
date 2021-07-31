@@ -29,9 +29,8 @@ function MainQue() {
       // localStorage.setItem("tokenType", token_type);
       // getUserID(access_token);
   }, []);
-
   const refresh = () => {
-    const playlistID = localStorage.getItem("playlistID");
+    const playlistID = localStorage.getItem("playlistID"); 
     docRef.get().then((doc) => {
       if (doc.exists) {
         setSongs(songs => (songs = doc.data().songs))
@@ -53,6 +52,7 @@ function MainQue() {
       headers: { 'Authorization': "Bearer " + token, 'Content-Type': 'application/json' },
       body: JSON.stringify({"uris": uriArray})
     };
+    console.log(token)
     await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
         .then(response => response.json())
         .then(data => (
@@ -66,6 +66,7 @@ function MainQue() {
       },
     })
     .then((response) => {
+      console.log("Here") 
       QueuePlaylist(response.data.id, token)
     })
     .catch((error) => {
@@ -135,7 +136,4 @@ function makeHash(length) {
   }
   return result;
 }
-
-
-
 export default MainQue;

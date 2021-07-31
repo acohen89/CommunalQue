@@ -12,8 +12,6 @@ const SCOPES = [
  "playlist-modify-public",
  "playlist-read-private",
  "app-remote-control",
- "user-library-modify",
- "user-library-read",
  "user-read-private",
  "user-read-email"
 
