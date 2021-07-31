@@ -6,7 +6,7 @@ const SongInQue = ({songs}) => {
     return (
         <>
             {songs.map((song) => (
-                <p key = {song.id}> {song.title} {song.artist} </p>
+                <p key = {song.uri}> {song.title} {song.artist} </p>
             ))}     
         </>
     )
