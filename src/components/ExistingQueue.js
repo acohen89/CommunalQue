@@ -14,8 +14,6 @@ urlParams.get("queueID") ? docRef = db.collection("Active Ques").doc(urlParams.g
 
 const ExistingQueue = () => {
     const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, {id: "", title: "", artist: ""}]);
-    // const [songs, setSongs] = useState([{id: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
-    // {id: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
     const refresh = () => {
         docRef.get().then((doc) => {
             if (doc.exists) {

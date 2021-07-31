@@ -23,6 +23,11 @@ const startQueue = () => {
 
 
 function Home() {
+  const enterPressed = e => {
+  if (e.key === "Enter" && document.getElementById(inputID).value.length == HASH_LENGTH) {
+    joinQueue();
+  }
+};
   const [token, setToken] = useState("");
   const getReturnedParamsFromSpotifyAuth = (hash) => {
     const stringAfterHashtag = hash.substring(1);
@@ -51,7 +56,7 @@ function Home() {
     return (
       <div >
       <h1 ><Button text = "Join Existing Queue" onClick = {joinQueue} /> </h1>
-      <input type="text" name="queueID" id= {inputID} placeholder="Enter Queue ID" minLength= {HASH_LENGTH} maxLength={HASH_LENGTH}/>
+      <input type="text" name="queueID" id= {inputID} placeholder="Enter Queue ID" minLength= {HASH_LENGTH} maxLength={HASH_LENGTH}  onKeyPress={enterPressed}/>
       <h2><Button text = "Start a Queue" onClick = {startQueue} /> </h2>
       </div>
     );

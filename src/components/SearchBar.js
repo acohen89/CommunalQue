@@ -6,16 +6,11 @@ const SEARCH_ENDPOINT = "https://api.spotify.com/v1/search";
 const SearchBar = () => {
     const [search, setSearch] = useState("");
     const token = localStorage.getItem("token");
-    const [songs, setSongs] = useState([{uri: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
-    {uri: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
-    // const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, {id: "", title: "", artist: ""}]);
+    const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, {id: "", title: "", artist: ""}]);
     const searchID = "searchBar";
     function updateSearch (){
          setSearch(search => search = document.getElementById(searchID).value);
     }
-    // element.addEventListener("change", (event) => {
-    // });8 
- 
     useEffect(() => {
         if(search !== ""){
             const url = SEARCH_ENDPOINT + "?q=" + search + "&type=track";  
