@@ -20,14 +20,13 @@ const SearchBar = () => {
                 }
               })
               .then(function (response) {
-                //console.log(response.data.tracks.items[0].artists);
                 setSongs(response.data.tracks.items.map(item => ({uri: item.uri, title: item.name, artist: item.artists[0].name})))
               })
               .catch(function (error) {
                 console.log(error);
               })
         }
-    }, [search])
+    }, [search, token])
     return (
         <div>
             <input type="text" name={searchID} id={searchID} placeholder="Search for a song" onChange={updateSearch} />

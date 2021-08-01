@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect} from "react";
 import './styles/Home.css';
 // import MainQue from "./MainQue";
 import Button from "./Button"
@@ -24,11 +24,10 @@ const startQueue = () => {
 
 function Home() {
   const enterPressed = e => {
-  if (e.key === "Enter" && document.getElementById(inputID).value.length == HASH_LENGTH) {
+  if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
     joinQueue();
   }
 };
-  const [token, setToken] = useState("");
   const getReturnedParamsFromSpotifyAuth = (hash) => {
     const stringAfterHashtag = hash.substring(1);
     const paramsInUrl = stringAfterHashtag.split("&");
@@ -44,10 +43,9 @@ function Home() {
     const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
     localStorage.clear();
     localStorage.setItem("token", access_token);
-    setToken(localStorage.getItem("token"));
     localStorage.setItem("expiresIn", expires_in);
     localStorage.setItem("tokenType", token_type);
-    window.history.pushState({}, document.title, "/");
+    window.history.pushState({}, document.title, "/home");
   }, [])
   const urlParams = new URLSearchParams(window.location.search);
   if(urlParams.get("error")){
