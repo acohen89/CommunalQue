@@ -13,6 +13,7 @@ const SongInQue = ({songs}) => {
 }
 
 SongInQue.defaultProps = {
+    uri: "testURi",
     name: "TestName",
     artist: "Test Artist",
 }
