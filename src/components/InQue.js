@@ -5,7 +5,7 @@ import SongInQue from './SongInQue';
 const InQue = ({songs}) => {
     return (
         <div>
-            <SongInQue songs = {songs} />
+            <SongInQue songs = {songs} inQueue={true}/>
         </div>
     )
 }

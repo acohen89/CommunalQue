@@ -1,21 +1,18 @@
 import React from 'react';
+import Song from "./Song";
 import "./styles/SongInQue.css";
 
 
-const SongInQue = ({songs}) => {
+const SongInQue = ({songs, inQueue}) => {
     return (
         <>
             {songs.map((song) => (
-                <p key = {song.uri}> {song.title} {song.artist} </p>
+               <Song uri={song.uri} title={song.title} artist={song.artist} inQueue={inQueue} />
+                // <p key = {song.uri} style={{cursor:"pointer"}} onClick={console.log()}> {song.title} {song.artist} </p>
             ))}     
         </>
     )
 }
 
-SongInQue.defaultProps = {
-    uri: "testURi",
-    name: "TestName",
-    artist: "Test Artist",
-}
 
 export default SongInQue;

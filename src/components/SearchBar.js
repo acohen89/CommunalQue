@@ -30,7 +30,7 @@ const SearchBar = () => {
     return (
         <div>
             <input type="text" name={searchID} id={searchID} placeholder="Search for a song" onChange={updateSearch} />
-            <SongInQue songs={songs}/>
+            <SongInQue songs={songs} inQueue={false}/>
         </div>
     )
 }

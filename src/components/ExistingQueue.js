@@ -11,6 +11,9 @@ const db = firebase.firestore();
 let docRef;
 urlParams.get("queueID") ? docRef = db.collection("Active Ques").doc(urlParams.get("queueID")) : docRef = null;
 //TODO: need to get spotify auth form link still 
+let queueID = urlParams.get("queueID");
+export {docRef};
+export{queueID};
 
 const ExistingQueue = () => {
     const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, {id: "", title: "", artist: ""}]);
