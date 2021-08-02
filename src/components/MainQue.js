@@ -20,9 +20,10 @@ function MainQue() {
   useEffect(() => {
     hashToDB(hash);
     getUserID(localStorage.getItem("token"));
-  }, []);
+  }, [])
   const refresh = () => {
-    const playlistID = localStorage.getItem("playlistID"); 
+    const playlistID = localStorage.getItem("playlistID");
+    console.log(playlistID)
     docRef.get().then((doc) => {
       if (doc.exists) {
         setSongs(songs => (songs = doc.data().songs))
@@ -77,6 +78,7 @@ function MainQue() {
         )
   }
   function idToFirebase(playlistid){
+    console.log("Logging playlistID to firebase " + playlistid)
     localStorage.setItem("playlistID", playlistid);
     db.collection("Active Ques").doc(TEST_HASH).update({
       playlistID: playlistid

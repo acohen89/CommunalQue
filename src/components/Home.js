@@ -20,8 +20,6 @@ const startQueue = () => {
   window.location = WEB_URL + "/Queue";
 };
 
-
-
 function Home() {
   const enterPressed = e => {
   if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
@@ -41,11 +39,13 @@ function Home() {
   };
   useEffect(() => {
     const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
-    localStorage.clear();
-    localStorage.setItem("token", access_token);
-    localStorage.setItem("expiresIn", expires_in);
-    localStorage.setItem("tokenType", token_type);
-    window.history.pushState({}, document.title, "/home");
+    if(access_token !== undefined && expires_in !== undefined && token_type !== undefined){
+      localStorage.clear();
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("expiresIn", expires_in);
+      localStorage.setItem("tokenType", token_type);
+      window.history.pushState({}, document.title, "/home");
+    }
   }, [])
   const urlParams = new URLSearchParams(window.location.search);
   if(urlParams.get("error")){
