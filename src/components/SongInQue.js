@@ -1,20 +1,12 @@
 import React from 'react';
+import Song from "./Song";
 import './styles/ZevsStyles.scss';
 
-const SongInQue = ({ songs }) => {
+const SongInQue = ({songs, inQueue }) => {
   return (
     <>
       {songs.map((song) => (
-        <div style={{ display: 'flex' }}>
-          <p className="song" key={song.id}>
-            {' '}
-            {song.title}
-          </p>
-          <p className="songArtist" key={song.id}>
-            {' '}
-            {song.artist}
-          </p>
-        </div>
+               <Song uri={song.uri} title={song.title} artist={song.artist} inQueue={inQueue} />
       ))}
     </>
   );
