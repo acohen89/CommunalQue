@@ -4,8 +4,6 @@ import firebase from "./firesbase";
 const db = firebase.firestore();
 
 const Song = ({uri, title, artist, inQueue}) => {
-    console.log("title " + title + " artist " + artist + " inQueue " + inQueue )
-    
     const queueID = localStorage.getItem("queueID");
     const docRef = db.collection("Active Ques").doc(queueID);
     const addSong = () => {
@@ -25,16 +23,38 @@ const Song = ({uri, title, artist, inQueue}) => {
             console.error("Error updating document: ", error);
         });
     }
+    let artistKey = uri + artist;
+    if(uri === "testURi") { 
+        uri = Math.floor(Math.random() * 99999)  
+        artistKey = uri + Math.floor(Math.random() * 999);
+    }
     if(inQueue){
         return (
-            <div>
-                 <p id={uri} key = {uri} > {title} {artist} </p> 
-            </div>
+                <div style={{ display: 'flex' }}>
+                    <p className="song" key={uri}>
+                        {' '}
+                        {title}
+                    </p>
+                    <p className="songArtist" key={artistKey}>
+                        {' '}
+                        {artist}
+                    </p>
+                </div>
                 )
     } else{
         return (
-            <div>
-                 <p id={uri} key = {uri} > {title} {artist} <MdAdd onClick={addSong}/> </p> 
+            <div style={{ display: 'flex' }}>
+                <p className="song" key={uri}>
+                    {' '}
+                    {title}
+                </p>
+                <p className="songArtist" key={artistKey}>
+                    {' '}
+                    {artist}
+                </p> 
+                <p>
+                    <MdAdd onClick={addSong}/>
+                </p>
             </div>
                 )
     }
