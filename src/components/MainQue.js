@@ -18,21 +18,12 @@ function MainQue() {
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
   ]);
-  const [token, setToken] = useState('');
+
+  const token = localStorage.getItem("token");
   useEffect(() => {
     hashToDB(hash);
-    if (window.location.hash) {
-      const { access_token, expires_in, token_type } =
-        getReturnedParamsFromSpotifyAuth(window.location.hash);
-      window.history.pushState({}, document.title, '/');
-      localStorage.clear();
-      localStorage.setItem('token', access_token);
-      setToken(localStorage.getItem('token'));
-      localStorage.setItem('expiresIn', expires_in);
-      localStorage.setItem('tokenType', token_type);
-      getUserID(access_token);
-    }
-  }, []);
+    getUserID(token);
+  }, [])
 
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
@@ -57,7 +48,6 @@ function MainQue() {
     }
     const ADD_TO_PLAYLIST_ENDPOINT =
       'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
-    const token = localStorage.getItem('token');
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -66,10 +56,9 @@ function MainQue() {
       },
       body: JSON.stringify({ uris: uriArray }),
     };
-    console.log(token)
     await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => console.log("Added songs to playlist"));
   }
   async function getUserID(token) {
     await axios
@@ -82,7 +71,7 @@ function MainQue() {
         QueuePlaylist(response.data.id, token);
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error + "\n with token \n " + token);
       });
   }
   function QueuePlaylist(userID, token) {
