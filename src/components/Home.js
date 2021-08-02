@@ -74,6 +74,7 @@ function Home() {
               autoComplete="off"
               minLength={HASH_LENGTH}
               maxLength={HASH_LENGTH}
+              onKeyPress={enterPressed}
             />
           </div>
           <div style={{ margin: 20 }}>
