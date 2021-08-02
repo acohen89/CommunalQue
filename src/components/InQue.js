@@ -1,13 +1,18 @@
-import React from 'react'
+import React from 'react';
 import SongInQue from './SongInQue';
 
+const InQue = ({ songs }) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+      }}
+    >
+      <SongInQue songs={songs} />
+    </div>
+  );
+};
 
-const InQue = ({songs}) => {
-    return (
-        <div>
-            <SongInQue songs = {songs} />
-        </div>
-    )
-}
-
-export default InQue
+export default InQue;

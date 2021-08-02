@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+$clr-green: #4caf50;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.button {
+  background-color: $clr-green; /* Green */
+  border: none;
+  color: white;
+  font-family: 'Montserrat', Georgia;
+  font-weight: 600;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 30px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.header {
+  font-family: 'Montserrat';
+  font-weight: 600;
+  font-size: 40px;
+}
+
+.body {
+  font-family: 'Montserrat';
+  font-size: 30px;
+}
+
+.bg {
+  background: rgb(33, 33, 33);
+  background: linear-gradient(
+    180deg,
+    rgba(33, 33, 33, 1) 0%,
+    rgba(18, 18, 18, 1) 50%
+  );
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.darkContainer {
+  margin: 40px;
+  padding: 10px;
+  display: inline-flex;
+  justify-content: space-evenly;
+  background-color: black;
+  border-radius: 60px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.darkContainer p {
+  margin: 15px;
+}
+
+.queueTitle {
+  font-weight: bold;
+  font-family: 'Montserrat';
+  color: white;
+  font-size: 35px;
+}
+
+.queueID {
+  font-family: monospace;
+  font-size: 30px;
+  color: gray;
+}
+
+.credits {
+  font-family: 'Montserrat';
+  font-size: 20px;
+  color: gray;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.song {
+  font-family: 'Montserrat';
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+}
+
+.songArtist {
+  font-family: 'Montserrat';
+  font-size: 20px;
+  color: gray;
+}
+
+.form {
+  position: relative;
+  width: 10rem;
+  height: 3rem;
+  flex-shrink: 2;
+
+  &__input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid gray;
+    border-radius: 15px;
+    font-family: inherit;
+    font-size: 20px;
+    color: white;
+    outline: none;
+    padding: 1rem;
+    background: none;
+    transition: border-color 100ms ease-in;
+
+    &:focus {
+      border-color: $clr-green;
+    }
+  }
+}
