@@ -23,7 +23,7 @@ const Song = ({uri, title, artist, inQueue}) => {
             console.error("Error updating document: ", error);
         });
     }
-    let artistKey = uri;
+    let artistKey = uri + artist;
     if(uri === "testURi") { 
         uri = Math.floor(Math.random() * 99999)  
         artistKey = uri + Math.floor(Math.random() * 999);
