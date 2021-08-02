@@ -11,11 +11,12 @@ const db = firebase.firestore();
 let docRef;
 urlParams.get("queueID") ? docRef = db.collection("Active Ques").doc(urlParams.get("queueID")) : docRef = null;
 //TODO: need to get spotify auth form link still 
+const queueID = urlParams.get("queueID");
+localStorage.setItem("queueID", queueID);
+export {docRef};
 
 const ExistingQueue = () => {
-    const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, {id: "", title: "", artist: ""}]);
-    // const [songs, setSongs] = useState([{id: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
-    // {id: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
+    const [songs, setSongs] = useState([{id: "", title: "", artist: "", inQueue:true }, {id: "", title: "", artist: "", inQueue:true}]);
     const refresh = () => {
         docRef.get().then((doc) => {
             if (doc.exists) {
@@ -40,7 +41,7 @@ const ExistingQueue = () => {
             <div>
                 <p>Queue with id {urlParams.get("queueID")}</p>
                 <p><u>Current Songs in Queue</u></p>
-                <InQue songs = {songs}/>
+                <InQue songs = {songs} />
                 <p><Button text="Back" onClick={back}/></p>
                 <Button text="Refresh" onClick={refresh}/>
                 <SearchBar/> 

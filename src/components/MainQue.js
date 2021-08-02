@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import axios from "axios";
 import './styles/MainQue.css';
 import firebase from "./firesbase";
@@ -17,20 +17,13 @@ const USER_ID_ENDPOINT = "https://api.spotify.com/v1/me";
 function MainQue() {
   const [songs, setSongs] = useState([{id: "123kf21", title: "Piano Man", artist: "Billy Joel"}, 
   {id: "198213da", title: "She's Always A Woman", artist: "Billy Joel"}]);
-  // const [token, setToken] = useState("");
   useEffect(() => {
     hashToDB(hash);
-      // const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
-      // window.history.pushState({}, document.title, "/");
-      // localStorage.clear();
-      // localStorage.setItem("token", access_token);
-      // setToken(localStorage.getItem("token"));
-      // localStorage.setItem("expiresIn", expires_in);
-      // localStorage.setItem("tokenType", token_type);
-      // getUserID(access_token);
-  }, []);
+    getUserID(localStorage.getItem("token"));
+  }, [])
   const refresh = () => {
-    const playlistID = localStorage.getItem("playlistID"); 
+    const playlistID = localStorage.getItem("playlistID");
+    console.log(playlistID)
     docRef.get().then((doc) => {
       if (doc.exists) {
         setSongs(songs => (songs = doc.data().songs))
@@ -66,7 +59,6 @@ function MainQue() {
       },
     })
     .then((response) => {
-      console.log("Here") 
       QueuePlaylist(response.data.id, token)
     })
     .catch((error) => {
@@ -86,6 +78,7 @@ function MainQue() {
         )
   }
   function idToFirebase(playlistid){
+    console.log("Logging playlistID to firebase " + playlistid)
     localStorage.setItem("playlistID", playlistid);
     db.collection("Active Ques").doc(TEST_HASH).update({
       playlistID: playlistid
