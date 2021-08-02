@@ -6,6 +6,8 @@ import {WEB_URL} from "./Home";
 import Button from "./Button";
 import InQue from './InQue';
 const TEST_HASH = '0001';
+const PLAYLIST_NAME = "Communal Queue";
+const PLAYLIST_DESCRIPTION = "This playlist is automatically created by Communal Que. Please do not delete during a que session.";
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
 const db = firebase.firestore();
@@ -68,13 +70,39 @@ function MainQue() {
         },
       })
       .then((response) => {
-        QueuePlaylist(response.data.id, token);
+        SetUpQueuePlaylist(response.data.id, token);
       })
       .catch((error) => {
         console.log(error + "\n with token \n " + token);
       });
   }
-  function QueuePlaylist(userID, token) {
+  function SetUpQueuePlaylist(userID, token) {
+    // checking if playlist has already been created
+    const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
+    axios
+      .get(PLAYLISTS_ENDPOINT, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((response) => {
+        let found = false;
+        for(let i = 0; i < response.data.items.length; i++){
+          if(response.data.items[i].name === PLAYLIST_NAME && response.data.items[i].description === PLAYLIST_DESCRIPTION){
+            found = true;
+            console.log("Playlist already in library, old one being used");
+            idToFirebase(response.data.items[i].id, false);
+          }
+        }
+        if(!found){
+          createNewPlaylist(userID, token);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  function createNewPlaylist(userID, token ){
     const PLAYLIST_ENDPOINT =
       'https://api.spotify.com/v1/users/' + userID + '/playlists';
     const requestOptions = {
@@ -84,17 +112,17 @@ function MainQue() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: 'Communal Que',
-        description:
-          'This playlist is autimatically created by Communal Que. Please do not delete during a que session. It will autimatically delete once the que is finished',
+        name: PLAYLIST_NAME,
+        description: PLAYLIST_DESCRIPTION,
         public: true,
       }),
     };
     fetch(PLAYLIST_ENDPOINT, requestOptions)
       .then((response) => response.json())
-      .then((data) => idToFirebase(data.id));
+      .then((data) => idToFirebase(data.id, true));
   }
-  function idToFirebase(playlistid) {
+  
+  function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
     db.collection('Active Ques')
       .doc(TEST_HASH)
@@ -102,12 +130,42 @@ function MainQue() {
         playlistID: playlistid,
       })
       .then((docRef) => {
-        console.log('Added playlist ID: ' + playlistid);
+        console.log(newPlaylist ? "Added a new playlist with id " + playlistid : "Added old playlist with id " + playlistid);
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
       });
   }
+  const endQue = () => {
+    // migrate data to past ques collection
+    // go to home page
+    window.location.href = WEB_URL + '/home';
+  };
+  
+  function hashToDB(hash) {
+    db.collection('Active Ques')
+      .doc(hash)
+      .set({
+        Songs: [],
+      })
+      .then((docRef) => {
+        console.log('Document with hash ' + hash + ' written sucesfully');
+      })
+      .catch((error) => {
+        console.error('Error adding document: ', error);
+      });
+  }
+
+  const getReturnedParamsFromSpotifyAuth = (hash) => {
+    const stringAfterHashtag = hash.substring(1);
+    const paramsInUrl = stringAfterHashtag.split('&');
+    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
+      const [key, value] = currentValue.split('=');
+      accumulater[key] = value;
+      return accumulater;
+    }, {});
+    return paramsSplitUp;
+  };
   return (
     <div
       className="bg"
@@ -145,25 +203,6 @@ function MainQue() {
     </div>
   );
 }
-const endQue = () => {
-  // migrate data to past ques collection
-  // go to home page
-  window.location.href = WEB_URL + '/home';
-};
-
-function hashToDB(hash) {
-  db.collection('Active Ques')
-    .doc(hash)
-    .set({
-      Songs: [],
-    })
-    .then((docRef) => {
-      console.log('Document with hash ' + hash + ' written sucesfully');
-    })
-    .catch((error) => {
-      console.error('Error adding document: ', error);
-    });
-}
 function makeHash(length) {
   var result = '';
   var characters =
@@ -174,16 +213,6 @@ function makeHash(length) {
   }
   return result;
 }
-const getReturnedParamsFromSpotifyAuth = (hash) => {
-  const stringAfterHashtag = hash.substring(1);
-  const paramsInUrl = stringAfterHashtag.split('&');
-  const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-    const [key, value] = currentValue.split('=');
-    accumulater[key] = value;
-    return accumulater;
-  }, {});
 
-  return paramsSplitUp;
-};
 
 export default MainQue;
