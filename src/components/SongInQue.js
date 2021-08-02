@@ -8,7 +8,6 @@ const SongInQue = ({songs, inQueue}) => {
         <>
             {songs.map((song) => (
                <Song uri={song.uri} title={song.title} artist={song.artist} inQueue={inQueue} />
-                // <p key = {song.uri} style={{cursor:"pointer"}} onClick={console.log()}> {song.title} {song.artist} </p>
             ))}     
         </>
     )

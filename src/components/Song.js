@@ -4,8 +4,10 @@ import firebase from "./firesbase";
 const db = firebase.firestore();
 
 const Song = ({uri, title, artist, inQueue}) => {
+    console.log("title " + title + " artist " + artist + " inQueue " + inQueue )
+    
     const queueID = localStorage.getItem("queueID");
-const docRef = db.collection("Active Ques").doc(queueID);
+    const docRef = db.collection("Active Ques").doc(queueID);
     const addSong = () => {
         if(artist === "" || title === "" || uri === ""){ 
             console.error("Can't add an empty song");

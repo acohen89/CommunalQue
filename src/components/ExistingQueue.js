@@ -16,7 +16,7 @@ localStorage.setItem("queueID", queueID);
 export {docRef};
 
 const ExistingQueue = () => {
-    const [songs, setSongs] = useState([{id: "", title: "", artist: ""}, {id: "", title: "", artist: ""}]);
+    const [songs, setSongs] = useState([{id: "", title: "", artist: "", inQueue:true }, {id: "", title: "", artist: "", inQueue:true}]);
     const refresh = () => {
         docRef.get().then((doc) => {
             if (doc.exists) {
