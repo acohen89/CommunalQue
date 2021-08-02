@@ -8,12 +8,22 @@ import InQue from './InQue';
 const TEST_HASH = '0001';
 const PLAYLIST_NAME = "Communal Queue";
 const PLAYLIST_DESCRIPTION = "This playlist is automatically created by Communal Que. Please do not delete during a que session.";
+const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
 const db = firebase.firestore();
 const hash = makeHash(HASH_LENGTH);
 const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
+
+// TODO: when page refreshed, do not regenerate hash  // write hash in local storage: only generate new if it has localStorage is clear // same with playlistID
+// TODO: have que be refreshed automatically when new data comes in
+// TODO: add a now playing component 
+// TODO: refresh access token 
+// TODO: at more info for songs
+// TODO: add info on who added the song to the queue
+// TODO: add custom image for queue playlist
+
 
 function MainQue() {
   const [songs, setSongs] = useState([
@@ -44,23 +54,39 @@ function MainQue() {
       });
   };
   async function addSongsToPlaylist(playlistID, songsObj) {
-    let uriArray = [];
-    for (let i = 0; i < songsObj.length; i++) {
-      uriArray.push(songsObj[i].id);
-    }
-    const ADD_TO_PLAYLIST_ENDPOINT =
-      'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
-    const requestOptions = {
-      method: 'POST',
+    const SPECIFIC_PLAYLIST_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID;
+    await axios
+    .get(SPECIFIC_PLAYLIST_ENDPOINT, {
       headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
+        Authorization: "Bearer " + token,
       },
-      body: JSON.stringify({ uris: uriArray }),
-    };
-    await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
-      .then((response) => response.json())
-      .then((data) => console.log("Added songs to playlist"));
+    })
+    .then((response) => {
+      addUniqueSongs(playlistID, songsObj, response.data.tracks.items);
+    })
+    .catch((error) => {
+      console.log(error + " with getting songs in playlist");
+    });
+  } 
+  async function addUniqueSongs(playlistID, songsObj, songsAlreadyInPlaylist){  
+        let uriAndTitleArray = findUniqueSongs(songsObj, songsAlreadyInPlaylist);
+        const uriArray = uriAndTitleArray[0];
+        const titleArray = uriAndTitleArray[1];
+       if(uriArray.length !== 0){
+          const ADD_TO_PLAYLIST_ENDPOINT =
+          'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ uris: uriArray }),
+        };
+        await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
+          .then((response) => response.json())
+          .then((data) => console.log("Added songs: " + printArr(titleArray) + "to playlist"));
+       }
   }
   async function getUserID(token) {
     await axios
@@ -78,7 +104,6 @@ function MainQue() {
   }
   function SetUpQueuePlaylist(userID, token) {
     // checking if playlist has already been created
-    const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
     axios
       .get(PLAYLISTS_ENDPOINT, {
         headers: {
@@ -202,6 +227,31 @@ function MainQue() {
       <p className="credits">Created by Adam Cohen and Zev Ross</p>
     </div>
   );
+}
+function findUniqueSongs(songsObj, songsAlreadyInPlaylist){
+  let uriArray = [];
+  let titleArray = [];
+  for (let i = 0; i < songsObj.length; i++) {
+    let inPlaylistAlready = false;
+    for(let j = 0; j < songsAlreadyInPlaylist.length; j++){
+      if(songsObj[i].id === songsAlreadyInPlaylist[j].track.uri){
+        inPlaylistAlready = true;
+        break;
+      }
+    }
+    if(!inPlaylistAlready){
+      uriArray.push(songsObj[i].id);
+      titleArray.unshift(songsObj[i].title);
+    }
+  }
+  return [uriArray, titleArray];
+}
+function printArr(arr){
+  let ret = "\n";
+  for(let i = 0; i < arr.length; i++){
+    ret += arr[i] + "\n";
+  }
+  return ret;
 }
 function makeHash(length) {
   var result = '';
