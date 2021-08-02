@@ -5,7 +5,7 @@ const SongInQue = ({songs, inQueue }) => {
   return (
     <>
       {songs.map((song) => (
-               <Song uri={song.uri} title={song.title} artist={song.artist} inQueue={inQueue} />
+               <Song key = {song.uri === "testURi"  || song.uri === undefined || song.uri === "" ? "testURi" + Math.floor(Math.random() * 999) : song.uri} uri={song.uri} title={song.title} artist={song.artist} inQueue={inQueue} />
       ))}
     </>
   );
@@ -14,6 +14,6 @@ const SongInQue = ({songs, inQueue }) => {
 SongInQue.defaultProps = {
   name: 'TestName',
   artist: 'Test Artist',
-  uri: "testUri",
+  uri: "testURi",
 };
 export default SongInQue;

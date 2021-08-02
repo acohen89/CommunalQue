@@ -4,7 +4,6 @@ import firebase from "./firesbase";
 const db = firebase.firestore();
 
 const Song = ({uri, title, artist, inQueue}) => {
-    
     const queueID = localStorage.getItem("queueID");
     const docRef = db.collection("Active Ques").doc(queueID);
     const addSong = () => {
@@ -24,6 +23,11 @@ const Song = ({uri, title, artist, inQueue}) => {
             console.error("Error updating document: ", error);
         });
     }
+    let artistKey = uri;
+    if(uri === "testURi") { 
+        uri = Math.floor(Math.random() * 99999)  
+        artistKey = uri + Math.floor(Math.random() * 999);
+    }
     if(inQueue){
         return (
                 <div style={{ display: 'flex' }}>
@@ -31,7 +35,7 @@ const Song = ({uri, title, artist, inQueue}) => {
                         {' '}
                         {title}
                     </p>
-                    <p className="songArtist" key={uri + artist}>
+                    <p className="songArtist" key={artistKey}>
                         {' '}
                         {artist}
                     </p>
@@ -44,7 +48,7 @@ const Song = ({uri, title, artist, inQueue}) => {
                     {' '}
                     {title}
                 </p>
-                <p className="songArtist" key={uri + artist}>
+                <p className="songArtist" key={artistKey}>
                     {' '}
                     {artist}
                 </p> 
