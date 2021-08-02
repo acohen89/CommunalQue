@@ -3,7 +3,6 @@ import firebase from "./firesbase";
 import Button from "./Button";
 import InQue from './InQue';
 import SearchBar from "./SearchBar";
-
 import { HASH_LENGTH } from './MainQue';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
@@ -16,7 +15,7 @@ localStorage.setItem("queueID", queueID);
 export {docRef};
 
 const ExistingQueue = () => {
-    const [songs, setSongs] = useState([{id: "", title: "", artist: "", inQueue:true }, {id: "", title: "", artist: "", inQueue:true}]);
+    const [songs, setSongs] = useState([{id: "1", title: "", artist: "", inQueue:true }, {id: "2", title: "", artist: "", inQueue:true}]);
     const refresh = () => {
         docRef.get().then((doc) => {
             if (doc.exists) {

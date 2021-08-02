@@ -1,6 +1,5 @@
 import React from 'react';
 import Song from "./Song";
-import './styles/ZevsStyles.scss';
 
 const SongInQue = ({songs, inQueue }) => {
   return (
@@ -15,5 +14,6 @@ const SongInQue = ({songs, inQueue }) => {
 SongInQue.defaultProps = {
   name: 'TestName',
   artist: 'Test Artist',
+  uri: "testUri",
 };
 export default SongInQue;
