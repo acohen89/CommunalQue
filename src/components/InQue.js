@@ -10,9 +10,8 @@ const InQue = ({ songs }) => {
         alignItems: 'flex-start',
       }}
     >
-      <SongInQue songs={songs} />
+      <SongInQue songs={songs} inQueue={true} />
     </div>
   );
 };
-
 export default InQue;

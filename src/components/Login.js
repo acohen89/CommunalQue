@@ -9,14 +9,12 @@ const SPOTIFY_AUTHORIZE_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const REDIRECT_URL_AFTER_LOGIN = WEB_URL + '/Home';
 const SPACE_DELIMITER = '%20';
 const SCOPES = [
-  'playlist-modify-private',
-  'playlist-modify-public',
-  'playlist-read-private',
-  'app-remote-control',
-  'user-library-modify',
-  'user-library-read',
-  'user-read-private',
-  'user-read-email',
+ "playlist-modify-private",
+ "playlist-modify-public",
+ "playlist-read-private",
+ "app-remote-control",
+ "user-read-private",
+ "user-read-email"
 ];
 const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
 

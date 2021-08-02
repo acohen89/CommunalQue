@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import './styles/ZevsStyles.scss';
 // import MainQue from "./MainQue";
 import Button from './Button';
@@ -21,6 +21,32 @@ const startQueue = () => {
 };
 
 function Home() {
+  const enterPressed = e => {
+  if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
+    joinQueue();
+  }
+};
+  const getReturnedParamsFromSpotifyAuth = (hash) => {
+    const stringAfterHashtag = hash.substring(1);
+    const paramsInUrl = stringAfterHashtag.split("&");
+    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
+      const [key, value] = currentValue.split("=");
+      accumulater[key] = value;
+      return accumulater;
+    }, {});
+    
+    return paramsSplitUp;
+  };
+  useEffect(() => {
+    const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
+    if(access_token !== undefined && expires_in !== undefined && token_type !== undefined){
+      localStorage.clear();
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("expiresIn", expires_in);
+      localStorage.setItem("tokenType", token_type);
+      window.history.pushState({}, document.title, "/home");
+    }
+  }, [])
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('error')) {
     window.location = WEB_URL;

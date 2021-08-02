@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './styles/ZevsStyles.scss';
-import firebase from './firesbase';
-import { WEB_URL } from './Home';
-import Button from './Button';
-import QueID from './QueID';
+import React, {useEffect, useState } from "react";
+import axios from "axios";
+import "./styles/ZevsStyles.scss";
+import firebase from "./firesbase";
+import {WEB_URL} from "./Home";
+import Button from "./Button";
+import QueID from "./QueID"
 import InQue from './InQue';
 const TEST_HASH = '0001';
 const HASH_LENGTH = 4;
@@ -67,6 +67,7 @@ function MainQue() {
       },
       body: JSON.stringify({ uris: uriArray }),
     };
+    console.log(token)
     await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
       .then((response) => response.json())
       .then((data) => console.log(data));

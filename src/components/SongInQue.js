@@ -24,5 +24,4 @@ SongInQue.defaultProps = {
   name: 'TestName',
   artist: 'Test Artist',
 };
-
 export default SongInQue;
