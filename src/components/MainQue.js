@@ -4,7 +4,6 @@ import "./styles/ZevsStyles.scss";
 import firebase from "./firesbase";
 import {WEB_URL} from "./Home";
 import Button from "./Button";
-import QueID from "./QueID"
 import InQue from './InQue';
 const TEST_HASH = '0001';
 const HASH_LENGTH = 4;

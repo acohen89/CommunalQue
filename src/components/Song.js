@@ -25,6 +25,7 @@ const Song = ({uri, title, artist, inQueue}) => {
         });
     }
     if(inQueue){
+        console.log("here")
         return (
                 <div style={{ display: 'flex' }}>
                     <p className="song" key={uri}>
