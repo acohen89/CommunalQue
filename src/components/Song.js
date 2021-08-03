@@ -4,6 +4,8 @@ import firebase from "./firesbase";
 const db = firebase.firestore();
 
 const Song = ({uri, title, artist, inQueue}) => {
+    // URI IS WRONG 
+    //console.log(uri, title, artist,)
     const queueID = localStorage.getItem("queueID");
     const docRef = db.collection("Active Ques").doc(queueID);
     const addSong = () => {
@@ -25,7 +27,7 @@ const Song = ({uri, title, artist, inQueue}) => {
     }
     let artistKey = uri + artist;
     if(uri === "testURi") { 
-        uri = Math.floor(Math.random() * 99999)  
+        uri = "Random uri " + Math.floor(Math.random() * 99999)  
         artistKey = uri + Math.floor(Math.random() * 999);
     }
     if(inQueue){
