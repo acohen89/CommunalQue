@@ -12,20 +12,23 @@ const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
 const db = firebase.firestore();
-const hash = makeHash(HASH_LENGTH);
 const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 
-// TODO: when page refreshed, do not regenerate hash  // write hash in local storage: only generate new if it has localStorage is clear // same with playlistID
 // TODO: have que be refreshed automatically when new data comes in
 // TODO: add a now playing component 
 // TODO: refresh access token 
 // TODO: at more info for songs
 // TODO: add info on who added the song to the queue
 // TODO: add custom image for queue playlist
+// TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
 
 
 function MainQue() {
+  if(!localStorage.getItem("hash")){
+    localStorage.setItem("hash", makeHash(HASH_LENGTH));
+  }
+  const hash = localStorage.getItem("hash");
   const [songs, setSongs] = useState([
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
@@ -164,6 +167,7 @@ function MainQue() {
   const endQue = () => {
     // migrate data to past ques collection
     // go to home page
+    localStorage.removeItem("hash");
     window.location.href = WEB_URL + '/home';
   };
   
