@@ -15,7 +15,8 @@ const db = firebase.firestore();
 const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 
-// TODO: have que be refreshed automatically when new data comes in
+// TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
+// TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add a now playing component 
 // TODO: refresh access token 
 // TODO: at more info for songs
@@ -29,17 +30,26 @@ function MainQue() {
     localStorage.setItem("hash", makeHash(HASH_LENGTH));
   }
   const hash = localStorage.getItem("hash");
+  const token = localStorage.getItem("token");
   const [songs, setSongs] = useState([
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
   ]);
 
-  const token = localStorage.getItem("token");
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
+    docRef.onSnapshot((doc) => {
+      console.log("New Data!")
+      refresh();
+      // setSongs((songs) => songs = doc.data().songs);
+
+    });
   }, [])
 
+
+   
+   
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
     docRef
