@@ -3,11 +3,11 @@ import './styles/ZevsStyles.scss';
 import Button from './Button';
 import { HASH_LENGTH } from './MainQue';
 
-const port = 3000;
-const WEB_URL = 'http://localhost:' + port;
-const inputID = 'queueID';
-export { WEB_URL };
 
+const WEB_URL = "https://communalque.hostman.site";
+export {WEB_URL}; 
+
+const inputID = 'queueID';
 const joinQueue = () => {
   const queueID = document.getElementById(inputID).value;
   const url = WEB_URL + '/JoinQueue?queueID=' + queueID;
