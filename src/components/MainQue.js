@@ -1,13 +1,14 @@
-import React, {useEffect, useState } from "react";
-import axios from "axios";
-import "./styles/ZevsStyles.scss";
-import firebase from "./firesbase";
-import {WEB_URL} from "./Home";
-import Button from "./Button";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import './styles/ZevsStyles.scss';
+import firebase from './firesbase';
+import { WEB_URL } from './Home';
+import Button from './Button';
 import InQue from './InQue';
 const TEST_HASH = '0001';
-const PLAYLIST_NAME = "Communal Queue";
-const PLAYLIST_DESCRIPTION = "This playlist is automatically created by Communal Que. Please do not delete during a que session.";
+const PLAYLIST_NAME = 'Communal Queue';
+const PLAYLIST_DESCRIPTION =
+  'This playlist is automatically created by Communal Que. Please do not delete during a que session.';
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
 const db = firebase.firestore();
@@ -21,11 +22,11 @@ function MainQue() {
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
   ]);
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
-  }, [])
+  }, []);
 
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
@@ -60,7 +61,7 @@ function MainQue() {
     };
     await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log("Added songs to playlist"));
+      .then((data) => console.log('Added songs to playlist'));
   }
   async function getUserID(token) {
     await axios
@@ -73,28 +74,31 @@ function MainQue() {
         SetUpQueuePlaylist(response.data.id, token);
       })
       .catch((error) => {
-        console.log(error + "\n with token \n " + token);
+        console.log(error + '\n with token \n ' + token);
       });
   }
   function SetUpQueuePlaylist(userID, token) {
     // checking if playlist has already been created
-    const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
+    const PLAYLISTS_ENDPOINT = 'https://api.spotify.com/v1/me/playlists';
     axios
       .get(PLAYLISTS_ENDPOINT, {
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: 'Bearer ' + token,
         },
       })
       .then((response) => {
         let found = false;
-        for(let i = 0; i < response.data.items.length; i++){
-          if(response.data.items[i].name === PLAYLIST_NAME && response.data.items[i].description === PLAYLIST_DESCRIPTION){
+        for (let i = 0; i < response.data.items.length; i++) {
+          if (
+            response.data.items[i].name === PLAYLIST_NAME &&
+            response.data.items[i].description === PLAYLIST_DESCRIPTION
+          ) {
             found = true;
-            console.log("Playlist already in library, old one being used");
+            console.log('Playlist already in library, old one being used');
             idToFirebase(response.data.items[i].id, false);
           }
         }
-        if(!found){
+        if (!found) {
           createNewPlaylist(userID, token);
         }
       })
@@ -102,7 +106,7 @@ function MainQue() {
         console.log(error);
       });
   }
-  function createNewPlaylist(userID, token ){
+  function createNewPlaylist(userID, token) {
     const PLAYLIST_ENDPOINT =
       'https://api.spotify.com/v1/users/' + userID + '/playlists';
     const requestOptions = {
@@ -121,7 +125,7 @@ function MainQue() {
       .then((response) => response.json())
       .then((data) => idToFirebase(data.id, true));
   }
-  
+
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
     db.collection('Active Ques')
@@ -130,7 +134,11 @@ function MainQue() {
         playlistID: playlistid,
       })
       .then((docRef) => {
-        console.log(newPlaylist ? "Added a new playlist with id " + playlistid : "Added old playlist with id " + playlistid);
+        console.log(
+          newPlaylist
+            ? 'Added a new playlist with id ' + playlistid
+            : 'Added old playlist with id ' + playlistid
+        );
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
@@ -141,7 +149,7 @@ function MainQue() {
     // go to home page
     window.location.href = WEB_URL + '/home';
   };
-  
+
   function hashToDB(hash) {
     db.collection('Active Ques')
       .doc(hash)
@@ -182,7 +190,12 @@ function MainQue() {
       </div>
       <div
         className="darkContainer"
-        style={{ padding: 30, flexDirection: 'column', alignItems: 'stretch' }}
+        style={{
+          padding: 30,
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          minWidth: 700,
+        }}
       >
         <div
           style={{
@@ -213,6 +226,5 @@ function makeHash(length) {
   }
   return result;
 }
-
 
 export default MainQue;
