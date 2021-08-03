@@ -127,3 +127,22 @@ $clr-green: #4caf50;
     }
   }
 }
+
+.searchBar {
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.25s;
+  padding-left: 20px;
+  background-color: #3b3b3b;
+  color: #c4c4c4;
+  font-size: 1rem;
+  box-shadow: -10px 10px 20px rgba(0, 0, 0, 0.445);
+}
+
+.searchBar:focus {
+  border: 2px solid $clr-green;
+  transform: scale(1.025);
+}

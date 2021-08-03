@@ -54,49 +54,56 @@ const ExistingQueue = () => {
     );
   } else {
     return (
-      <div
-        className="bg"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <div className="darkContainer">
-          <p className="queueTitle" style={{ marginLeft: 35, marginRight: 10 }}>
-            Queue
-          </p>
-          <p className="queueID">ID: {urlParams.get('queueID')}</p>
-          <div style={{ margin: 20 }}>
-            <Button text="Back" onClick={back} />
-          </div>
+      <div className="bg">
+        <div style={{ position: 'absolute', margin: 30, top: 0, right: 0 }}>
+          <SearchBar />
         </div>
+
         <div
-          className="darkContainer"
           style={{
-            padding: 30,
+            display: 'flex',
             flexDirection: 'column',
-            alignItems: 'stretch',
-            minWidth: 700,
+            alignItems: 'center',
           }}
         >
+          <div className="darkContainer">
+            <p
+              className="queueTitle"
+              style={{ marginLeft: 35, marginRight: 10 }}
+            >
+              Queue
+            </p>
+            <p className="queueID">ID: {urlParams.get('queueID')}</p>
+            <div style={{ margin: 20 }}>
+              <Button text="Back" onClick={back} />
+            </div>
+          </div>
           <div
+            className="darkContainer"
             style={{
-              width: '100%',
-              display: 'flex',
-              flexGrow: 2,
-              justifyContent: 'space-between',
+              padding: 30,
+              flexDirection: 'column',
+              alignItems: 'stretch',
+              minWidth: 700,
             }}
           >
-            <p className="queueTitle" style={{ fontSize: 30, color: 'gray' }}>
-              Songs in queue
-            </p>
-            <Button text="Refresh" onClick={refresh} />
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                flexGrow: 2,
+                justifyContent: 'space-between',
+              }}
+            >
+              <p className="queueTitle" style={{ fontSize: 30, color: 'gray' }}>
+                Songs in queue
+              </p>
+              <Button text="Refresh" onClick={refresh} />
+            </div>
+            <InQue songs={songs} />
           </div>
-          <InQue songs={songs} />
+          <p className="credits">Created by Adam Cohen and Zev Ross</p>
         </div>
-        <p className="credits">Created by Adam Cohen and Zev Ross</p>
-        <SearchBar />
       </div>
     );
   }
