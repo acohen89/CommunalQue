@@ -3,7 +3,8 @@ import axios from "axios";
 
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 
-const SpotifyGetPlaylists = () => {
+const QuePlaylist = () => {
+
   const [token, setToken] = useState("");
   const [data, setData] = useState({});
 
@@ -13,14 +14,21 @@ const SpotifyGetPlaylists = () => {
     }
   }, []);
 
-  const handleGetPlaylists = () => {
+  const makePlaylist = () => {
+    console.log("in que playlist : ", token)
     axios
-      .get(PLAYLISTS_ENDPOINT, {
+      .post(PLAYLISTS_ENDPOINT, {
         headers: {
           Authorization: "Bearer " + token,
         },
+        body: {
+            "name": "Test Playlist",
+            "description": "New playlist description",
+            "public": true
+        }
       })
       .then((response) => {
+        console.log(response.data)
         setData(response.data);
       })
       .catch((error) => {
@@ -28,12 +36,14 @@ const SpotifyGetPlaylists = () => {
       });
   };
 
-  return (
-    <>
-      <button onClick={handleGetPlaylists}>Get Playlists</button>
-      {data?.items ? data.items.map((item) => console.log(item)) : null}
-    </>
-  );
+  return (<>
+  {makePlaylist}
+  </>
+    );    
+    // <>
+    //   <button onClick={handleGetPlaylists}>Get Playlists</button>
+    //   {data?.items ? data.items.map((item) => console.log(item)) : null}
+    // </>
 };
 
-export default SpotifyGetPlaylists;
+export default QuePlaylist;
