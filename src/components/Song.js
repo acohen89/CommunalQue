@@ -16,7 +16,8 @@ const Song = ({uri, title, artist, inQueue}) => {
         docRef.update({songs:firebase.firestore.FieldValue.arrayUnion({
             artist: artist,
             id: uri,    
-            title: title})
+            title: title,
+            played: false })
         })
         .then(() => {
             console.log("Added " + title + " to database!");

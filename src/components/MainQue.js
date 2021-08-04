@@ -20,6 +20,7 @@ const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?stat
 const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?state=false";
 
 // TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
+// TODO: pause music on endQueue
 // TODO: fix error where it makes requests to player when no player is found
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add a now playing component 
@@ -29,6 +30,8 @@ const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?st
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
 
+// if song is already played, set a value in the db to true
+// have song component only display songs with this value of false
 
 function MainQue() {
   if(!localStorage.getItem("hash")){
@@ -45,14 +48,21 @@ function MainQue() {
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
+    let playCheck = localStorage.getItem("playlistID");
+    while(playCheck === null){
+      setTimeout(function(){ 
+        console.log("inLop")
+        playCheck = localStorage.getItem("playlistID");
+       }, 300);
+    }
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
+
       refresh();
     });
     playPlaylist();
   }, [])
   
-
 
    function playPlaylist(){
     const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
@@ -71,7 +81,7 @@ function MainQue() {
     };
      fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then(disableShuffleandRepeat())
-      .then(deleteFirstSong())
+      .then(changeCurentSongoPlayed())
       
    }
    async function getSongsFromDB(){
@@ -90,23 +100,22 @@ function MainQue() {
     });
     return data;
    }
-   async function deleteFirstSong(){
+   async function changeCurentSongoPlayed(){
     ;(async () => {
         const nowPlaying = await getNowPlaying();
         const dbSongs =  (await getSongsFromDB());
         for(let i = 0; i < dbSongs.length; i++){
-          if(nowPlaying.uri === dbSongs[i].id){
-            removeFromDB(dbSongs, nowPlaying)
-            removeSongFromPlaylist(localStorage.getItem("playlistID"), nowPlaying);
+          if(nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played){
+            updateDB(dbSongs, nowPlaying);
           }
         }
       })()
    }
-   function removeFromDB(dbSongs, songToDelete){
+   function updateDB(dbSongs, songToUpdate){
      let newSongs = dbSongs;
       for(let i = 0; i < newSongs.length; i++){
-        if(newSongs[i].id === songToDelete.uri){
-          newSongs.splice(i, 1);
+        if(newSongs[i].id === songToUpdate.uri){
+          newSongs[i].played = true;
         }
       }
       docRef.update({
