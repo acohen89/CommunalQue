@@ -16,6 +16,8 @@ const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const CURRENTLY_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing?market=US";
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
+const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?state=off";
+const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?state=false";
 
 // TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
 // TODO: add set repeat to false function 
@@ -38,7 +40,7 @@ function MainQue() {
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
   ]);
-  //setTimeout(function(){ getNowPlaying()  }, 1600);
+
   
   useEffect(() => {
     hashToDB(hash);
@@ -50,7 +52,8 @@ function MainQue() {
     });
   }, [])
 
-  async function playPlaylist(){
+
+   function playPlaylist(){
     const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
     const requestOptions = {
       method: 'PUT',
@@ -65,8 +68,23 @@ function MainQue() {
       },
       "position_ms": 0 }),
     };
-    await fetch(PLAYBACK_ENDPOINT, requestOptions)
-      .then((response) => response.json())
+     fetch(PLAYBACK_ENDPOINT, requestOptions)
+      .then(disableShuffleandRepeat())
+      .then((data) => console.log(data))
+   }
+   function disableShuffleandRepeat(){
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    }
+    fetch(TOGGLE_REPEAT_ENDPOINT, requestOptions)
+      .then()
+      .then((data) => console.log(data))
+   fetch(TOGGLE_SHUFFLE_ENDPOINT, requestOptions)
+      .then()
       .then((data) => console.log(data))
    }
   async function getNowPlaying(){
