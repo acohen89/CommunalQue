@@ -49,12 +49,12 @@ function MainQue() {
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
-    let playCheck = localStorage.getItem("playlistID");
-    while(playCheck === null){
-      setTimeout(function(){ 
-        playCheck = localStorage.getItem("playlistID");
-       }, 300);
-    }
+    // let playCheck = localStorage.getItem("playlistID");
+    // while(playCheck === null){
+    //   setTimeout(function(){ 
+    //     playCheck = localStorage.getItem("playlistID");
+    //    }, 300);
+    // }
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
@@ -165,6 +165,7 @@ function MainQue() {
       },
     })
     .then((response) => {
+      console.log(response)
       ret = {title: response.data.item.name, artist: response.data.item.artists[0].name, uri: response.data.item.uri};
     })
     .catch((error) => {
