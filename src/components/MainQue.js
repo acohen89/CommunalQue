@@ -20,7 +20,6 @@ const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?stat
 const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?state=false";
 
 // TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
-// TODO: add set repeat to false function 
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add a now playing component 
 // TODO: refresh access token 
@@ -45,12 +44,16 @@ function MainQue() {
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
-    playPlaylist();
+    //playPlaylist();
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
     });
   }, [])
+  setTimeout(function(){
+    deleteFirstSong();
+   }, 3000);
+  
 
 
    function playPlaylist(){
@@ -70,7 +73,55 @@ function MainQue() {
     };
      fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then(disableShuffleandRepeat())
+      .then((data) => deleteFirstSong())
+      
+   }
+   async function getSongsFromDB(){
+     let data = "";
+    await docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+       data = doc.data().songs;
+      } else {
+        console.log('No such document!');
+      }
+    })
+    .catch((error) => {
+      console.log('Error getting document:', error);
+    });
+    return data;
+   }
+   async function deleteFirstSong(){
+    ;(async () => {
+        const nowPlaying = await getNowPlaying();
+        const firstSong =  (await getSongsFromDB())[0];
+        if(nowPlaying.uri === firstSong.id){
+          // delete song 
+          //removeFromDB(firstSong);
+          //removeSongFromPlaylist(localStorage.getItem("playlistID"), nowPlaying.uri);
+        }
+      })()
+   }
+   function removeFromDB(song){
+
+   }
+   function removeSongFromPlaylist(playlistID, songURI){
+    const RM_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "tracks": [{ "uri": songURI}] 
+      })
+    }
+    fetch(RM_ENDPOINT, requestOptions)
+      .then()
       .then((data) => console.log(data))
+
    }
    function disableShuffleandRepeat(){
     const requestOptions = {
@@ -88,6 +139,7 @@ function MainQue() {
       .then((data) => console.log(data))
    }
   async function getNowPlaying(){
+    let ret = "";
     await axios
     .get(CURRENTLY_PLAYING_ENDPOINT, {
       headers: {
@@ -95,11 +147,12 @@ function MainQue() {
       },
     })
     .then((response) => {
-      console.log({title: response.data.item.name, artist: response.data.item.artists[0].name, uri: response.data.item.uri})
+      ret = {title: response.data.item.name, artist: response.data.item.artists[0].name, uri: response.data.item.uri};
     })
     .catch((error) => {
       console.log(error + " with getting songs in playlist");
     });
+    return ret;
   }
    
   const refresh = () => {
