@@ -45,11 +45,11 @@ function MainQue() {
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
-    playPlaylist();
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
     });
+    playPlaylist();
   }, [])
   
 
@@ -71,7 +71,7 @@ function MainQue() {
     };
      fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then(disableShuffleandRepeat())
-      .then((data) => deleteFirstSong())
+      .then(deleteFirstSong())
       
    }
    async function getSongsFromDB(){
@@ -91,12 +91,15 @@ function MainQue() {
     return data;
    }
    async function deleteFirstSong(){
-     console.log("in deletesong")
     ;(async () => {
         const nowPlaying = await getNowPlaying();
         const dbSongs =  (await getSongsFromDB());
-        removeFromDB(dbSongs, nowPlaying)
-          //removeSongFromPlaylist(localStorage.getItem("playlistID"), nowPlaying.uri);
+        for(let i = 0; i < dbSongs.length; i++){
+          if(nowPlaying.uri === dbSongs[i].id){
+            removeFromDB(dbSongs, nowPlaying)
+            removeSongFromPlaylist(localStorage.getItem("playlistID"), nowPlaying);
+          }
+        }
       })()
    }
    function removeFromDB(dbSongs, songToDelete){
@@ -111,7 +114,7 @@ function MainQue() {
       });
   
    }
-   function removeSongFromPlaylist(playlistID, songURI){
+   function removeSongFromPlaylist(playlistID, song){
     const RM_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
     const requestOptions = {
       method: 'DELETE',
@@ -120,12 +123,12 @@ function MainQue() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        "tracks": [{ "uri": songURI}] 
+        "tracks": [{ "uri": song.uri}] 
       })
     }
     fetch(RM_ENDPOINT, requestOptions)
       .then()
-      .then((data) => console.log(data))
+      .then((data) => console.log("Removed " + song.title + " from playlist"))
 
    }
    function disableShuffleandRepeat(){
@@ -178,6 +181,7 @@ function MainQue() {
   };
   async function addSongsToPlaylist(playlistID, songsObj) {
     const SPECIFIC_PLAYLIST_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID;
+    console.log(playlistID)
     await axios
     .get(SPECIFIC_PLAYLIST_ENDPOINT, {
       headers: {
