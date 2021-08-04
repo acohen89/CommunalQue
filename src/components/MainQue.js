@@ -40,8 +40,8 @@ function MainQue() {
   const hash = localStorage.getItem("hash");
   const token = localStorage.getItem("token");
   const [songs, setSongs] = useState([
-    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
-    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
+    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false },
+    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false },
   ]);
 
   
@@ -51,18 +51,19 @@ function MainQue() {
     let playCheck = localStorage.getItem("playlistID");
     while(playCheck === null){
       setTimeout(function(){ 
-        console.log("inLop")
+        console.log("in while")
         playCheck = localStorage.getItem("playlistID");
        }, 300);
     }
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
-
       refresh();
     });
     playPlaylist();
+    setInterval(changeCurentSongToPlayed, 4500);
   }, [])
-  
+
+ 
 
    function playPlaylist(){
     const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
@@ -81,7 +82,7 @@ function MainQue() {
     };
      fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then(disableShuffleandRepeat())
-      .then(changeCurentSongoPlayed())
+      .then(changeCurentSongToPlayed())
       
    }
    async function getSongsFromDB(){
@@ -100,10 +101,10 @@ function MainQue() {
     });
     return data;
    }
-   async function changeCurentSongoPlayed(){
+   async function changeCurentSongToPlayed(){
     ;(async () => {
         const nowPlaying = await getNowPlaying();
-        const dbSongs =  (await getSongsFromDB());
+        const dbSongs =  await getSongsFromDB();
         for(let i = 0; i < dbSongs.length; i++){
           if(nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played){
             updateDB(dbSongs, nowPlaying);
@@ -112,9 +113,11 @@ function MainQue() {
       })()
    }
    function updateDB(dbSongs, songToUpdate){
+     console.log("in update")
      let newSongs = dbSongs;
       for(let i = 0; i < newSongs.length; i++){
         if(newSongs[i].id === songToUpdate.uri){
+          console.log("Changing " + newSongs[i].title + " to played ");
           newSongs[i].played = true;
         }
       }
