@@ -14,13 +14,15 @@ export { HASH_LENGTH };
 const db = firebase.firestore();
 const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
+const CURRENTLY_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing?market=US";
 
 // TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
+// TODO: add set repeat to false function 
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add a now playing component 
 // TODO: refresh access token 
 // TODO: at more info for songs
-// TODO: add info on who added the song to the queue
+// TODO: add info on who added the song to the queue // like which user added it 
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
 
@@ -35,6 +37,7 @@ function MainQue() {
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
   ]);
+  setTimeout(function(){ getNowPlaying()  }, 1600);
 
   useEffect(() => {
     hashToDB(hash);
@@ -42,13 +45,24 @@ function MainQue() {
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
-      // setSongs((songs) => songs = doc.data().songs);
-
     });
   }, [])
 
 
-   
+  async function getNowPlaying(){
+    await axios
+    .get(CURRENTLY_PLAYING_ENDPOINT, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then((response) => {
+      console.log({title: response.data.item.name, artist: response.data.item.artists[0].name, uri: response.data.item.uri})
+    })
+    .catch((error) => {
+      console.log(error + " with getting songs in playlist");
+    });
+  }
    
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
