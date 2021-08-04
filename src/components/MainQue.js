@@ -51,7 +51,6 @@ function MainQue() {
     let playCheck = localStorage.getItem("playlistID");
     while(playCheck === null){
       setTimeout(function(){ 
-        console.log("in while")
         playCheck = localStorage.getItem("playlistID");
        }, 300);
     }
