@@ -15,6 +15,7 @@ const db = firebase.firestore();
 const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const CURRENTLY_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing?market=US";
+const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
 // TODO: add set repeat to false function 
@@ -37,18 +38,37 @@ function MainQue() {
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
   ]);
-  setTimeout(function(){ getNowPlaying()  }, 1600);
-
+  //setTimeout(function(){ getNowPlaying()  }, 1600);
+  
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
+    playPlaylist();
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
     });
   }, [])
 
-
+  async function playPlaylist(){
+    const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+      { "context_uri": playlistURI,
+      "offset": {
+        "position": 0
+      },
+      "position_ms": 0 }),
+    };
+    await fetch(PLAYBACK_ENDPOINT, requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+   }
   async function getNowPlaying(){
     await axios
     .get(CURRENTLY_PLAYING_ENDPOINT, {
