@@ -20,6 +20,7 @@ const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?stat
 const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?state=false";
 
 // TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
+// TODO: fix error where it makes requests to player when no player is found
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add a now playing component 
 // TODO: refresh access token 
@@ -44,15 +45,12 @@ function MainQue() {
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
-    //playPlaylist();
+    playPlaylist();
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
     });
   }, [])
-  setTimeout(function(){
-    deleteFirstSong();
-   }, 3000);
   
 
 
@@ -93,18 +91,25 @@ function MainQue() {
     return data;
    }
    async function deleteFirstSong(){
+     console.log("in deletesong")
     ;(async () => {
         const nowPlaying = await getNowPlaying();
-        const firstSong =  (await getSongsFromDB())[0];
-        if(nowPlaying.uri === firstSong.id){
-          // delete song 
-          //removeFromDB(firstSong);
+        const dbSongs =  (await getSongsFromDB());
+        removeFromDB(dbSongs, nowPlaying)
           //removeSongFromPlaylist(localStorage.getItem("playlistID"), nowPlaying.uri);
-        }
       })()
    }
-   function removeFromDB(song){
-
+   function removeFromDB(dbSongs, songToDelete){
+     let newSongs = dbSongs;
+      for(let i = 0; i < newSongs.length; i++){
+        if(newSongs[i].id === songToDelete.uri){
+          newSongs.splice(i, 1);
+        }
+      }
+      docRef.update({
+        songs: newSongs
+      });
+  
    }
    function removeSongFromPlaylist(playlistID, songURI){
     const RM_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
@@ -133,10 +138,10 @@ function MainQue() {
     }
     fetch(TOGGLE_REPEAT_ENDPOINT, requestOptions)
       .then()
-      .then((data) => console.log(data))
+      .then((data) => console.log("Disabled repeat"))
    fetch(TOGGLE_SHUFFLE_ENDPOINT, requestOptions)
       .then()
-      .then((data) => console.log(data))
+      .then((data) => console.log("Disabled shuffle"))
    }
   async function getNowPlaying(){
     let ret = "";
