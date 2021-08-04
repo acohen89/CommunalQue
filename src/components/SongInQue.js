@@ -8,7 +8,7 @@ const SongInQue = ({songs, inQueue }) => {
   return (
     <>
       {songs.map((song) => (
-               <Song key = {processKey(song.id)} title={song.title} artist={song.artist} inQueue={inQueue} />
+               <Song key = {processKey(song.id)} title={song.title} artist={song.artist} inQueue={inQueue} played={song.played} />
       ))}
     </>
   );

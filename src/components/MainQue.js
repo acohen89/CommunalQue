@@ -14,16 +14,24 @@ export { HASH_LENGTH };
 const db = firebase.firestore();
 const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
+const CURRENTLY_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing?market=US";
+const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
+const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?state=off";
+const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?state=false";
 
 // TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
+// TODO: pause music on endQueue
+// TODO: fix error where it makes requests to player when no player is found
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add a now playing component 
 // TODO: refresh access token 
 // TODO: at more info for songs
-// TODO: add info on who added the song to the queue
+// TODO: add info on who added the song to the queue // like which user added it 
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
 
+// if song is already played, set a value in the db to true
+// have song component only display songs with this value of false
 
 function MainQue() {
   if(!localStorage.getItem("hash")){
@@ -32,23 +40,139 @@ function MainQue() {
   const hash = localStorage.getItem("hash");
   const token = localStorage.getItem("token");
   const [songs, setSongs] = useState([
-    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel' },
-    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel' },
+    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false },
+    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false },
   ]);
 
+  
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
+    let playCheck = localStorage.getItem("playlistID");
+    while(playCheck === null){
+      setTimeout(function(){ 
+        playCheck = localStorage.getItem("playlistID");
+       }, 300);
+    }
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
-      // setSongs((songs) => songs = doc.data().songs);
-
     });
+    playPlaylist();
+    setInterval(changeCurentSongToPlayed, 4500);
   }, [])
 
+ 
 
-   
+   function playPlaylist(){
+    const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+      { "context_uri": playlistURI,
+      "offset": {
+        "position": 0
+      },
+      "position_ms": 0 }),
+    };
+     fetch(PLAYBACK_ENDPOINT, requestOptions)
+      .then(disableShuffleandRepeat())
+      .then(changeCurentSongToPlayed())
+      
+   }
+   async function getSongsFromDB(){
+     let data = "";
+    await docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+       data = doc.data().songs;
+      } else {
+        console.log('No such document!');
+      }
+    })
+    .catch((error) => {
+      console.log('Error getting document:', error);
+    });
+    return data;
+   }
+   async function changeCurentSongToPlayed(){
+    ;(async () => {
+        const nowPlaying = await getNowPlaying();
+        const dbSongs =  await getSongsFromDB();
+        for(let i = 0; i < dbSongs.length; i++){
+          if(nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played){
+            updateDB(dbSongs, nowPlaying);
+          }
+        }
+      })()
+   }
+   function updateDB(dbSongs, songToUpdate){
+     console.log("in update")
+     let newSongs = dbSongs;
+      for(let i = 0; i < newSongs.length; i++){
+        if(newSongs[i].id === songToUpdate.uri){
+          console.log("Changing " + newSongs[i].title + " to played ");
+          newSongs[i].played = true;
+        }
+      }
+      docRef.update({
+        songs: newSongs
+      });
+  
+   }
+   function removeSongFromPlaylist(playlistID, song){
+    const RM_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "tracks": [{ "uri": song.uri}] 
+      })
+    }
+    fetch(RM_ENDPOINT, requestOptions)
+      .then()
+      .then((data) => console.log("Removed " + song.title + " from playlist"))
+
+   }
+   function disableShuffleandRepeat(){
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    }
+    fetch(TOGGLE_REPEAT_ENDPOINT, requestOptions)
+      .then()
+      .then((data) => console.log("Disabled repeat"))
+   fetch(TOGGLE_SHUFFLE_ENDPOINT, requestOptions)
+      .then()
+      .then((data) => console.log("Disabled shuffle"))
+   }
+  async function getNowPlaying(){
+    let ret = "";
+    await axios
+    .get(CURRENTLY_PLAYING_ENDPOINT, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then((response) => {
+      ret = {title: response.data.item.name, artist: response.data.item.artists[0].name, uri: response.data.item.uri};
+    })
+    .catch((error) => {
+      console.log(error + " with getting songs in playlist");
+    });
+    return ret;
+  }
    
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
@@ -68,6 +192,7 @@ function MainQue() {
   };
   async function addSongsToPlaylist(playlistID, songsObj) {
     const SPECIFIC_PLAYLIST_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID;
+    console.log(playlistID)
     await axios
     .get(SPECIFIC_PLAYLIST_ENDPOINT, {
       headers: {

@@ -6,7 +6,7 @@ const SEARCH_ENDPOINT = "https://api.spotify.com/v1/search";
 const SearchBar = () => {
     const [search, setSearch] = useState("");
     const token = localStorage.getItem("token");
-    const [songs, setSongs] = useState([{id: "1", title: "", artist: "", inQueue:true}, {id: "2", title: "", artist: "", inQueue:true}]);
+    const [songs, setSongs] = useState([{id: "1", title: "", artist: "", inQueue:true, played: false}, {id: "2", title: "", artist: "", inQueue:true, played: false}]);
     const searchID = "searchBar";
     let updated = true;
     function updateSearch (){
@@ -22,7 +22,7 @@ const SearchBar = () => {
                 }
               })
               .then(function (response) {
-                setSongs(response.data.tracks.items.map(item => ({uri: item.uri, title: item.name, artist: item.artists[0].name})))
+                setSongs(response.data.tracks.items.map(item => ({uri: item.uri, title: item.name, artist: item.artists[0].name, played: false})))
               })
               .catch(function (error) {
                 console.log(error); 
