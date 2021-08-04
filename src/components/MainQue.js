@@ -18,8 +18,9 @@ const CURRENTLY_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/current
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?state=off";
 const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?state=false";
+const PLAY_ENDPOINT ="https://api.spotify.com/v1/me/player/play";
+const PAUSE_ENDPOINT = "https://api.spotify.com/v1/me/player/pause";
 
-// TODO: once que starts and song has been played, display next song // delete song in playlist and refresh data!!
 // TODO: pause music on endQueue
 // TODO: fix error where it makes requests to player when no player is found
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
@@ -59,9 +60,8 @@ function MainQue() {
       refresh();
     });
     playPlaylist();
-    setInterval(changeCurentSongToPlayed, 4500);
+    setInterval(changeCurrentSongToPlayed, 4500);
   }, [])
-
  
 
    function playPlaylist(){
@@ -81,8 +81,7 @@ function MainQue() {
     };
      fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then(disableShuffleandRepeat())
-      .then(changeCurentSongToPlayed())
-      
+      .then(changeCurrentSongToPlayed()) 
    }
    async function getSongsFromDB(){
      let data = "";
@@ -100,7 +99,7 @@ function MainQue() {
     });
     return data;
    }
-   async function changeCurentSongToPlayed(){
+   async function changeCurrentSongToPlayed(){
     ;(async () => {
         const nowPlaying = await getNowPlaying();
         const dbSongs =  await getSongsFromDB();
@@ -303,9 +302,34 @@ function MainQue() {
     // migrate data to past ques collection
     // go to home page
     localStorage.removeItem("hash");
+    pause();
     window.location.href = WEB_URL + '/home';
   };
-  
+   
+  function pause(){
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    };
+     fetch(PAUSE_ENDPOINT, requestOptions)
+      .then((response) => console.log(response.ok))
+  }
+
+  function play(){
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    };
+     fetch(PLAY_ENDPOINT, requestOptions)
+      .then((response) => console.log(response.ok))
+      
+  }
   function hashToDB(hash) {
     db.collection('Active Ques')
       .doc(hash)
