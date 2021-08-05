@@ -45,19 +45,31 @@ function MainQue() {
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
-    // let playCheck = localStorage.getItem("playlistID");
-    // while(playCheck === null){
-    //   setTimeout(function(){ 
-    //     playCheck = localStorage.getItem("playlistID");
-    //    }, 300);
-    // }
+  }, []) 
+  
+  //  let playCheck = localStorage.getItem("playlistID");
+  //   while(localStorage.getItem("playlistID") === null){
+  //     setTimeout(function(){ 
+  //       // playCheck = localStorage.getItem("playlistID");
+  //      }, 300);
+  //   }
+  const playlistIDProm = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if(localStorage.getItem("playlistID") !== null){
+        console.log("Resolved promise")
+        resolve("playistID");
+      }
+    }, 2200);
+  });
+  playlistIDProm.then(
+  useEffect(() => {
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
     });
     playPlaylist();
     setInterval(changeCurrentSongToPlayed, 4500);
-  }, []) 
+  }, []))
 
   function playPlaylist(){
     const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
@@ -78,15 +90,18 @@ function MainQue() {
      .then((response) => function () {
        if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
         localStorage.setItem("noActiveDevice", true);
-        alert("No active player found! Please open Spotify on your device.");
+        alert("No active player found! Please open Spotify on your device.1")
+      } else {
+        localStorage.setItem("noActiveDevice", false)
       }
+      
      })
      .then(function (){
-      if(localStorage.getItem("noActiveDevice")){
+      if(!localStorage.getItem("noActiveDevice")){
         disableShuffleandRepeat()
       } else {
         localStorage.setItem("noActiveDevice", true);
-        alert("No active player found! Please open Spotify on your device.");
+        alert("No active player found! Please open Spotify on your device.2");
       }
     }).then(changeCurrentSongToPlayed())
   }
@@ -276,6 +291,7 @@ function MainQue() {
     // migrate data to past ques collection
     // go to home page
     localStorage.removeItem("hash");
+    localStorage.removeItem("noActiveDevice");
     pause();
     window.location.href = WEB_URL + '/home';
   };

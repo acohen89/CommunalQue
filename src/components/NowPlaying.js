@@ -32,7 +32,7 @@ export function pause(){
       .then((response) => function(){
         if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert("No active player found! Please open Spotify on your device.3");
         } else if(response.status === 200){
           localStorage.setItem("noActiveDevice", false);
           console.log("Paused Song")
@@ -52,7 +52,7 @@ export function pause(){
       .then((response) => function(){
         if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert("No active player found! Please open Spotify on your device.4");
         } else if(response.status === 200){
           localStorage.setItem("noActiveDevice", false);
           console.log("Played Song")
@@ -71,7 +71,7 @@ export function skipTrack(){
       .then((response) => function(){
         if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert("No active player found! Please open Spotify on your device.5");
         } else if(response.status === 200){
           localStorage.setItem("noActiveDevice", false);
           console.log("Skipped Song")
@@ -90,7 +90,7 @@ export function skipTrack(){
       .then((response) => function(){
         if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert("No active player found! Please open Spotify on your device.6");
         } else if(response.status === 200){
           localStorage.setItem("noActiveDevice", false);
           console.log("Went back a Song")
@@ -109,7 +109,7 @@ export function disableShuffleandRepeat(){
    .then((data) => function(){
      if(data.status === 404){
        localStorage.setItem("noActiveDevice", true);
-       alert("No active player found! Please open Spotify on your device.");
+       alert("No active player found! Please open Spotify on your device.7");
      } else if(data.status === 200){
        localStorage.setItem("noActiveDevice", false);
        console.log("Disabled repeat")
@@ -119,7 +119,7 @@ export function disableShuffleandRepeat(){
    .then((data) => function () {
      if(data.status === 404){
        localStorage.setItem("noActiveDevice", true);
-       alert("No active player found! Please open Spotify on your device.");
+       alert("No active player found! Please open Spotify on your device.8");
      } else if(data.status === 200){
        localStorage.setItem("noActiveDevice", false);
        console.log("Disabled shuffle")
@@ -142,7 +142,7 @@ export async function getNowPlaying(){
       } else if (response.status === 204) {
           if(!localStorage.getItem("noActiveDevice")){
               localStorage.setItem("noActiveDevice", true);
-              alert("No active player found! Please open Spotify on your device.");
+              alert("No active player found! Please open Spotify on your device.9");
           }
       }
     })
