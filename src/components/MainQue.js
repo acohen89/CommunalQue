@@ -17,13 +17,10 @@ const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
-
-// TODO: pause music on endQueue
-// TODO: fix error where it makes requests to player when no player is found
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add a now playing component 
 // TODO: refresh access token 
-// TODO: at more info for songs
+// TODO: add more info for songs
 // TODO: add info on who added the song to the queue // like which user added it 
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
@@ -36,27 +33,24 @@ function MainQue() {
     localStorage.setItem("hash", makeHash(HASH_LENGTH));
   }
   const hash = localStorage.getItem("hash");
+
   const token = localStorage.getItem("token");
+
   const [songs, setSongs] = useState([
-    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false },
-    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false },
+    { id: '123kf21', title: "No Songs To Display", artist: "", played: false },
+    { id: '198213da', title: "", artist: "", played: false },
   ]);
   
+   
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
   }, []) 
-  
-  //  let playCheck = localStorage.getItem("playlistID");
-  //   while(localStorage.getItem("playlistID") === null){
-  //     setTimeout(function(){ 
-  //       // playCheck = localStorage.getItem("playlistID");
-  //      }, 300);
-  //   }
+  let resolved = false;
   const playlistIDProm = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if(localStorage.getItem("playlistID") !== null){
-        console.log("Resolved promise")
+    let timeout = setInterval(() => {
+      if(localStorage.getItem("playlistID") !== null && !resolved){
+        clearTimeout(timeout);
         resolve("playistID");
       }
     }, 2200);
@@ -69,8 +63,8 @@ function MainQue() {
     });
     playPlaylist();
     setInterval(changeCurrentSongToPlayed, 4500);
-  }, []))
-
+  }, [])
+  )
   function playPlaylist(){
     const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
     const requestOptions = {
@@ -99,9 +93,6 @@ function MainQue() {
      .then(function (){
       if(!localStorage.getItem("noActiveDevice")){
         disableShuffleandRepeat()
-      } else {
-        localStorage.setItem("noActiveDevice", true);
-        alert("No active player found! Please open Spotify on your device.");
       }
     }).then(changeCurrentSongToPlayed())
   }
@@ -133,7 +124,6 @@ function MainQue() {
       })()
     }
     function updateDB(dbSongs, songToUpdate){
-      console.log("in update")
       let newSongs = dbSongs;
       for(let i = 0; i < newSongs.length; i++){
         if(newSongs[i].id === songToUpdate.uri){
@@ -275,6 +265,7 @@ function MainQue() {
   }
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
+    resolved = true;
     db.collection('Active Ques')
     .doc(TEST_HASH)
     .update({
@@ -282,6 +273,7 @@ function MainQue() {
     })
     .then((docRef) => {
       console.log(newPlaylist ? "Added a new playlist with id " + playlistid : "Added old playlist with id " + playlistid);
+      playPlaylist();
     })
       .catch((error) => {
         console.error('Error adding document: ', error);
