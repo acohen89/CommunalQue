@@ -65,7 +65,6 @@ const ExistingQueue = () => {
         <div style={{ position: 'absolute', margin: 30, top: 0, right: 0 }}>
           <SearchBar />
         </div>
-
         <div
           style={{
             display: 'flex',

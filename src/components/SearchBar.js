@@ -7,9 +7,7 @@ const SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
 const SearchBar = () => {
   const [search, setSearch] = useState('');
   const token = localStorage.getItem('token');
-  const [songs, setSongs] = useState([
-    { id: '1', title: '', artist: '', inQueue: true },
-    { id: '2', title: '', artist: '', inQueue: true },
+   const [songs, setSongs] = useState([{id: "1", title: "", artist: "", inQueue:true, played: false}, {id: "2", title: "", artist: "", inQueue:true, played: false}]);
   ]);
   const searchID = 'searchBar';
   let updated = true;
@@ -54,5 +52,4 @@ const SearchBar = () => {
     </div>
   );
 };
-
 export default SearchBar;

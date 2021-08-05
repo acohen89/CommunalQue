@@ -3,7 +3,9 @@ import {MdAdd} from "react-icons/md";
 import firebase from "./firesbase";
 const db = firebase.firestore();
 
-const Song = ({uri, title, artist, inQueue}) => {
+const Song = ({uri, title, artist, inQueue, played}) => {
+    // URI IS WRONG 
+    //console.log(uri, title, artist,)
     const queueID = localStorage.getItem("queueID");
     const docRef = db.collection("Active Ques").doc(queueID);
     const addSong = () => {
@@ -14,7 +16,8 @@ const Song = ({uri, title, artist, inQueue}) => {
         docRef.update({songs:firebase.firestore.FieldValue.arrayUnion({
             artist: artist,
             id: uri,    
-            title: title})
+            title: title,
+            played: false })
         })
         .then(() => {
             console.log("Added " + title + " to database!");
@@ -25,10 +28,16 @@ const Song = ({uri, title, artist, inQueue}) => {
     }
     let artistKey = uri + artist;
     if(uri === "testURi") { 
-        uri = Math.floor(Math.random() * 99999)  
+        uri = "Random uri " + Math.floor(Math.random() * 99999)  
         artistKey = uri + Math.floor(Math.random() * 999);
     }
-    if(inQueue){
+    if(played || played === undefined){
+        return(
+            <>
+            </>
+        )
+    }
+    else if(inQueue){
         return (
                 <div style={{ display: 'flex' }}>
                     <p className="song" key={uri}>
@@ -64,6 +73,7 @@ Song.defaultProps = {
     name: "TestName",
     artist: "Test Artist",
     inQueue: true,
+    played: false
 }
 
 export default Song
