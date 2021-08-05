@@ -19,7 +19,7 @@ const SearchBar = () => {
   }
   useEffect(() => {
     if (search !== '') {
-      const url = SEARCH_ENDPOINT + '?q=' + search + '&type=track';
+      const url = SEARCH_ENDPOINT + '?q=' + search + '&type=track&limit=14';
       axios
         .get(url, {
           headers: {
