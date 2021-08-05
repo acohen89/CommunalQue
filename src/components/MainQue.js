@@ -3,6 +3,7 @@ import axios from "axios";
 import "./styles/ZevsStyles.scss";
 import firebase from "./firesbase";
 import {WEB_URL} from "./Home";
+import NowPlaying, {getNowPlaying, disableShuffleandRepeat, skipTrack, previousTrack, play, pause} from "./NowPlaying";
 import Button from "./Button";
 import InQue from './InQue';
 const TEST_HASH = '0001';
@@ -14,14 +15,8 @@ export { HASH_LENGTH };
 const db = firebase.firestore();
 const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
-const CURRENTLY_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing?market=US";
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
-const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?state=off";
-const TOGGLE_SHUFFLE_ENDPOINT = "https://api.spotify.com/v1/me/player/shuffle?state=false";
-const PLAY_ENDPOINT ="https://api.spotify.com/v1/me/player/play";
-const PAUSE_ENDPOINT = "https://api.spotify.com/v1/me/player/pause";
-const PREVIOUS_TRACK_ENDPOINT = "https://api.spotify.com/v1/me/player/previous";
-const SKIP_ENDPOINT = "https://api.spotify.com/v1/me/player/next";
+
 
 // TODO: pause music on endQueue
 // TODO: fix error where it makes requests to player when no player is found
@@ -46,17 +41,16 @@ function MainQue() {
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false },
   ]);
-
   
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
-    let playCheck = localStorage.getItem("playlistID");
-    while(playCheck === null){
-      setTimeout(function(){ 
-        playCheck = localStorage.getItem("playlistID");
-       }, 300);
-    }
+    // let playCheck = localStorage.getItem("playlistID");
+    // while(playCheck === null){
+    //   setTimeout(function(){ 
+    //     playCheck = localStorage.getItem("playlistID");
+    //    }, 300);
+    // }
     docRef.onSnapshot((doc) => {
       console.log("New Data!")
       refresh();
@@ -81,9 +75,21 @@ function MainQue() {
         "position_ms": 0 }),
       };
      fetch(PLAYBACK_ENDPOINT, requestOptions)
-     .then(disableShuffleandRepeat())
-     .then(changeCurrentSongToPlayed()) 
-    }
+     .then((response) => function () {
+       if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
+        localStorage.setItem("noActiveDevice", true);
+        alert("No active player found! Please open Spotify on your device.");
+      }
+     })
+     .then(function (){
+      if(localStorage.getItem("noActiveDevice")){
+        disableShuffleandRepeat()
+      } else {
+        localStorage.setItem("noActiveDevice", true);
+        alert("No active player found! Please open Spotify on your device.");
+      }
+    }).then(changeCurrentSongToPlayed())
+  }
     async function getSongsFromDB(){
       let data = "";
       await docRef
@@ -142,39 +148,6 @@ function MainQue() {
       .then((data) => console.log("Removed " + song.title + " from playlist"))
       
     }
-   function disableShuffleandRepeat(){
-     const requestOptions = {
-       method: 'PUT',
-       headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    }
-    fetch(TOGGLE_REPEAT_ENDPOINT, requestOptions)
-    .then()
-    .then((data) => console.log("Disabled repeat"))
-    fetch(TOGGLE_SHUFFLE_ENDPOINT, requestOptions)
-    .then()
-    .then((data) => console.log("Disabled shuffle"))
-  }
-  async function getNowPlaying(){
-    let ret = "";
-    await axios
-    .get(CURRENTLY_PLAYING_ENDPOINT, {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-    .then((response) => {
-      console.log(response)
-      ret = {title: response.data.item.name, artist: response.data.item.artists[0].name, uri: response.data.item.uri};
-    })
-    .catch((error) => {
-      console.log(error + " with getting songs in playlist");
-    });
-    return ret;
-  }
-  
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
     docRef
@@ -285,29 +258,6 @@ function MainQue() {
     .then((response) => response.json())
     .then((data) => idToFirebase(data.id, true));
   }
-  
-  function skipTrack(){
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    };
-    fetch(SKIP_ENDPOINT, requestOptions)
-      .then((response) => response.json())
-  }
-  function previousTrack(){
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    };
-    fetch(PREVIOUS_TRACK_ENDPOINT, requestOptions)
-      .then((response) => response.json())
-  }
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
     db.collection('Active Ques')
@@ -329,31 +279,6 @@ function MainQue() {
     pause();
     window.location.href = WEB_URL + '/home';
   };
-   
-  function pause(){
-    const requestOptions = {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    };
-     fetch(PAUSE_ENDPOINT, requestOptions)
-      .then((response) => console.log(response.ok))
-  }
-
-  function play(){
-    const requestOptions = {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    };
-     fetch(PLAY_ENDPOINT, requestOptions)
-      .then((response) => console.log(response.ok))
-      
-  }
   function hashToDB(hash) {
     db.collection('Active Ques')
       .doc(hash)
