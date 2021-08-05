@@ -48,7 +48,10 @@ const Song = ({uri, title, artist, inQueue, played}) => {
                         {' '}
                         {artist}
                     </p>
-                </div>
+                    <p style={{color: 'red'}}>
+                      <MdAdd onClick={addSong}/>
+                    </p>
+                </div>      
                 )
     } else{
         return (
