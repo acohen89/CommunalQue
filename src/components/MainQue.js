@@ -1,14 +1,15 @@
-import React, {useEffect, useState } from "react";
-import axios from "axios";
-import "./styles/ZevsStyles.scss";
-import firebase from "./firesbase";
-import {WEB_URL} from "./Home";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import './styles/ZevsStyles.scss';
+import firebase from './firesbase';
+import { WEB_URL } from './Home';
+import Button from './Button';
 import NowPlaying, {getNowPlaying, disableShuffleandRepeat, skipTrack, previousTrack, play, pause} from "./NowPlaying";
-import Button from "./Button";
 import InQue from './InQue';
 const TEST_HASH = '0001';
-const PLAYLIST_NAME = "Communal Queue";
-const PLAYLIST_DESCRIPTION = "This playlist is automatically created by Communal Que. Please do not delete during a que session.";
+const PLAYLIST_NAME = 'Communal Queue';
+const PLAYLIST_DESCRIPTION =
+  'This playlist is automatically created by Communal Que. Please do not delete during a que session.';
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
@@ -40,8 +41,7 @@ function MainQue() {
   const [songs, setSongs] = useState([
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false },
-  ]);
-  
+  ]);  
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
@@ -226,7 +226,7 @@ function MainQue() {
         SetUpQueuePlaylist(response.data.id, token);
       })
       .catch((error) => {
-        console.log(error + "\n with token \n " + token);
+        console.log(error + '\n with token \n ' + token);
       });
     }
     function SetUpQueuePlaylist(userID, token) {
@@ -234,19 +234,22 @@ function MainQue() {
       axios
       .get(PLAYLISTS_ENDPOINT, {
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: 'Bearer ' + token,
         },
       })
       .then((response) => {
         let found = false;
-        for(let i = 0; i < response.data.items.length; i++){
-          if(response.data.items[i].name === PLAYLIST_NAME && response.data.items[i].description === PLAYLIST_DESCRIPTION){
+        for (let i = 0; i < response.data.items.length; i++) {
+          if (
+            response.data.items[i].name === PLAYLIST_NAME &&
+            response.data.items[i].description === PLAYLIST_DESCRIPTION
+          ) {
             found = true;
-            console.log("Playlist already in library, old one being used");
+            console.log('Playlist already in library, old one being used');
             idToFirebase(response.data.items[i].id, false);
           }
         }
-        if(!found){
+        if (!found) {
           createNewPlaylist(userID, token);
         }
       })
@@ -335,7 +338,12 @@ function MainQue() {
       </div>
       <div
         className="darkContainer"
-        style={{ padding: 30, flexDirection: 'column', alignItems: 'stretch' }}
+        style={{
+          padding: 30,
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          minWidth: 700,
+        }}
       >
         <div
           style={{
@@ -391,6 +399,5 @@ function makeHash(length) {
   }
   return result;
 }
-
 
 export default MainQue;
