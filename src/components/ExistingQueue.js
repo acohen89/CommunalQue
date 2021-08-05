@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import firebase from './firesbase';
 import Button from './Button';
 import InQue from './InQue';
@@ -12,7 +12,6 @@ let docRef;
 urlParams.get('queueID')
   ? (docRef = db.collection('Active Ques').doc(urlParams.get('queueID')))
   : (docRef = null);
-//TODO: need to get spotify auth form link still
 const queueID = urlParams.get('queueID');
 localStorage.setItem('queueID', queueID);
 export { docRef };
@@ -22,6 +21,14 @@ const ExistingQueue = () => {
     { id: '1', title: '', artist: '', inQueue: true },
     { id: '2', title: '', artist: '', inQueue: true },
   ]);
+
+  useEffect(() => {
+      docRef.onSnapshot((doc) => {
+        console.log("New Data!")
+        refresh();
+      });
+  }, [])
+
   const refresh = () => {
     docRef
       .get()
