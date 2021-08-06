@@ -71,41 +71,42 @@ function MainQue() {
     setInterval(changeCurrentSongToPlayed, 4500);
   }, []))
 
+  
   function playPlaylist(){
-    const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
-    const requestOptions = {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(
-        { "context_uri": playlistURI,
-        "offset": {
-          "position": 0
+      const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
         },
-        "position_ms": 0 }),
-      };
-     fetch(PLAYBACK_ENDPOINT, requestOptions)
-     .then((response) => function () {
-       if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
-        localStorage.setItem("noActiveDevice", true);
-        alert("No active player found! Please open Spotify on your device.")
-      } else {
-        localStorage.setItem("noActiveDevice", false)
-      }
-      
-     })
-     .then(function (){
-      if(!localStorage.getItem("noActiveDevice")){
-        disableShuffleandRepeat()
-      } else {
-        localStorage.setItem("noActiveDevice", true);
-        alert("No active player found! Please open Spotify on your device.");
-      }
-    }).then(changeCurrentSongToPlayed())
+        body: JSON.stringify(
+          { "context_uri": playlistURI,
+          "offset": {
+            "position": 0
+          },
+          "position_ms": 0 }),
+        };
+      fetch(PLAYBACK_ENDPOINT, requestOptions)
+      .then((response) => function () {
+        if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
+          localStorage.setItem("noActiveDevice", true);
+          alert("No active player found! Please open Spotify on your device.")
+        } else {
+          localStorage.setItem("noActiveDevice", false)
+        }
+        
+      })
+      .then(function (){
+        if(!localStorage.getItem("noActiveDevice")){
+          disableShuffleandRepeat()
+        } else {
+          localStorage.setItem("noActiveDevice", true);
+          alert("No active player found! Please open Spotify on your device.");
+        }
+      }).then(changeCurrentSongToPlayed())
   }
-    async function getSongsFromDB(){
+  async function getSongsFromDB(){
       let data = "";
       await docRef
       .get()
@@ -120,8 +121,8 @@ function MainQue() {
         console.log('Error getting document:', error);
       });
       return data;
-    }
-    async function changeCurrentSongToPlayed(){
+  }
+  async function changeCurrentSongToPlayed(){
       ;(async () => {
         const nowPlaying = await getNowPlaying();
         const dbSongs =  await getSongsFromDB();
@@ -131,8 +132,8 @@ function MainQue() {
           }
         }
       })()
-    }
-    function updateDB(dbSongs, songToUpdate){
+  }
+  function updateDB(dbSongs, songToUpdate){
       console.log("in update")
       let newSongs = dbSongs;
       for(let i = 0; i < newSongs.length; i++){
@@ -145,8 +146,8 @@ function MainQue() {
         songs: newSongs
       });
       
-    }
-    function removeSongFromPlaylist(playlistID, song){
+  }
+  function removeSongFromPlaylist(playlistID, song){
       const RM_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
       const requestOptions = {
         method: 'DELETE',
@@ -162,7 +163,7 @@ function MainQue() {
     .then()
       .then((data) => console.log("Removed " + song.title + " from playlist"))
       
-    }
+  }
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
     docRef
