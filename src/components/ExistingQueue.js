@@ -18,16 +18,16 @@ export { docRef };
 
 const ExistingQueue = () => {
   const [songs, setSongs] = useState([
-    { id: '1', title: '', artist: '', inQueue: true },
+    { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },
     { id: '2', title: '', artist: '', inQueue: true },
   ]);
 
   useEffect(() => {
-      docRef.onSnapshot((doc) => {
-        console.log("New Data!")
-        refresh();
-      });
-  }, [])
+    docRef.onSnapshot((doc) => {
+      console.log('New Data!');
+      refresh();
+    });
+  }, []);
 
   const refresh = () => {
     docRef
@@ -106,7 +106,7 @@ const ExistingQueue = () => {
               </p>
               <Button text="Refresh" onClick={refresh} />
             </div>
-            <InQue songs={songs} />
+            <InQue songs={songs} inQueue={true} />
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
         </div>

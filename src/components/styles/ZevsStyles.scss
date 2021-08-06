@@ -92,12 +92,14 @@ $clr-green: #4caf50;
   font-size: 20px;
   font-weight: bold;
   color: white;
+  text-align: left;
 }
 
 .songArtist {
   font-family: 'Montserrat';
   font-size: 20px;
   color: gray;
+  text-align: left;
 }
 
 .form {
@@ -145,4 +147,12 @@ $clr-green: #4caf50;
 .searchBar:focus {
   border: 2px solid $clr-green;
   transform: scale(1.025);
+}
+
+.searchSuggestions {
+  background-color: #212121;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 0 15px 15px;
 }
