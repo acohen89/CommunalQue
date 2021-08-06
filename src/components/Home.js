@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import './styles/ZevsStyles.scss';
 import Button from './Button';
-import { HASH_LENGTH } from './MainQue';
+import { HASH_LENGTH } from './MainQueue/MainQue';
 
 const port = 3000;
 const WEB_URL = 'http://localhost:' + port;

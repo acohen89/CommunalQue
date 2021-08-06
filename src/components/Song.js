@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdAdd } from 'react-icons/md';
-import { getSongsFromDB } from './MainQue';
+import { getSongsFromDB } from './MainQueue/MainQue';
 import { GrFormAdd } from 'react-icons/gr';
 import firebase from './firesbase';
 const db = firebase.firestore();
@@ -83,7 +83,7 @@ export const addSong = (artist, title, uri, docRef) => {
 export function convert(millis) {
     var minutes = Math.floor(millis / 60000);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return seconds == 60
+    return seconds === 60
       ? minutes + 1 + ':00'
       : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   }

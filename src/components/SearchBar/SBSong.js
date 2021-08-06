@@ -1,6 +1,6 @@
 import React from 'react'
 import { MdAdd } from 'react-icons/md';
-import { addSong } from './Song';
+import { addSong } from '../Song';
 
 const SBSong = ({uri, title, artist, duration}) => {
     let artistKey = uri + artist;

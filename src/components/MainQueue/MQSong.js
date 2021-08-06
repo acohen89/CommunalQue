@@ -1,5 +1,5 @@
 import React from 'react'
-import { removeSong, convert } from "./Song";
+import { removeSong, convert } from "../Song";
 
 const MQSong = ({uri, title, artist, played, duration, addedBy}) => {
     let artistKey = uri + artist;

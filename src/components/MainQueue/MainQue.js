@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './styles/ZevsStyles.scss';
-import firebase from './firesbase';
-import { WEB_URL } from './Home';
-import Button from './Button';
-import NowPlaying, {getNowPlaying, disableShuffleandRepeat, skipTrack, previousTrack, play, pause} from "./NowPlaying";
+import '../styles/ZevsStyles.scss';
+import firebase from '../firesbase';
+import { WEB_URL } from '../Home';
+import Button from '../Button';
+import NowPlaying, {getNowPlaying, disableShuffleandRepeat, skipTrack, previousTrack, play, pause} from "../NowPlaying";
 import MainQueueSongs from './MainQueueSongs';
 const TEST_HASH = '0001';
 const PLAYLIST_NAME = 'Communal Queue';
@@ -19,6 +19,8 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: add more info for songs
+// TODO: Delete refresh button
+// TODO: fix error with joining queue with empty id
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: refresh access token 
 // TODO: add info on who added the song to the queue // like which user added it 
@@ -35,8 +37,8 @@ function MainQue() {
   const hash = localStorage.getItem("hash");
   const token = localStorage.getItem("token");
   const [songs, setSongs] = useState([
-    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false },
-    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false },
+    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false, duration: 0 },
+    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false, duration: 0 },
   ]);  
   useEffect(() => {
     hashToDB(hash);

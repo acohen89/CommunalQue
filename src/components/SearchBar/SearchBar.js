@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import SearchBarSongs from './SearchBarSongs';
-import './styles/ZevsStyles.scss';
+import '../styles/ZevsStyles.scss';
 const SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
 
 const SearchBar = () => {
@@ -12,10 +12,8 @@ const SearchBar = () => {
   const onFocus = () => setFocus(true);
   const onBlur = () => setFocus(false);
   const searchID = 'searchBar';
-  let updated = true;
   function updateSearch() {
       setSearch((search) => (search = document.getElementById(searchID).value));
-    updated = false;
   }
   useEffect(() => {
     if (search !== '') {
