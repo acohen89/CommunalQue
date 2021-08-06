@@ -1,24 +1,19 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import SongInQue from './SongInQue';
-import './styles/ZevsStyles.scss';
+import SearchBarSongs from './SearchBarSongs';
+import '../styles/ZevsStyles.scss';
 const SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
 
 const SearchBar = () => {
   const [search, setSearch] = useState('');
   const token = localStorage.getItem('token');
-  const [songs, setSongs] = useState([
-    { id: '1', title: '', artist: '', inQueue: true, played: false },
-    { id: '2', title: '', artist: '', inQueue: true, played: false },
-  ]);
+  const [songs, setSongs] = useState([]);
   const [searchBarFocus, setFocus] = useState(false);
   const onFocus = () => setFocus(true);
   const onBlur = () => setFocus(false);
   const searchID = 'searchBar';
-  let updated = true;
   function updateSearch() {
-    setSearch((search) => (search = document.getElementById(searchID).value));
-    updated = false;
+      setSearch((search) => (search = document.getElementById(searchID).value));
   }
   useEffect(() => {
     if (search !== '') {
@@ -35,6 +30,7 @@ const SearchBar = () => {
               uri: item.uri,
               title: item.name,
               artist: item.artists[0].name,
+              duration: item.duration,
             }))
           );
         })
@@ -58,7 +54,7 @@ const SearchBar = () => {
       />
       {search !== '' && searchBarFocus === true ? (
         <div className="searchSuggestions">
-          <SongInQue songs={songs} inQueue={false} />
+          <SearchBarSongs songs={songs} />
         </div>
       ) : null}
     </div>

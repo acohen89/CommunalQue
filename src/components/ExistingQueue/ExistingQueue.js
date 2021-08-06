@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import firebase from './firesbase';
-import Button from './Button';
-import InQue from './InQue';
-import SearchBar from './SearchBar';
-import { HASH_LENGTH } from './MainQue';
-import './styles/ZevsStyles.scss';
+import firebase from '../firesbase';
+import Button from '../Button';
+import SearchBar from '../SearchBar/SearchBar';
+import ExistingQueueSongs from './ExistingQueueSongs';
+import { HASH_LENGTH } from '../MainQueue/MainQue';
+import '../styles/ZevsStyles.scss';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
 
@@ -106,7 +106,7 @@ const ExistingQueue = () => {
               </p>
               <Button text="Refresh" onClick={refresh} />
             </div>
-            <InQue songs={songs} inQueue={true} />
+            <ExistingQueueSongs songs={songs}/>
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
         </div>
