@@ -19,12 +19,9 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: remove song feature
-// TODO: pause music on endQueue
-// TODO: fix error where it makes requests to player when no player is found
-// TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
-// TODO: add a now playing component 
-// TODO: refresh access token 
 // TODO: at more info for songs
+// TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
+// TODO: refresh access token 
 // TODO: add info on who added the song to the queue // like which user added it 
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
@@ -67,61 +64,45 @@ function MainQue() {
       console.log("New Data!")
       refresh();
     });
-    playPlaylist();
+    //playPlaylist();
     setInterval(changeCurrentSongToPlayed, 4500);
-  }, []))
+  }, [])) 
 
   function playPlaylist(){
-    const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
-    const requestOptions = {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(
-        { "context_uri": playlistURI,
-        "offset": {
-          "position": 0
+      const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
         },
-        "position_ms": 0 }),
-      };
-     fetch(PLAYBACK_ENDPOINT, requestOptions)
-     .then((response) => function () {
-       if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
-        localStorage.setItem("noActiveDevice", true);
-        alert("No active player found! Please open Spotify on your device.")
-      } else {
-        localStorage.setItem("noActiveDevice", false)
-      }
-      
-     })
-     .then(function (){
-      if(!localStorage.getItem("noActiveDevice")){
-        disableShuffleandRepeat()
-      } else {
-        localStorage.setItem("noActiveDevice", true);
-        alert("No active player found! Please open Spotify on your device.");
-      }
-    }).then(changeCurrentSongToPlayed())
-  }
-    async function getSongsFromDB(){
-      let data = "";
-      await docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          data = doc.data().songs;
+        body: JSON.stringify(
+          { "context_uri": playlistURI,
+          "offset": {
+            "position": 0
+          },
+          "position_ms": 0 }),
+        };
+      fetch(PLAYBACK_ENDPOINT, requestOptions)
+      .then((response) => function () {
+        if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
+          localStorage.setItem("noActiveDevice", true);
+          alert("No active player found! Please open Spotify on your device.")
         } else {
-          console.log('No such document!');
+          localStorage.setItem("noActiveDevice", false)
         }
+        
       })
-      .catch((error) => {
-        console.log('Error getting document:', error);
-      });
-      return data;
-    }
-    async function changeCurrentSongToPlayed(){
+      .then(function (){
+        if(!localStorage.getItem("noActiveDevice")){
+          disableShuffleandRepeat()
+        } else {
+          localStorage.setItem("noActiveDevice", true);
+          alert("No active player found! Please open Spotify on your device.");
+        }
+      }).then(changeCurrentSongToPlayed())
+  }
+  async function changeCurrentSongToPlayed(){
       ;(async () => {
         const nowPlaying = await getNowPlaying();
         const dbSongs =  await getSongsFromDB();
@@ -131,8 +112,8 @@ function MainQue() {
           }
         }
       })()
-    }
-    function updateDB(dbSongs, songToUpdate){
+  }
+  function updateDB(dbSongs, songToUpdate){
       console.log("in update")
       let newSongs = dbSongs;
       for(let i = 0; i < newSongs.length; i++){
@@ -145,8 +126,8 @@ function MainQue() {
         songs: newSongs
       });
       
-    }
-    function removeSongFromPlaylist(playlistID, song){
+  }
+  function removeSongFromPlaylist(playlistID, song){
       const RM_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
       const requestOptions = {
         method: 'DELETE',
@@ -162,7 +143,7 @@ function MainQue() {
     .then()
       .then((data) => console.log("Removed " + song.title + " from playlist"))
       
-    }
+  }
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
     docRef
@@ -398,6 +379,22 @@ function makeHash(length) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+}
+export async function getSongsFromDB(){
+  let data = "";
+  await docRef
+  .get()
+  .then((doc) => {
+    if (doc.exists) {
+      data = doc.data().songs;
+    } else {
+      console.log('No such document!');
+    }
+  })
+  .catch((error) => {
+    console.log('Error getting document:', error);
+  });
+  return data;
 }
 
 export default MainQue;
