@@ -1,7 +1,7 @@
 import React from 'react';
 import SongInQue from './SongInQue';
 
-const InQue = ({ songs }) => {
+const InQue = ({ songs, inQueue }) => {
   return (
     <div
       style={{
@@ -10,7 +10,7 @@ const InQue = ({ songs }) => {
         alignItems: 'flex-start',
       }}
     >
-      <SongInQue songs={songs} inQueue={true} />
+      <SongInQue songs={songs} inQueue={inQueue} />
     </div>
   );
 };
