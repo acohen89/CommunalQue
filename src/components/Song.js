@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdAdd } from 'react-icons/md';
+import { getSongsFromDB } from './MainQue';
 import { GrFormAdd } from 'react-icons/gr';
 import firebase from './firesbase';
 const db = firebase.firestore();
@@ -112,6 +113,7 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
       </div>
     );
   } else {
+      console.log("here with " + title)
     return (
       <div style={{ display: 'flex' }}>
         <p className="song" key={uri}>
@@ -132,6 +134,7 @@ Song.defaultProps = {
   name: 'TestName',
   artist: 'Test Artist',
   inQueue: true,
+  duration: 0,
   played: false,
 };
 

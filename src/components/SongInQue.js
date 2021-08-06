@@ -16,7 +16,7 @@ const SongInQue = ({ songs, inQueue }) => {
           artist={song.artist}
           inQueue={inQueue}
           played={song.played}
-          duration={218905}
+          duration={song.duration}
         />
       ))}
     </>

@@ -8,8 +8,8 @@ const SearchBar = () => {
   const [search, setSearch] = useState('');
   const token = localStorage.getItem('token');
   const [songs, setSongs] = useState([
-    { id: '1', title: '', artist: '', inQueue: true, played: false },
-    { id: '2', title: '', artist: '', inQueue: true, played: false },
+    { id: '1', title: '', artist: '', inQueue: true, played: false, duration: 0 },
+    { id: '2', title: '', artist: '', inQueue: true, played: false, duration: 0 },
   ]);
   const [searchBarFocus, setFocus] = useState(false);
   const onFocus = () => setFocus(true);
@@ -30,11 +30,13 @@ const SearchBar = () => {
           },
         })
         .then(function (response) {
+            console.log(response.data.tracks)
           setSongs(
             response.data.tracks.items.map((item) => ({
               uri: item.uri,
               title: item.name,
               artist: item.artists[0].name,
+              duration: item.duration
             }))
           );
         })
