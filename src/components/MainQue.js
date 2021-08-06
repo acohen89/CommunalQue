@@ -18,8 +18,7 @@ const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
-// TODO: remove song feature
-// TODO: at more info for songs
+// TODO: add more info for songs
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: refresh access token 
 // TODO: add info on who added the song to the queue // like which user added it 
@@ -44,12 +43,7 @@ function MainQue() {
     getUserID(token);
   }, []) 
   
-  //  let playCheck = localStorage.getItem("playlistID");
-  //   while(localStorage.getItem("playlistID") === null){
-  //     setTimeout(function(){ 
-  //       // playCheck = localStorage.getItem("playlistID");
-  //      }, 300);
-  //   }
+
   const playlistIDProm = new Promise((resolve, reject) => {
     setTimeout(() => {
       if(localStorage.getItem("playlistID") !== null){
@@ -64,7 +58,7 @@ function MainQue() {
       console.log("New Data!")
       refresh();
     });
-    //playPlaylist();
+    playPlaylist();
     setInterval(changeCurrentSongToPlayed, 4500);
   }, [])) 
 
