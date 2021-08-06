@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {ALERT_MESSAGE} from "../NowPlaying";
 import axios from 'axios';
 import '../styles/ZevsStyles.scss';
 import firebase from '../firesbase';
@@ -83,7 +84,7 @@ function MainQue() {
       .then((response) => function () {
         if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.")
+          alert(ALERT_MESSAGE)
         } else {
           localStorage.setItem("noActiveDevice", false)
         }
@@ -94,7 +95,7 @@ function MainQue() {
           disableShuffleandRepeat()
         } else {
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert(ALERT_MESSAGE);
         }
       }).then(changeCurrentSongToPlayed())
   }
