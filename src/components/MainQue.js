@@ -5,7 +5,7 @@ import firebase from './firesbase';
 import { WEB_URL } from './Home';
 import Button from './Button';
 import NowPlaying, {getNowPlaying, disableShuffleandRepeat, skipTrack, previousTrack, play, pause} from "./NowPlaying";
-import InQue from './InQue';
+import MainQueueSongs from './MainQueueSongs';
 const TEST_HASH = '0001';
 const PLAYLIST_NAME = 'Communal Queue';
 const PLAYLIST_DESCRIPTION =
@@ -333,7 +333,7 @@ function MainQue() {
           </p>
           <Button text="Refresh" onClick={refresh} />
         </div>
-        <InQue songs={songs} />
+        <MainQueueSongs songs={songs}/>
       </div>
       <p className="credits">Created by Adam Cohen and Zev Ross</p>
     </div>

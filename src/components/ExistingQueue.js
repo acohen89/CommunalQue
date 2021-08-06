@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebase from './firesbase';
 import Button from './Button';
-import InQue from './InQue';
+import InQue from './MainQueueSongs';
 import SearchBar from './SearchBar';
 import { HASH_LENGTH } from './MainQue';
 import './styles/ZevsStyles.scss';

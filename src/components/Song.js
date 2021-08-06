@@ -6,77 +6,8 @@ import firebase from './firesbase';
 const db = firebase.firestore();
 
 const Song = ({ uri, title, artist, inQueue, played, duration }) => {
-  function convert(millis) {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return seconds == 60
-      ? minutes + 1 + ':00'
-      : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-  }
   const queueID = localStorage.getItem('queueID');
   const docRef = db.collection('Active Ques').doc(queueID);
-    async function removeSong(){
-        const playlistID = localStorage.getItem("playlistID");
-        const token = localStorage.getItem("token");
-        if(playlistID === null || playlistID === undefined){
-            console.error("Playist id = " + playlistID);
-            return; 
-        }
-        if(uri.substring(0, 7) !== "spotify"){
-            console.error("Invalid uri of " + uri);
-            return; 
-        }
-        if(token === null || token === undefined){
-            console.error("Invalid token of " + token);
-            return; 
-        }
-        const RM_PLAYLIST_ENDPOINT = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
-        const requestOptions = {
-            method: 'DELETE',
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ uris: [uri]}),
-            };
-        fetch(RM_PLAYLIST_ENDPOINT, requestOptions)
-        .then((response) => function () {
-            console.log(response)
-        })
-        const dbSongs = await getSongsFromDB();
-        let newSongs = [];
-        for(let i = 0; i < dbSongs.length; i++){
-            if(dbSongs[i].id !== uri){
-                newSongs.push(dbSongs[i]);
-            } else {
-            console.log("Deleted song:  " + dbSongs[i].title + " from db");
-            }
-        }
-        docRef.update({
-            songs: newSongs
-        });
-    }
-  const addSong = () => {
-    if (artist === '' || title === '' || uri === '') {
-      console.error("Can't add an empty song");
-      return;
-    }
-    docRef
-      .update({
-        songs: firebase.firestore.FieldValue.arrayUnion({
-          artist: artist,
-          id: uri,
-          title: title,
-          played: false,
-        }),
-      })
-      .then(() => {
-        console.log('Added ' + title + ' to database!');
-      })
-      .catch((error) => {
-        console.error('Error updating document: ', error);
-      });
-  };
   let artistKey = uri + artist;
   if (uri === 'testURi') {
     uri = 'Random uri ' + Math.floor(Math.random() * 99999);
@@ -113,7 +44,6 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
       </div>
     );
   } else {
-      console.log("here with " + title)
     return (
       <div style={{ display: 'flex' }}>
         <p className="song" key={uri}>
@@ -129,6 +59,75 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
     );
   }
 };
+export const addSong = (artist, title, uri, docRef) => {
+    if (artist === '' || title === '' || uri === '') {
+      console.error("Can't add an empty song");
+      return;
+    }
+    docRef
+      .update({
+        songs: firebase.firestore.FieldValue.arrayUnion({
+          artist: artist,
+          id: uri,
+          title: title,
+          played: false,
+        }),
+      })
+      .then(() => {
+        console.log('Added ' + title + ' to database!');
+      })
+      .catch((error) => {
+        console.error('Error updating document: ', error);
+      });
+  };
+export function convert(millis) {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return seconds == 60
+      ? minutes + 1 + ':00'
+      : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+  }
+export async function removeSong(uri, docRef){
+    const playlistID = localStorage.getItem("playlistID");
+    const token = localStorage.getItem("token");
+    if(playlistID === null || playlistID === undefined){
+        console.error("Playist id = " + playlistID);
+        return; 
+    }
+    if(uri.substring(0, 7) !== "spotify"){
+        console.error("Invalid uri of " + uri);
+        return; 
+    }
+    if(token === null || token === undefined){
+        console.error("Invalid token of " + token);
+        return; 
+    }
+    const RM_PLAYLIST_ENDPOINT = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uris: [uri]}),
+        };
+    fetch(RM_PLAYLIST_ENDPOINT, requestOptions)
+    .then((response) => function () {
+        console.log(response)
+    })
+    const dbSongs = await getSongsFromDB();
+    let newSongs = [];
+    for(let i = 0; i < dbSongs.length; i++){
+        if(dbSongs[i].id !== uri){
+            newSongs.push(dbSongs[i]);
+        } else {
+        console.log("Deleted song:  " + dbSongs[i].title + " from db");
+        }
+    }
+    docRef.update({
+        songs: newSongs
+    });
+}
 Song.defaultProps = {
   uri: 'testURi',
   name: 'TestName',
