@@ -19,12 +19,9 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: remove song feature
-// TODO: pause music on endQueue
-// TODO: fix error where it makes requests to player when no player is found
-// TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
-// TODO: add a now playing component 
-// TODO: refresh access token 
 // TODO: at more info for songs
+// TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
+// TODO: refresh access token 
 // TODO: add info on who added the song to the queue // like which user added it 
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
@@ -67,11 +64,10 @@ function MainQue() {
       console.log("New Data!")
       refresh();
     });
-    playPlaylist();
+    //playPlaylist();
     setInterval(changeCurrentSongToPlayed, 4500);
-  }, []))
+  }, [])) 
 
-  
   function playPlaylist(){
       const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
       const requestOptions = {
@@ -105,22 +101,6 @@ function MainQue() {
           alert("No active player found! Please open Spotify on your device.");
         }
       }).then(changeCurrentSongToPlayed())
-  }
-  async function getSongsFromDB(){
-      let data = "";
-      await docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          data = doc.data().songs;
-        } else {
-          console.log('No such document!');
-        }
-      })
-      .catch((error) => {
-        console.log('Error getting document:', error);
-      });
-      return data;
   }
   async function changeCurrentSongToPlayed(){
       ;(async () => {
@@ -399,6 +379,22 @@ function makeHash(length) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+}
+export async function getSongsFromDB(){
+  let data = "";
+  await docRef
+  .get()
+  .then((doc) => {
+    if (doc.exists) {
+      data = doc.data().songs;
+    } else {
+      console.log('No such document!');
+    }
+  })
+  .catch((error) => {
+    console.log('Error getting document:', error);
+  });
+  return data;
 }
 
 export default MainQue;

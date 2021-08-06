@@ -1,4 +1,5 @@
 import React from 'react';
+import { getSongsFromDB } from './MainQue';
 import {MdAdd} from "react-icons/md";
 import firebase from "./firesbase";
 const db = firebase.firestore();
@@ -9,7 +10,7 @@ const Song = ({uri, title, artist, inQueue, played}) => {
     const queueID = localStorage.getItem("queueID");
     const docRef = db.collection("Active Ques").doc(queueID);
     
-    const removeSong = () => {
+    async function removeSong(){
         const playlistID = localStorage.getItem("playlistID");
         const token = localStorage.getItem("token");
         if(playlistID === null || playlistID === undefined){
@@ -37,9 +38,18 @@ const Song = ({uri, title, artist, inQueue, played}) => {
         .then((response) => function () {
             console.log(response)
         })
-
-
-
+        const dbSongs = await getSongsFromDB();
+        let newSongs = [];
+        for(let i = 0; i < dbSongs.length; i++){
+            if(dbSongs[i].id !== uri){
+                newSongs.push(dbSongs[i]);
+            } else {
+            console.log("Deleted song:  " + dbSongs[i].title + " from db");
+            }
+        }
+        docRef.update({
+            songs: newSongs
+        });
     }
     const addSong = () => {
         if(artist === "" || title === "" || uri === ""){ 
