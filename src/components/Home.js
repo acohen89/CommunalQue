@@ -10,8 +10,12 @@ export { WEB_URL };
 
 const joinQueue = () => {
   const queueID = document.getElementById(inputID).value;
-  const url = WEB_URL + '/JoinQueue?queueID=' + queueID;
-  window.location = url;
+  if(queueID.length === HASH_LENGTH){
+    const url = WEB_URL + '/JoinQueue?queueID=' + queueID;
+    window.location = url;
+  } else {
+    alert("Enter a valid QueueID")
+  }
 };
 const startQueue = () => {
   window.location = WEB_URL + '/Queue';
