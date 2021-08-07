@@ -7,9 +7,9 @@ const port = 3000;
 const WEB_URL = 'http://localhost:' + port;
 const inputID = 'queueID';
 const redirect_uri = WEB_URL + "/Home";
-const client_id = "";
+const client_id = "35135547562945148a4c9129b244dfe8";
 const TOKEN = "https://accounts.spotify.com/api/token";
-const client_secret = "";
+const client_secret = "818c3697a3314a469cf9fb841abe6626";
 export { WEB_URL };
 
 const joinQueue = () => {
