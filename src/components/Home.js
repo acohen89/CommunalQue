@@ -1,11 +1,18 @@
 import React, {useEffect} from "react";
+import axios from 'axios';
+
 import './styles/ZevsStyles.scss';
 import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
-
+import { PostAdd } from "@material-ui/icons";
+const cors = require("cors");
 const port = 3000;
 const WEB_URL = 'http://localhost:' + port;
 const inputID = 'queueID';
+const redirect_uri = WEB_URL + "/Home";
+const client_id = "35135547562945148a4c9129b244dfe8";
+const TOKEN = "https://accounts.spotify.com/api/token";
+const client_secret = "818c3697a3314a469cf9fb841abe6626";
 export { WEB_URL };
 
 const joinQueue = () => {
@@ -22,11 +29,17 @@ const startQueue = () => {
 };
 
 function Home() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get("code");
+  useEffect(() => {
+    fetchAccessToken(code);
+  }, [])
+  
   const enterPressed = e => {
-  if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
-    joinQueue();
-  }
-};
+    if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
+      joinQueue();
+    }
+  };
   const getReturnedParamsFromSpotifyAuth = (hash) => {
     const stringAfterHashtag = hash.substring(1);
     const paramsInUrl = stringAfterHashtag.split("&");
@@ -39,6 +52,7 @@ function Home() {
     return paramsSplitUp;
   };
   useEffect(() => {
+    console.log(window.location.hash)
     const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
     if(access_token !== undefined && expires_in !== undefined && token_type !== undefined){
       localStorage.clear();
@@ -48,19 +62,18 @@ function Home() {
       window.history.pushState({}, document.title, "/home");
     }
   }, [])
-  const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('error')) {
     window.location = WEB_URL;
   } else {
     return (
       <div
-        className="bg"
+      className="bg"
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}
-      >
+        >
         <p className="header" style={{ marginTop: 70 }}>
           Communal Queue
         </p>
@@ -89,4 +102,30 @@ function Home() {
   }
 }
 
+function fetchAccessToken(code){
+  let body = "grant_type=authorization_code";
+  body += "&code=" + code; 
+  body += "&redirect_uri=" + encodeURI(redirect_uri);
+  body += "&client_id=" + client_id;
+  body += "&client_secret=" + client_secret;
+  callAuthorizationApi(body);
+}
+function callAuthorizationApi(body){
+let xhr = new XMLHttpRequest();
+xhr.open("POST", TOKEN, true);
+xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xhr.setRequestHeader('Authorization', 'Basic ' + btoa(client_id + ":" + client_secret));
+xhr.send(body);
+xhr.onload = handleAuthorizationResponse;
+}
+function handleAuthorizationResponse(){
+if (this.status === 200){
+    var data = JSON.parse(this.responseText);
+    console.log(data);
+}
+else {
+    console.log(this.responseText);
+    alert(this.responseText);
+}
+}
 export default Home;
