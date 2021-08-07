@@ -20,6 +20,7 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: add more info for songs
+// TODO: MUST HIDE CLIENT ID AND SECRET AT SOME POINT
 // TODO: Delete refresh button
 // TODO: fix error with joining queue with empty id
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage

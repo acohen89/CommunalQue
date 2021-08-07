@@ -1,10 +1,7 @@
 import React, {useEffect} from "react";
-import axios from 'axios';
-
 import './styles/ZevsStyles.scss';
 import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
-import { PostAdd } from "@material-ui/icons";
 const cors = require("cors");
 const port = 3000;
 const WEB_URL = 'http://localhost:' + port;
@@ -29,10 +26,14 @@ const startQueue = () => {
 };
 
 function Home() {
+  setTimeout(refreshAccessToken(), 1000);
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get("code");
   useEffect(() => {
-    fetchAccessToken(code);
+    if(localStorage.getItem("refreshToken") === null || localStorage.getItem("refreshToken") === undefined){
+          fetchAccessToken(code);
+          window.history.pushState({}, document.title, "/home");
+    }
   }, [])
   
   const enterPressed = e => {
@@ -40,28 +41,6 @@ function Home() {
       joinQueue();
     }
   };
-  const getReturnedParamsFromSpotifyAuth = (hash) => {
-    const stringAfterHashtag = hash.substring(1);
-    const paramsInUrl = stringAfterHashtag.split("&");
-    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-      const [key, value] = currentValue.split("=");
-      accumulater[key] = value;
-      return accumulater;
-    }, {});
-    
-    return paramsSplitUp;
-  };
-  useEffect(() => {
-    console.log(window.location.hash)
-    const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
-    if(access_token !== undefined && expires_in !== undefined && token_type !== undefined){
-      localStorage.clear();
-      localStorage.setItem("token", access_token);
-      localStorage.setItem("expiresIn", expires_in);
-      localStorage.setItem("tokenType", token_type);
-      window.history.pushState({}, document.title, "/home");
-    }
-  }, [])
   if (urlParams.get('error')) {
     window.location = WEB_URL;
   } else {
@@ -111,21 +90,29 @@ function fetchAccessToken(code){
   callAuthorizationApi(body);
 }
 function callAuthorizationApi(body){
-let xhr = new XMLHttpRequest();
-xhr.open("POST", TOKEN, true);
-xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-xhr.setRequestHeader('Authorization', 'Basic ' + btoa(client_id + ":" + client_secret));
-xhr.send(body);
-xhr.onload = handleAuthorizationResponse;
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", TOKEN, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('Authorization', 'Basic ' + btoa(client_id + ":" + client_secret));
+  xhr.send(body);
+  xhr.onload = handleAuthorizationResponse;
 }
 function handleAuthorizationResponse(){
-if (this.status === 200){
+  if (this.status === 200){
     var data = JSON.parse(this.responseText);
-    console.log(data);
-}
-else {
+    localStorage.setItem("token", data.access_token);
+    localStorage.setItem("refreshToken", data.refresh_token);
+    localStorage.setItem("expiresIn", data.expires_in);
+  }
+  else {
     console.log(this.responseText);
-    alert(this.responseText);
+  }
 }
+export function refreshAccessToken(){
+  let refresh_token = localStorage.getItem("refresh_token");
+  let body = "grant_type=refresh_token";
+  body += "&refresh_token=" + refresh_token;
+  body += "&client_id=" + client_id;
+  callAuthorizationApi(body);
 }
 export default Home;
