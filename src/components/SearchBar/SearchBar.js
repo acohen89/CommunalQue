@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import SearchBarSongs from './SearchBarSongs';
 import '../styles/ZevsStyles.scss';
+import { refreshAccessToken } from '../Home';
 const SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
 
 const SearchBar = () => {
@@ -35,6 +36,9 @@ const SearchBar = () => {
           );
         })
         .catch(function (error) {
+          if(error.response.status === 401){
+            refreshAccessToken();
+          }
           console.log(error);
         });
     }
