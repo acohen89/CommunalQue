@@ -26,14 +26,11 @@ const startQueue = () => {
 };
 
 function Home() {
-  setTimeout(refreshAccessToken(), 1000);
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get("code");
   useEffect(() => {
-    if(localStorage.getItem("refreshToken") === null || localStorage.getItem("refreshToken") === undefined){
-          fetchAccessToken(code);
-          window.history.pushState({}, document.title, "/home");
-    }
+    fetchAccessToken(code);
+    window.history.pushState({}, document.title, "/home");
   }, [])
   
   const enterPressed = e => {

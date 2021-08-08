@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from "axios";
+import {refreshAccessToken} from "./Home";
 const token = localStorage.getItem("token");
 const CURRENTLY_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing?market=US";
 const TOGGLE_REPEAT_ENDPOINT = "https://api.spotify.com/v1/me/player/repeat?state=off";
@@ -31,7 +32,11 @@ export function pause(){
     };
      fetch(PAUSE_ENDPOINT, requestOptions)
       .then((response) => function(){
-        if(response.status === 204){
+        if(response.status === 401){
+            console.log("Refreshing acess token")
+            refreshAccessToken().then(pause());
+        }
+        else if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
           alert(ALERT_MESSAGE);
         } else if(response.status === 200){
@@ -51,7 +56,11 @@ export function pause(){
     };
      fetch(PLAY_ENDPOINT, requestOptions)
       .then((response) => function(){
-        if(response.status === 204){
+        if(response.status === 401){
+            console.log("Refreshing acess token")
+            refreshAccessToken().then(play());
+        }
+        else if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
           alert(ALERT_MESSAGE);
         } else if(response.status === 200){
@@ -70,7 +79,11 @@ export function skipTrack(){
     };
     fetch(SKIP_ENDPOINT, requestOptions)
       .then((response) => function(){
-        if(response.status === 204){
+        if(response.status === 401){
+            console.log("Refreshing access token")
+            refreshAccessToken().then(skipTrack());
+        }
+        else if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
           alert("No active player found! Please open Spotify on your device.");
         } else if(response.status === 200){
@@ -89,7 +102,11 @@ export function skipTrack(){
     };
     fetch(PREVIOUS_TRACK_ENDPOINT, requestOptions)
       .then((response) => function(){
-        if(response.status === 204){
+        if(response.status === 401){
+            console.log("Refreshing access token")
+            refreshAccessToken().then(previousTrack());
+        }
+        else if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
           alert(ALERT_MESSAGE);
         } else if(response.status === 200){
@@ -108,7 +125,11 @@ export function disableShuffleandRepeat(){
    }
    fetch(TOGGLE_REPEAT_ENDPOINT, requestOptions)
    .then((data) => function(){
-     if(data.status === 404){
+     if(data.status === 401){
+        console.log("Refreshing acess token")
+        refreshAccessToken().then(disableShuffleandRepeat());
+     }
+     else if(data.status === 404){
        localStorage.setItem("noActiveDevice", true);
        alert(ALERT_MESSAGE);
      } else if(data.status === 200){
@@ -137,8 +158,11 @@ export async function getNowPlaying(){
       },
     })
     .then((response) => {
-      
-      if(response.status === 200){
+      if(response.status === 401){
+        console.log("Refreshing access token")
+        refreshAccessToken().then(getNowPlaying());
+      }
+      else if(response.status === 200){
           ret = {title: response.data.item.name, artist: response.data.item.artists[0].name, uri: response.data.item.uri};
       } else if (response.status === 204) {
           if(!localStorage.getItem("noActiveDevice")){
