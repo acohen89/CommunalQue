@@ -5,10 +5,6 @@ import firebase from './firesbase';
 const db = firebase.firestore();
 
 const Song = ({ uri, title, artist, inQueue, played, duration }) => {
-  // URI IS WRONG
-  //console.log(uri, title, artist,)
-
-  console.log('Duration: ' + duration);
   function convert(millis) {
     var minutes = Math.floor(millis / 60000);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -18,6 +14,47 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
   }
   const queueID = localStorage.getItem('queueID');
   const docRef = db.collection('Active Ques').doc(queueID);
+    async function removeSong(){
+        const playlistID = localStorage.getItem("playlistID");
+        const token = localStorage.getItem("token");
+        if(playlistID === null || playlistID === undefined){
+            console.error("Playist id = " + playlistID);
+            return; 
+        }
+        if(uri.substring(0, 7) !== "spotify"){
+            console.error("Invalid uri of " + uri);
+            return; 
+        }
+        if(token === null || token === undefined){
+            console.error("Invalid token of " + token);
+            return; 
+        }
+        const RM_PLAYLIST_ENDPOINT = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+              Authorization: 'Bearer ' + token,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ uris: [uri]}),
+            };
+        fetch(RM_PLAYLIST_ENDPOINT, requestOptions)
+        .then((response) => function () {
+            console.log(response)
+        })
+        const dbSongs = await getSongsFromDB();
+        let newSongs = [];
+        for(let i = 0; i < dbSongs.length; i++){
+            if(dbSongs[i].id !== uri){
+                newSongs.push(dbSongs[i]);
+            } else {
+            console.log("Deleted song:  " + dbSongs[i].title + " from db");
+            }
+        }
+        docRef.update({
+            songs: newSongs
+        });
+    }
   const addSong = () => {
     console.log('Song being added');
     if (artist === '' || title === '' || uri === '') {
