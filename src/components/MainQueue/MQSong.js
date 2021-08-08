@@ -10,6 +10,7 @@ const MQSong = ({uri, title, artist, played, duration, addedBy}) => {
     if (played || played === undefined) {
       return <></>;
     }else{
+      // add a place of who the song was added by 
         return (
             <div style={{ display: 'flex' }}>
             <p className="song" key={uri}>

@@ -23,6 +23,7 @@ const MainQueueSongs = ({ songs}) => {
           artist={song.artist}
           played={song.played}
           duration={song.duration}
+          addedBy={song.addedBy}
         />
       ))}
     </>
