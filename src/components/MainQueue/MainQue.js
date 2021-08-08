@@ -225,6 +225,7 @@ function MainQue() {
             found = true;
             console.log('Playlist already in library, old one being used');
             idToFirebase(response.data.items[i].id, false);
+            break;
           }
         }
         if (!found) {
