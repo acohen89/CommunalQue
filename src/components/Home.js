@@ -34,6 +34,7 @@ function Home() {
   useEffect(() => {
     fetchAccessToken(code);
   }, [])
+  window.history.pushState({}, document.title, "/Home");
   
   const enterPressed = e => {
     if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
