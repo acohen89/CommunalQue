@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from "axios";
 import firebase from '../firesbase';
 import Button from '../Button';
 import SearchBar from '../SearchBar/SearchBar';
@@ -7,6 +8,7 @@ import { HASH_LENGTH } from '../MainQueue/MainQue';
 import '../styles/ZevsStyles.scss';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
+const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 
 let docRef;
 urlParams.get('queueID')
@@ -23,12 +25,28 @@ const ExistingQueue = () => {
   ]);
 
   useEffect(() => {
+    getNameFromSpot();
     docRef.onSnapshot((doc) => {
       console.log('New Data!');
       refresh();
     });
   }, []);
 
+  function getNameFromSpot(){
+    const token = localStorage.getItem("token");
+    axios
+    .get(USER_ID_ENDPOINT, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    .then((response) => {
+      localStorage.setItem("name", response.data.display_name);
+    })
+    .catch((error) => {
+      console.log(error + '\n with token \n ' + token);
+    });
+  }
   const refresh = () => {
     docRef
       .get()

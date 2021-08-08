@@ -60,6 +60,7 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
   }
 };
 export const addSong = (artist, title, uri, docRef) => {
+    const name = localStorage.getItem("name") === null || localStorage.getItem("name") === undefined ? "N/A" : localStorage.getItem("name");
     if (artist === '' || title === '' || uri === '') {
       console.error("Can't add an empty song");
       return;
@@ -71,6 +72,7 @@ export const addSong = (artist, title, uri, docRef) => {
           id: uri,
           title: title,
           played: false,
+          addedBy: name
         }),
       })
       .then(() => {
