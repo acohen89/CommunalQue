@@ -19,6 +19,7 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
   const queueID = localStorage.getItem('queueID');
   const docRef = db.collection('Active Ques').doc(queueID);
   const addSong = () => {
+    console.log('Song being added');
     if (artist === '' || title === '' || uri === '') {
       console.error("Can't add an empty song");
       return;
@@ -69,8 +70,11 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
             {artist}
           </p>
         </div>
-        <p style={{ color: 'white', marginLeft: 5 }}>
-          <MdAdd onClick={addSong} />
+        <p
+          onClick={addSong}
+          style={{ color: 'white', marginLeft: 5, cursor: 'pointer' }}
+        >
+          <MdAdd />
         </p>
       </div>
     );
