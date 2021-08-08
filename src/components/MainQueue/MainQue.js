@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {ALERT_MESSAGE} from "../NowPlaying";
-import { refreshAccessToken } from '../Home';
-import axios from 'axios';
-import '../styles/ZevsStyles.scss';
-import firebase from '../firesbase';
 import { WEB_URL } from '../Home';
-import Button from '../Button';
 import NowPlaying, {getNowPlaying, disableShuffleandRepeat, skipTrack, previousTrack, play, pause} from "../NowPlaying";
+import {refreshAccessToken} from "../Home";
+import axios from 'axios';
+import firebase from '../firesbase';
+import Button from '../Button';
 import MainQueueSongs from './MainQueueSongs';
+import '../styles/ZevsStyles.scss';
 const TEST_HASH = '0001';
 const PLAYLIST_NAME = 'Communal Queue';
 const PLAYLIST_DESCRIPTION =
-  'This playlist is automatically created by Communal Que. Please do not delete during a que session.';
+  'This playlist is automatically created by Communal Queue. Please do not delete during a que session.';
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
@@ -21,10 +21,9 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: add more info for songs
+// TODO: MUST HIDE CLIENT ID AND SECRET AT SOME POINT
 // TODO: Delete refresh button
-// TODO: fix error with joining queue with empty id
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
-// TODO: refresh access token 
 // TODO: add info on who added the song to the queue // like which user added it 
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
@@ -38,6 +37,7 @@ function MainQue() {
   }
   const hash = localStorage.getItem("hash");
   const token = localStorage.getItem("token");
+  console.log(token)
   const [songs, setSongs] = useState([
     { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false, duration: 0 },
     { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false, duration: 0 },
@@ -68,6 +68,7 @@ function MainQue() {
 
 
   function playPlaylist(){
+    console.log("Trying to play")
       const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
       const requestOptions = {
         method: 'PUT',
@@ -84,12 +85,16 @@ function MainQue() {
         };
       fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then((response) => function () {
-        if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
+        if(response.status === 401){
+          console.log("Refreshing acess token")
+          refreshAccessToken().then(playPlaylist())
+        }
+        else if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
           localStorage.setItem("noActiveDevice", true);
           alert(ALERT_MESSAGE)
         } else {
           localStorage.setItem("noActiveDevice", false)
-        }
+        } 
         
       })
       .then(function (){
@@ -139,9 +144,14 @@ function MainQue() {
       })
     }
     fetch(RM_ENDPOINT, requestOptions)
-    .then()
-      .then((data) => console.log("Removed " + song.title + " from playlist"))
-      
+      .then((data) => function (){
+        if(data.status === 401){
+          console.log("Refreshing acess token")
+          refreshAccessToken().then(removeSongFromPlaylist(playlistID, song))
+        } else {
+        console.log("Removed " + song.title + " from playlist")
+        }
+      })
   }
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
@@ -171,7 +181,12 @@ function MainQue() {
       addUniqueSongs(playlistID, songsObj, response.data.tracks.items);
     })
     .catch((error) => {
-      console.log(error + " with getting songs in playlist");
+      if(error.response.status === 401){
+        console.log("Refreshing acess token")
+        refreshAccessToken().then(addSongsToPlaylist(playlistID, songsObj));
+      } else {
+        console.log(error + " with getting songs in playlist");
+      }
     });
   } 
   async function addUniqueSongs(playlistID, songsObj, songsAlreadyInPlaylist){  
@@ -190,8 +205,14 @@ function MainQue() {
           body: JSON.stringify({ uris: uriArray }),
         };
         await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
-        .then((response) => response.json())
-        .then((data) => console.log("Added songs: " + printArr(titleArray) + "to playlist"));
+        .then((data) => function () {
+            if(data.status === 401){
+              console.log("Refreshing access token")
+              refreshAccessToken().then(addUniqueSongs(playlistID, songsObj, songsAlreadyInPlaylist));
+            }else {
+              console.log("Added songs: " + printArr(titleArray) + "to playlist")}
+            }
+          );
       }
     }
     async function getUserID(token) {
@@ -234,7 +255,12 @@ function MainQue() {
         }
       })
       .catch((error) => {
-        console.log(error);
+        if(error.response.status === 401){
+          console.log("Refreshing access token")
+          refreshAccessToken().then(SetUpQueuePlaylist(userID, token)());
+        } else {
+          console.log(error);
+        }
       });
     }
     function createNewPlaylist(userID, token ){
@@ -253,8 +279,13 @@ function MainQue() {
       }),
     };
     fetch(PLAYLIST_ENDPOINT, requestOptions)
-    .then((response) => response.json())
-    .then((data) => idToFirebase(data.id, true));
+    .then((data) => function (){
+      if(data.status === 401){
+        console.log("Refreshing access token");
+        refreshAccessToken().then(createNewPlaylist(userID, token));
+      }
+      idToFirebase(data.id, true)}
+    );
   }
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
