@@ -1,31 +1,39 @@
 import React from 'react';
-import Song from './Song';
+import MQSong from './MQSong';
 
-const SongInQue = ({ songs, inQueue }) => {
+const MainQueueSongs = ({ songs}) => {
   function processKey(id) {
     return id === 'testURi' || id === undefined || id === ''
       ? 'Random URI' + Math.floor(Math.random() * 999999999)
       : id;
   }
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+      }}
+    >
+          <>
       {songs.map((song) => (
-        <Song
+        <MQSong
           uri={processKey(song.uri)}
           title={song.title}
           artist={song.artist}
-          inQueue={inQueue}
           played={song.played}
-          duration={218905}
+          duration={song.duration}
+          addedBy={song.addedBy}
         />
       ))}
     </>
+    </div>
   );
 };
-
-SongInQue.defaultProps = {
+MainQueueSongs.defaultProps = {
   name: 'TestName',
   artist: 'Test Artist',
   uri: 'testURi',
 };
-export default SongInQue;
+
+export default MainQueueSongs;
