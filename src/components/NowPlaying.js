@@ -126,7 +126,7 @@ export function disableShuffleandRepeat(){
    fetch(TOGGLE_REPEAT_ENDPOINT, requestOptions)
    .then((data) => function(){
      if(data.status === 401){
-        console.log("Refreshing acess token")
+        console.log("Refreshing access token")
         refreshAccessToken().then(disableShuffleandRepeat());
      }
      else if(data.status === 404){
