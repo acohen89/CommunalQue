@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {ALERT_MESSAGE} from "../NowPlaying";
+import { refreshAccessToken } from '../Home';
 import axios from 'axios';
 import '../styles/ZevsStyles.scss';
 import firebase from '../firesbase';
@@ -64,6 +65,7 @@ function MainQue() {
     playPlaylist();
     setInterval(changeCurrentSongToPlayed, 4500);
   }, [])) 
+
 
   function playPlaylist(){
       const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
@@ -159,7 +161,6 @@ function MainQue() {
   };
   async function addSongsToPlaylist(playlistID, songsObj) {
     const SPECIFIC_PLAYLIST_ENDPOINT = 	"https://api.spotify.com/v1/playlists/" + playlistID;
-    console.log(playlistID)
     await axios
     .get(SPECIFIC_PLAYLIST_ENDPOINT, {
       headers: {

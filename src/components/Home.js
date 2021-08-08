@@ -101,7 +101,32 @@ function Home() {
     );
   }
 }
+var access_token = null;
+var refresh_token = null;
 
+export function refreshAccessToken(){
+  refresh_token = localStorage.getItem("refresh_token");
+  let body = "grant_type=refresh_token";
+  body += "&refresh_token=" + refresh_token;
+  body += "&client_id=" + client_id;
+  callAuthorizationApi(body);
+}
+function handleAuthorizationResponse(){
+  if ( this.status === 200 ){
+      var data = JSON.parse(this.responseText);
+      if ( data.access_token !== undefined ){
+          access_token = data.access_token;
+          localStorage.setItem("token", access_token);
+      }
+      if ( data.refresh_token  !== undefined ){
+          refresh_token = data.refresh_token;
+          localStorage.setItem("refresh_token", refresh_token);
+      }
+  }
+  else {
+      console.log(this.responseText);
+  }
+}
 function fetchAccessToken(code){
   let body = "grant_type=authorization_code";
   body += "&code=" + code; 
@@ -118,14 +143,5 @@ xhr.setRequestHeader('Authorization', 'Basic ' + btoa(client_id + ":" + client_s
 xhr.send(body);
 xhr.onload = handleAuthorizationResponse;
 }
-function handleAuthorizationResponse(){
-if (this.status === 200){
-    var data = JSON.parse(this.responseText);
-    console.log(data);
-}
-else {
-    console.log(this.responseText);
-    alert(this.responseText);
-}
-}
+
 export default Home;

@@ -13,8 +13,12 @@ const SCOPES = [
   "playlist-modify-public",
   "playlist-read-private",
   "app-remote-control",
+  "user-read-currently-playing",
+  "user-modify-playback-state",
+  "user-read-playback-state",
+  "streaming",
   "user-read-private",
-  "user-read-email"
+  "user-read-email",
 ];
 const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize?client_id=" + CLIENT_ID + "&response_type=code&redirect_uri=" + REDIRECT_URL_AFTER_LOGIN +"&scope=" + SCOPES_URL_PARAM;
