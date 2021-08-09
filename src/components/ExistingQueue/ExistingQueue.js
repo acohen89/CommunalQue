@@ -122,7 +122,6 @@ const ExistingQueue = () => {
               <p className="queueTitle" style={{ fontSize: 30, color: 'gray' }}>
                 Songs in queue
               </p>
-              <Button text="Refresh" onClick={refresh} />
             </div>
             <ExistingQueueSongs songs={songs}/>
           </div>

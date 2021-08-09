@@ -331,8 +331,7 @@ function MainQue() {
         >
           <p className="queueTitle" style={{ fontSize: 30, color: 'gray' }}>
             Songs
-          </p>
-          <Button text="Refresh" onClick={refresh} />
+          </p>  
         </div>
         <MainQueueSongs songs={songs}/>
       </div>
