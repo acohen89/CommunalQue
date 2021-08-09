@@ -5,7 +5,7 @@ import '../styles/ZevsStyles.scss';
 import { refreshAccessToken } from '../Home';
 const SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
 
-const SearchBar = () => {
+const SearchBar = ({docRef}) => {
   const [search, setSearch] = useState('');
   const token = localStorage.getItem('token');
   const [songs, setSongs] = useState([]);
@@ -39,7 +39,7 @@ const SearchBar = () => {
           if(error.response.status === 401){
             refreshAccessToken();
           }
-          console.log(error);
+          console.log(error.response.status);
         });
     }
   }, [search, token]);
@@ -56,9 +56,9 @@ const SearchBar = () => {
         onFocus={onFocus}
         onBlur={onBlur}
       />
-      {search !== '' && searchBarFocus === true ? (
+      {search !== '' ? (
         <div className="searchSuggestions">
-          <SearchBarSongs songs={songs} />
+          <SearchBarSongs songs={songs} docRef={docRef} />
         </div>
       ) : null}
     </div>

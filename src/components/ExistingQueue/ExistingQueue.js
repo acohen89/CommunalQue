@@ -81,7 +81,7 @@ const ExistingQueue = () => {
     return (
       <div className="bg">
         <div style={{ position: 'absolute', margin: 30, top: 0, right: 0 }}>
-          <SearchBar />
+          <SearchBar docRef={docRef} />
         </div>
         <div
           style={{

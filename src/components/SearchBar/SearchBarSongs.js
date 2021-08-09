@@ -1,7 +1,7 @@
 import React from 'react'
 import SBSong from "./SBSong";
 
-const SearchBarSongs = ({songs}) => {
+const SearchBarSongs = ({songs, docRef}) => {
     function processKey(id) {
         return id === 'testURi' || id === undefined || id === ''
           ? 'Random URI' + Math.floor(Math.random() * 999999999)
@@ -15,6 +15,7 @@ const SearchBarSongs = ({songs}) => {
           title={song.title}
           artist={song.artist}
           duration={218905}
+          docRef={docRef}
         />
       ))}
     </>
