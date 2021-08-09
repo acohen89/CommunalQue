@@ -38,8 +38,9 @@ const ExistingQueue = () => {
   async function updateNowPlaying () {
     ;(async () => {
       const cSong =  await getNowPlaying()
-      console.log(cSong)
-      setCurSong((curSong) => curSong = getNowPlaying());
+      if(cSong.title !== curSong.title){
+        setCurSong((curSong) => curSong = cSong);
+      }
     })()
   }
 

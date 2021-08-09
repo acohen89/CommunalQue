@@ -22,7 +22,6 @@ export const ALERT_MESSAGE =
 //TODO: when device has been found make sure we display shuffle and repeat when play is clicked
 const NowPlaying = ({ isMaster, curSong }) => {
   const [isPaused, setPaused] = useState([true]);
-  console.log(curSong)
   const switchPlayPause = () => {
     if (isPaused) {
       play();
@@ -283,8 +282,10 @@ export async function getNowPlaying() {
       }
     })
     .catch((error) => {
-      if(error.response.status === 401){
-        refreshAccessToken();
+      if(error.response.status !== undefined ){
+        if(error.response.status === 401){
+          refreshAccessToken();
+        }
       }
       console.log(error + ' with getting songs in playlist');
     });
