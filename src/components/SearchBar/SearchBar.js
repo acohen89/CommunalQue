@@ -65,7 +65,7 @@ const SearchBar = ({docRef}) => {
     </div>
   );
 };
-function handleImages(imgArr){
+export function handleImages(imgArr){
   let imgUrl = null;
   let curSmLength = 999999999999999999999999999999;
   for(let i = 0; i < imgArr.length; i++){

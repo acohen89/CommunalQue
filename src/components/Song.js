@@ -88,30 +88,6 @@ export const addSong = (artist, title, uri, duration, coverImage, docRef) => {
       });
   };
 export function convert(millis) {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return seconds === 60
-      ? minutes + 1 + ':00'
-      : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-  }
-  docRef
-    .update({
-      songs: firebase.firestore.FieldValue.arrayUnion({
-        artist: artist,
-        id: uri,
-        title: title,
-        played: false,
-        addedBy: name,
-      }),
-    })
-    .then(() => {
-      console.log('Added ' + title + ' to database!');
-    })
-    .catch((error) => {
-      console.error('Error updating document: ', error);
-    });
-};
-export function convert(millis) {
   var minutes = Math.floor(millis / 60000);
   var seconds = ((millis % 60000) / 1000).toFixed(0);
   return seconds === 60
