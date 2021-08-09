@@ -11,7 +11,7 @@ import MainQueueSongs from './MainQueueSongs';
 const TEST_HASH = '0001';
 const PLAYLIST_NAME = 'Communal Queue';
 const PLAYLIST_DESCRIPTION =
-  'This playlist is automatically created by Communal Que. Please do not delete during a que session.';
+  'This playlist is automatically created by Communal Queue. Please do not delete during a que session.';
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
@@ -22,6 +22,7 @@ const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: add state for now playing and pass in new song when needed
 // TODO: add description for app on homepage
+// TODO: add refresh token methods
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this

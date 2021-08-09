@@ -5,7 +5,7 @@ import Button from '../Button';
 import SearchBar from '../SearchBar/SearchBar';
 import ExistingQueueSongs from './ExistingQueueSongs';
 import { HASH_LENGTH } from '../MainQueue/MainQue';
-import NowPlaying from '../NowPlaying';
+import NowPlaying, { getNowPlaying } from '../NowPlaying';
 import '../styles/ZevsStyles.scss';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
@@ -20,10 +20,8 @@ localStorage.setItem('queueID', queueID);
 export { docRef };
 
 const ExistingQueue = () => {
-  const [songs, setSongs] = useState([
-    { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },
-    { id: '2', title: '', artist: '', inQueue: true },
-  ]);
+  const [songs, setSongs] = useState([ { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },{ id: '2', title: '', artist: '', inQueue: true },]);
+  const [curSong, setCurSong] = useState({id: '2', title: '', artist: '', inQueue: true, addedBy: "Spotify", duration: 0})
 
   useEffect(() => {
     getNameFromSpot();
@@ -32,6 +30,18 @@ const ExistingQueue = () => {
       refresh();
     });
   }, []);
+
+  useEffect(() => {
+    setInterval(updateNowPlaying, 5500);
+  }, [])
+  
+  async function updateNowPlaying () {
+    ;(async () => {
+      const cSong =  await getNowPlaying()
+      console.log(cSong)
+      setCurSong((curSong) => curSong = getNowPlaying());
+    })()
+  }
 
   function getNameFromSpot() {
     const token = localStorage.getItem('token');
@@ -125,7 +135,7 @@ const ExistingQueue = () => {
               </p>
               <Button text="Refresh" onClick={refresh} />
             </div>
-            <NowPlaying />
+            <NowPlaying curSong={curSong} />
             <ExistingQueueSongs songs={songs} />
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
