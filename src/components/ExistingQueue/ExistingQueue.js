@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from "axios";
+import axios from 'axios';
 import firebase from '../firesbase';
 import Button from '../Button';
 import SearchBar from '../SearchBar/SearchBar';
 import ExistingQueueSongs from './ExistingQueueSongs';
 import { HASH_LENGTH } from '../MainQueue/MainQue';
+import NowPlaying from '../NowPlaying';
 import '../styles/ZevsStyles.scss';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
@@ -32,20 +33,20 @@ const ExistingQueue = () => {
     });
   }, []);
 
-  function getNameFromSpot(){
-    const token = localStorage.getItem("token");
+  function getNameFromSpot() {
+    const token = localStorage.getItem('token');
     axios
-    .get(USER_ID_ENDPOINT, {
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-    })
-    .then((response) => {
-      localStorage.setItem("name", response.data.display_name);
-    })
-    .catch((error) => {
-      console.log(error + '\n with token \n ' + token);
-    });
+      .get(USER_ID_ENDPOINT, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      })
+      .then((response) => {
+        localStorage.setItem('name', response.data.display_name);
+      })
+      .catch((error) => {
+        console.log(error + '\n with token \n ' + token);
+      });
   }
   const refresh = () => {
     docRef
@@ -124,7 +125,8 @@ const ExistingQueue = () => {
               </p>
               <Button text="Refresh" onClick={refresh} />
             </div>
-            <ExistingQueueSongs songs={songs}/>
+            <NowPlaying />
+            <ExistingQueueSongs songs={songs} />
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
         </div>

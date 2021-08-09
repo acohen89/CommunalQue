@@ -31,7 +31,7 @@ const startQueue = () => {
 function Home() {
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
-  console.log(code);
+
   useEffect(() => {
     fetchAccessToken(code);
   }, []);
