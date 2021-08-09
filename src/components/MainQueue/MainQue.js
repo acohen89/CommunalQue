@@ -20,6 +20,7 @@ const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
+// TODO: add state for now playing and pass in new song when needed
 // TODO: Delete refresh button
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add custom image for queue playlist
@@ -35,8 +36,8 @@ function MainQue() {
   const hash = localStorage.getItem("hash");
   const token = localStorage.getItem("token");
   const [songs, setSongs] = useState([
-    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false, duration: 0 },
-    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false, duration: 0 },
+    { id: '123kf21', title: 'Piano Man', artist: 'Billy Joel', played: false, duration: 0, coverImage: null },
+    { id: '198213da', title: "She's Always A Woman", artist: 'Billy Joel', played: false, duration: 0, coverImage: null },
   ]);  
   useEffect(() => {
     hashToDB(hash);

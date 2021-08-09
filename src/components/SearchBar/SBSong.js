@@ -2,7 +2,7 @@ import React from 'react'
 import { MdAdd } from 'react-icons/md';
 import { addSong } from '../Song';
 
-const SBSong = ({uri, title, artist, duration}) => {
+const SBSong = ({uri, title, artist, duration, coverImage, docRef}) => {
     let artistKey = uri + artist;
     if (uri === 'testURi') {
       uri = 'Random uri ' + Math.floor(Math.random() * 99999);
@@ -30,8 +30,8 @@ const SBSong = ({uri, title, artist, duration}) => {
             {artist}
           </p>
         </div>
-        <p style={{ color: 'white', marginLeft: 5 }}>
-          <MdAdd onClick={addSong} />
+        <p style={{ color: 'white', marginLeft: 5, cursor: 'pointer'}}>
+          <MdAdd onClick={ () => addSong(artist, title, uri, duration, coverImage, docRef)} />
         </p>
       </div>
     )
@@ -42,6 +42,7 @@ SBSong.defaultProps = {
     artist: 'Test Artist',
     inQueue: true,
     duration: 0,
+    coverImage: null,
     played: false,
   };
 

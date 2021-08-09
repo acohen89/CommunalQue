@@ -37,10 +37,7 @@ function Home() {
   }, []);
 
   const enterPressed = (e) => {
-    if (
-      e.key === 'Enter' &&
-      document.getElementById(inputID).value.length === HASH_LENGTH
-    ) {
+    if ( e.key === 'Enter' && document.getElementById(inputID).value.length === HASH_LENGTH) {
       joinQueue();
     }
   };
@@ -56,19 +53,12 @@ function Home() {
     return paramsSplitUp;
   };
   useEffect(() => {
-    console.log(window.location.hash);
-    const { access_token, expires_in, token_type } =
-      getReturnedParamsFromSpotifyAuth(window.location.hash);
-    if (
-      access_token !== undefined &&
-      expires_in !== undefined &&
-      token_type !== undefined
-    ) {
-      localStorage.clear();
+    const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
+    if(access_token !== undefined && expires_in !== undefined && token_type !== undefined){
+      localStorage.clear(); 
       localStorage.setItem('token', access_token);
       localStorage.setItem('expiresIn', expires_in);
       localStorage.setItem('tokenType', token_type);
-      window.history.pushState({}, document.title, '/home');
     }
   }, []);
   if (urlParams.get('error')) {

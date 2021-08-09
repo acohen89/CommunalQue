@@ -62,15 +62,37 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
     );
   }
 };
-export const addSong = (artist, title, uri, docRef) => {
-  const name =
-    localStorage.getItem('name') === null ||
-    localStorage.getItem('name') === undefined
-      ? 'N/A'
-      : localStorage.getItem('name');
-  if (artist === '' || title === '' || uri === '') {
-    console.error("Can't add an empty song");
-    return;
+export const addSong = (artist, title, uri, duration, coverImage, docRef) => {
+    const name = localStorage.getItem("name") === null || localStorage.getItem("name") === undefined ? "N/A" : localStorage.getItem("name");
+    if (artist === '' || title === '' || uri === '') {
+      console.error("Can't add an empty song");
+      return;
+    }
+    docRef
+      .update({
+        songs: firebase.firestore.FieldValue.arrayUnion({
+          artist: artist,
+          id: uri,
+          title: title,
+          duration: duration,
+          played: false,
+          coverImage: coverImage,
+          addedBy: name
+        }),
+      })
+      .then(() => {
+        console.log('Added ' + title + ' to database!');
+      })
+      .catch((error) => {
+        console.error('Error updating document: ', error);
+      });
+  };
+export function convert(millis) {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return seconds === 60
+      ? minutes + 1 + ':00'
+      : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   }
   docRef
     .update({
