@@ -63,6 +63,8 @@ $clr-green: #4caf50;
 
 .darkContainer p {
   margin: 15px;
+  color: white;
+  font-family: 'Montserrat';
 }
 
 .queueTitle {
@@ -155,4 +157,12 @@ $clr-green: #4caf50;
   display: flex;
   flex-direction: column;
   border-radius: 0 0 15px 15px;
+}
+
+.controlBox {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-grow: 2;
+  padding-right: 10px;
 }
