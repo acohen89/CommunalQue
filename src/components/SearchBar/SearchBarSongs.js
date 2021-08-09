@@ -14,7 +14,7 @@ const SearchBarSongs = ({songs, docRef}) => {
           uri={processKey(song.uri)}
           title={song.title}
           artist={song.artist}
-          duration={218905}
+          duration={song.duration}
           docRef={docRef}
         />
       ))}

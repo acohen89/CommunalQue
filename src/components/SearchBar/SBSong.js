@@ -31,7 +31,7 @@ const SBSong = ({uri, title, artist, duration, docRef}) => {
           </p>
         </div>
         <p style={{ color: 'white', marginLeft: 5, cursor: 'pointer'}}>
-          <MdAdd onClick={ () => addSong(artist, title, uri, docRef)} />
+          <MdAdd onClick={ () => addSong(artist, title, uri, duration, docRef)} />
         </p>
       </div>
     )

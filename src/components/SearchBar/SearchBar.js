@@ -26,12 +26,13 @@ const SearchBar = ({docRef}) => {
           },
         })
         .then(function (response) {
+          console.log(response.data.tracks.items)
           setSongs(
             response.data.tracks.items.map((item) => ({
               uri: item.uri,
               title: item.name,
               artist: item.artists[0].name,
-              duration: item.duration,
+              duration: item.duration_ms,
             }))
           );
         })
