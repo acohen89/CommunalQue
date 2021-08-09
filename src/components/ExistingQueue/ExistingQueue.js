@@ -38,7 +38,6 @@ const ExistingQueue = () => {
   }, [])
   
   async function updateNowPlaying () {
-    console.log("Update")
     ;(async () => {
       const cSong =  await getNowPlaying()
       if(cSong.title !== curSong.title){
