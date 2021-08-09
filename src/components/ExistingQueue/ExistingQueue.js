@@ -24,6 +24,7 @@ const ExistingQueue = () => {
   const [curSong, setCurSong] = useState({id: '2', title: '', artist: '', inQueue: true, addedBy: "Spotify", duration: 0})
 
   //TODO: @ZEV fix spacing of added by place 
+  // TODO: when song is skipped, update now plaing
   updateNowPlaying();
   useEffect(() => {
     getNameFromSpot();
@@ -33,10 +34,11 @@ const ExistingQueue = () => {
   }, []);
 
   useEffect(() => {
-    setInterval(updateNowPlaying, 5500);
+    setInterval(() => updateNowPlaying(), 5500);
   }, [])
   
   async function updateNowPlaying () {
+    console.log("Update")
     ;(async () => {
       const cSong =  await getNowPlaying()
       if(cSong.title !== curSong.title){

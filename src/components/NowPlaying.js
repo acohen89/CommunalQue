@@ -18,11 +18,9 @@ const PLAY_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
 const PAUSE_ENDPOINT = 'https://api.spotify.com/v1/me/player/pause';
 export const ALERT_MESSAGE =
   'No active player found! Please open Spotify on your device. If error persists, play a random song to get it started.';
-
 //TODO: when device has been found make sure we display shuffle and repeat when play is clicked
 const NowPlaying = ({ isMaster, curSong }) => {
   const [isPaused, setPaused] = useState([true]);
-  
   const switchPlayPause = () => {
     if (isPaused) {
       play();
@@ -200,7 +198,6 @@ export function skipTrack() {
           alert('No active player found! Please open Spotify on your device.');
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
-          console.log('Skipped Song');
         }
       }
   );
