@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { handleImages } from './SearchBar/SearchBar';
 import testImage from '../assets/test album cover.jpg';
@@ -22,6 +22,7 @@ export const ALERT_MESSAGE =
 //TODO: when device has been found make sure we display shuffle and repeat when play is clicked
 const NowPlaying = ({ isMaster, curSong }) => {
   const [isPaused, setPaused] = useState([true]);
+  
   const switchPlayPause = () => {
     if (isPaused) {
       play();
@@ -31,6 +32,7 @@ const NowPlaying = ({ isMaster, curSong }) => {
       setPaused(true);
     }
   };
+   
 
   return (
     <div
@@ -65,8 +67,10 @@ const NowPlaying = ({ isMaster, curSong }) => {
         >
           Now Playing
         </p>
+         {curSong.addedBy !== undefined && curSong.addedBy !== null ?  <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
+           Added by {curSong.addedBy}
+        </p> : <p>   </p> } 
         <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
-          Added by Ploni Almoni
         </p>
       </div>
 
@@ -269,6 +273,7 @@ export async function getNowPlaying() {
         ret = {
           title: response.data.item.name,
           artist: response.data.item.artists[0].name,
+          addedBy: "Spotify",
           uri: response.data.item.uri,
           duration: response.data.item.duration_ms,
           coverImage: handleImages(response.data.item.album.images)
@@ -282,7 +287,7 @@ export async function getNowPlaying() {
       }
     })
     .catch((error) => {
-      if(error.response.status !== undefined ){
+      if(error.response){
         if(error.response.status === 401){
           refreshAccessToken();
         }

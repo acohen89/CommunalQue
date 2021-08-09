@@ -23,10 +23,11 @@ const ExistingQueue = () => {
   const [songs, setSongs] = useState([ { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },{ id: '2', title: '', artist: '', inQueue: true },]);
   const [curSong, setCurSong] = useState({id: '2', title: '', artist: '', inQueue: true, addedBy: "Spotify", duration: 0})
 
+  //TODO: @ZEV fix spacing of added by place 
+  updateNowPlaying();
   useEffect(() => {
     getNameFromSpot();
     docRef.onSnapshot((doc) => {
-      console.log('New Data!');
       refresh();
     });
   }, []);
@@ -39,9 +40,35 @@ const ExistingQueue = () => {
     ;(async () => {
       const cSong =  await getNowPlaying()
       if(cSong.title !== curSong.title){
+        if(cSong.addedBy === "Spotify" || cSong.addedBy === null || cSong.addedBy === undefined){
+          let addedBy = await getAddedByFromDB(cSong);
+          if((addedBy !== null || addedBy !== undefined) && cSong.addedBy){
+            cSong.addedBy = addedBy; 
+          }
+        }
+        // TODO: change state of play pause button to a play icon if a new song is playing 
         setCurSong((curSong) => curSong = cSong);
       }
     })()
+  }
+  async function getAddedByFromDB(curSong){
+    let ret = null;
+    await docRef.get()
+    .then((doc) => {
+      if (doc.exists) {
+        for(let i = 0; i < doc.data().songs.length; i++){
+          if(doc.data().songs[i].id === curSong.uri){
+            ret = (doc.data().songs[i].addedBy);
+          }
+        }
+      } else {
+        console.log('No such document!');
+      }
+    })
+    .catch((error) => {
+      console.log('Error getting document:', error);
+    }); 
+    return ret;
   }
 
   function getNameFromSpot() {
