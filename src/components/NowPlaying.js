@@ -23,8 +23,10 @@ const NowPlaying = ({ isMaster }) => {
 
   const switchPlayPause = () => {
     if (isPaused) {
+      play();
       setPaused(false);
     } else {
+      pause();
       setPaused(true);
     }
   };
