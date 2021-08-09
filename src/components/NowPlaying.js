@@ -8,6 +8,7 @@ const PREVIOUS_TRACK_ENDPOINT = "https://api.spotify.com/v1/me/player/previous";
 const SKIP_ENDPOINT = "https://api.spotify.com/v1/me/player/next";
 const PLAY_ENDPOINT ="https://api.spotify.com/v1/me/player/play";
 const PAUSE_ENDPOINT = "https://api.spotify.com/v1/me/player/pause";
+export const ALERT_MESSAGE = "No active player found! Please open Spotify on your device. If error persists, play a random song to get it started."
 
 //TODO: when device has been found make sure we display shuffle and repeat when play is clicked
 const NowPlaying = () => {
@@ -32,7 +33,7 @@ export function pause(){
       .then((response) => function(){
         if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert(ALERT_MESSAGE);
         } else if(response.status === 200){
           localStorage.setItem("noActiveDevice", false);
           console.log("Paused Song")
@@ -52,7 +53,7 @@ export function pause(){
       .then((response) => function(){
         if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert(ALERT_MESSAGE);
         } else if(response.status === 200){
           localStorage.setItem("noActiveDevice", false);
           console.log("Played Song")
@@ -90,7 +91,7 @@ export function skipTrack(){
       .then((response) => function(){
         if(response.status === 204){
           localStorage.setItem("noActiveDevice", true);
-          alert("No active player found! Please open Spotify on your device.");
+          alert(ALERT_MESSAGE);
         } else if(response.status === 200){
           localStorage.setItem("noActiveDevice", false);
           console.log("Went back a Song")
@@ -109,7 +110,7 @@ export function disableShuffleandRepeat(){
    .then((data) => function(){
      if(data.status === 404){
        localStorage.setItem("noActiveDevice", true);
-       alert("No active player found! Please open Spotify on your device.");
+       alert(ALERT_MESSAGE);
      } else if(data.status === 200){
        localStorage.setItem("noActiveDevice", false);
        console.log("Disabled repeat")
@@ -119,7 +120,7 @@ export function disableShuffleandRepeat(){
    .then((data) => function () {
      if(data.status === 404){
        localStorage.setItem("noActiveDevice", true);
-       alert("No active player found! Please open Spotify on your device.");
+       alert(ALERT_MESSAGE);
      } else if(data.status === 200){
        localStorage.setItem("noActiveDevice", false);
        console.log("Disabled shuffle")
@@ -142,7 +143,7 @@ export async function getNowPlaying(){
       } else if (response.status === 204) {
           if(!localStorage.getItem("noActiveDevice")){
               localStorage.setItem("noActiveDevice", true);
-              alert("No active player found! Please open Spotify on your device.");
+              alert(ALERT_MESSAGE);
           }
       }
     })

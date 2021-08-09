@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import firebase from './firesbase';
-import Button from './Button';
-import InQue from './InQue';
-import SearchBar from './SearchBar';
-import { HASH_LENGTH } from './MainQue';
-import './styles/ZevsStyles.scss';
+import axios from "axios";
+import firebase from '../firesbase';
+import Button from '../Button';
+import SearchBar from '../SearchBar/SearchBar';
+import ExistingQueueSongs from './ExistingQueueSongs';
+import { HASH_LENGTH } from '../MainQueue/MainQue';
+import '../styles/ZevsStyles.scss';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
+const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 
 let docRef;
 urlParams.get('queueID')
@@ -23,12 +25,28 @@ const ExistingQueue = () => {
   ]);
 
   useEffect(() => {
+    getNameFromSpot();
     docRef.onSnapshot((doc) => {
       console.log('New Data!');
       refresh();
     });
   }, []);
 
+  function getNameFromSpot(){
+    const token = localStorage.getItem("token");
+    axios
+    .get(USER_ID_ENDPOINT, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    .then((response) => {
+      localStorage.setItem("name", response.data.display_name);
+    })
+    .catch((error) => {
+      console.log(error + '\n with token \n ' + token);
+    });
+  }
   const refresh = () => {
     docRef
       .get()
@@ -106,7 +124,7 @@ const ExistingQueue = () => {
               </p>
               <Button text="Refresh" onClick={refresh} />
             </div>
-            <InQue songs={songs} inQueue={true} />
+            <ExistingQueueSongs songs={songs}/>
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
         </div>
