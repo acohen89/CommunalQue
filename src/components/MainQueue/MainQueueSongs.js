@@ -21,6 +21,7 @@ const MainQueueSongs = ({ songs}) => {
           uri={processKey(song.uri)}
           title={song.title}
           artist={song.artist}
+          coverImage={song.coverImage}
           played={song.played}
           duration={song.duration}
           addedBy={song.addedBy}

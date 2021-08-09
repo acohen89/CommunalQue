@@ -1,7 +1,7 @@
 import React from 'react'
 import { removeSong, convert } from "../Song";
 
-const MQSong = ({uri, title, artist, played, duration, addedBy}) => {
+const MQSong = ({uri, title, artist, played, duration, coverImage, addedBy}) => {
     let artistKey = uri + artist;
     if (uri === 'testURi') {
       uri = 'Random uri ' + Math.floor(Math.random() * 99999);

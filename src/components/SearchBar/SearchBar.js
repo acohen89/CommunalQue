@@ -26,21 +26,21 @@ const SearchBar = ({docRef}) => {
           },
         })
         .then(function (response) {
-          console.log(response.data.tracks.items)
           setSongs(
             response.data.tracks.items.map((item) => ({
               uri: item.uri,
               title: item.name,
               artist: item.artists[0].name,
               duration: item.duration_ms,
+              coverImage: handleImages(item.album.images)
             }))
           );
         })
         .catch(function (error) {
+          console.log(error);
           if(error.response.status === 401){
             refreshAccessToken();
           }
-          console.log(error.response.status);
         });
     }
   }, [search, token]);
@@ -65,4 +65,15 @@ const SearchBar = ({docRef}) => {
     </div>
   );
 };
+function handleImages(imgArr){
+  let imgUrl = null;
+  let curSmLength = 999999999999999999999999999999;
+  for(let i = 0; i < imgArr.length; i++){
+    if(imgArr[i].height < curSmLength){
+      curSmLength = imgArr[i].height;
+      imgUrl = imgArr[i].url;
+    }
+  }
+  return imgUrl;
+}
 export default SearchBar;

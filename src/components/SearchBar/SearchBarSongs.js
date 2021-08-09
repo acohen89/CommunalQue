@@ -15,6 +15,7 @@ const SearchBarSongs = ({songs, docRef}) => {
           title={song.title}
           artist={song.artist}
           duration={song.duration}
+          coverImage={song.coverImage}
           docRef={docRef}
         />
       ))}

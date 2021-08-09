@@ -34,7 +34,7 @@ function Home() {
   useEffect(() => {
     fetchAccessToken(code);
   }, [])
-  window.history.pushState({}, document.title, "/Home");
+
   
   const enterPressed = e => {
     if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
@@ -53,7 +53,6 @@ function Home() {
     return paramsSplitUp;
   };
   useEffect(() => {
-    console.log(window.location.hash)
     const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
     if(access_token !== undefined && expires_in !== undefined && token_type !== undefined){
       localStorage.clear();
