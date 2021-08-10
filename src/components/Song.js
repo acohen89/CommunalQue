@@ -38,8 +38,11 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
             {artist}
           </p>
         </div>
-        <p style={{ color: 'white', marginLeft: 5 }}>
-          <MdAdd onClick={addSong} />
+        <p
+          onClick={addSong}
+          style={{ color: 'white', marginLeft: 5, cursor: 'pointer' }}
+        >
+          <MdAdd />
         </p>
       </div>
     );
@@ -59,7 +62,7 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
     );
   }
 };
-export const addSong = (artist, title, uri, docRef) => {
+export const addSong = (artist, title, uri, duration, coverImage, docRef) => {
     const name = localStorage.getItem("name") === null || localStorage.getItem("name") === undefined ? "N/A" : localStorage.getItem("name");
     if (artist === '' || title === '' || uri === '') {
       console.error("Can't add an empty song");
@@ -71,7 +74,9 @@ export const addSong = (artist, title, uri, docRef) => {
           artist: artist,
           id: uri,
           title: title,
+          duration: duration,
           played: false,
+          coverImage: coverImage,
           addedBy: name
         }),
       })
@@ -83,52 +88,55 @@ export const addSong = (artist, title, uri, docRef) => {
       });
   };
 export function convert(millis) {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return seconds === 60
-      ? minutes + 1 + ':00'
-      : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  return seconds === 60
+    ? minutes + 1 + ':00'
+    : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+}
+export async function removeSong(uri, docRef) {
+  const playlistID = localStorage.getItem('playlistID');
+  const token = localStorage.getItem('token');
+  if (playlistID === null || playlistID === undefined) {
+    console.error('Playist id = ' + playlistID);
+    return;
   }
-export async function removeSong(uri, docRef){
-    const playlistID = localStorage.getItem("playlistID");
-    const token = localStorage.getItem("token");
-    if(playlistID === null || playlistID === undefined){
-        console.error("Playist id = " + playlistID);
-        return; 
+  if (uri.substring(0, 7) !== 'spotify') {
+    console.error('Invalid uri of ' + uri);
+    return;
+  }
+  if (token === null || token === undefined) {
+    console.error('Invalid token of ' + token);
+    return;
+  }
+  const RM_PLAYLIST_ENDPOINT =
+    'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
+  const requestOptions = {
+    method: 'DELETE',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ uris: [uri] }),
+  };
+  fetch(RM_PLAYLIST_ENDPOINT, requestOptions).then(
+    (response) =>
+      function () {
+        console.log(response);
+      }
+  );
+  const dbSongs = await getSongsFromDB();
+  let newSongs = [];
+  for (let i = 0; i < dbSongs.length; i++) {
+    if (dbSongs[i].id !== uri) {
+      newSongs.push(dbSongs[i]);
+    } else {
+      console.log('Deleted song:  ' + dbSongs[i].title + ' from db');
     }
-    if(uri.substring(0, 7) !== "spotify"){
-        console.error("Invalid uri of " + uri);
-        return; 
-    }
-    if(token === null || token === undefined){
-        console.error("Invalid token of " + token);
-        return; 
-    }
-    const RM_PLAYLIST_ENDPOINT = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks";
-    const requestOptions = {
-        method: 'DELETE',
-        headers: {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ uris: [uri]}),
-        };
-    fetch(RM_PLAYLIST_ENDPOINT, requestOptions)
-    .then((response) => function () {
-        console.log(response)
-    })
-    const dbSongs = await getSongsFromDB();
-    let newSongs = [];
-    for(let i = 0; i < dbSongs.length; i++){
-        if(dbSongs[i].id !== uri){
-            newSongs.push(dbSongs[i]);
-        } else {
-        console.log("Deleted song:  " + dbSongs[i].title + " from db");
-        }
-    }
-    docRef.update({
-        songs: newSongs
-    });
+  }
+  docRef.update({
+    songs: newSongs,
+  });
 }
 Song.defaultProps = {
   uri: 'testURi',

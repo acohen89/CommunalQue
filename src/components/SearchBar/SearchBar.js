@@ -5,7 +5,7 @@ import '../styles/ZevsStyles.scss';
 import { refreshAccessToken } from '../Home';
 const SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
 
-const SearchBar = () => {
+const SearchBar = ({docRef}) => {
   const [search, setSearch] = useState('');
   const token = localStorage.getItem('token');
   const [songs, setSongs] = useState([]);
@@ -31,15 +31,16 @@ const SearchBar = () => {
               uri: item.uri,
               title: item.name,
               artist: item.artists[0].name,
-              duration: item.duration,
+              duration: item.duration_ms,
+              coverImage: handleImages(item.album.images)
             }))
           );
         })
         .catch(function (error) {
+          console.log(error);
           if(error.response.status === 401){
             refreshAccessToken();
           }
-          console.log(error);
         });
     }
   }, [search, token]);
@@ -56,12 +57,23 @@ const SearchBar = () => {
         onFocus={onFocus}
         onBlur={onBlur}
       />
-      {search !== '' && searchBarFocus === true ? (
+      {search !== '' ? (
         <div className="searchSuggestions">
-          <SearchBarSongs songs={songs} />
+          <SearchBarSongs songs={songs} docRef={docRef} />
         </div>
       ) : null}
     </div>
   );
 };
+export function handleImages(imgArr){
+  let imgUrl = null;
+  let curSmLength = 999999999999999999999999999999;
+  for(let i = 0; i < imgArr.length; i++){
+    if(imgArr[i].height < curSmLength){
+      curSmLength = imgArr[i].height;
+      imgUrl = imgArr[i].url;
+    }
+  }
+  return imgUrl;
+}
 export default SearchBar;

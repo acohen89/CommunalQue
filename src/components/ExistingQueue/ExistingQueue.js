@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from "axios";
+import axios from 'axios';
 import firebase from '../firesbase';
 import Button from '../Button';
 import SearchBar from '../SearchBar/SearchBar';
 import ExistingQueueSongs from './ExistingQueueSongs';
 import { HASH_LENGTH } from '../MainQueue/MainQue';
+import NowPlaying, { getNowPlaying } from '../NowPlaying';
 import '../styles/ZevsStyles.scss';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
@@ -19,33 +20,72 @@ localStorage.setItem('queueID', queueID);
 export { docRef };
 
 const ExistingQueue = () => {
-  const [songs, setSongs] = useState([
-    { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },
-    { id: '2', title: '', artist: '', inQueue: true },
-  ]);
+  const [songs, setSongs] = useState([ { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },{ id: '2', title: '', artist: '', inQueue: true },]);
+  const [curSong, setCurSong] = useState({id: '2', title: '', artist: '', inQueue: true, addedBy: "Spotify", duration: 0})
 
+  //TODO: @ZEV fix spacing of added by place 
+  // TODO: when song is skipped, update now plaing
+  updateNowPlaying();
   useEffect(() => {
     getNameFromSpot();
     docRef.onSnapshot((doc) => {
-      console.log('New Data!');
       refresh();
     });
   }, []);
 
-  function getNameFromSpot(){
-    const token = localStorage.getItem("token");
-    axios
-    .get(USER_ID_ENDPOINT, {
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-    })
-    .then((response) => {
-      localStorage.setItem("name", response.data.display_name);
+  useEffect(() => {
+    setInterval(() => updateNowPlaying(), 5500);
+  }, [])
+  
+  async function updateNowPlaying () {
+    ;(async () => {
+      const cSong =  await getNowPlaying()
+      if(cSong.title !== curSong.title){
+        if(cSong.addedBy === "Spotify" || cSong.addedBy === null || cSong.addedBy === undefined){
+          let addedBy = await getAddedByFromDB(cSong);
+          if((addedBy !== null || addedBy !== undefined) && cSong.addedBy){
+            cSong.addedBy = addedBy; 
+          }
+        }
+        // TODO: change state of play pause button to a play icon if a new song is playing 
+        setCurSong((curSong) => curSong = cSong);
+      }
+    })()
+  }
+  async function getAddedByFromDB(curSong){
+    let ret = null;
+    await docRef.get()
+    .then((doc) => {
+      if (doc.exists) {
+        for(let i = 0; i < doc.data().songs.length; i++){
+          if(doc.data().songs[i].id === curSong.uri){
+            ret = (doc.data().songs[i].addedBy);
+          }
+        }
+      } else {
+        console.log('No such document!');
+      }
     })
     .catch((error) => {
-      console.log(error + '\n with token \n ' + token);
-    });
+      console.log('Error getting document:', error);
+    }); 
+    return ret;
+  }
+
+  function getNameFromSpot() {
+    const token = localStorage.getItem('token');
+    axios
+      .get(USER_ID_ENDPOINT, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      })
+      .then((response) => {
+        localStorage.setItem('name', response.data.display_name);
+      })
+      .catch((error) => {
+        console.log(error + '\n with token \n ' + token);
+      });
   }
   const refresh = () => {
     docRef
@@ -81,7 +121,7 @@ const ExistingQueue = () => {
     return (
       <div className="bg">
         <div style={{ position: 'absolute', margin: 30, top: 0, right: 0 }}>
-          <SearchBar />
+          <SearchBar docRef={docRef} />
         </div>
         <div
           style={{
@@ -123,7 +163,8 @@ const ExistingQueue = () => {
                 Songs in queue
               </p>
             </div>
-            <ExistingQueueSongs songs={songs}/>
+            <NowPlaying curSong={curSong} />
+            <ExistingQueueSongs songs={songs} />
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
         </div>
