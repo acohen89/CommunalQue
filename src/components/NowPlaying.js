@@ -65,7 +65,7 @@ const NowPlaying = ({ isMaster, curSong }) => {
         >
           Now Playing
         </p>
-         {curSong.addedBy !== undefined && curSong.addedBy !== null ?  <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
+         {curSong !== undefined && curSong !== null ?  <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
            Added by {curSong.addedBy}
         </p> : <p>   </p> } 
         <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
@@ -74,7 +74,7 @@ const NowPlaying = ({ isMaster, curSong }) => {
 
       <div style={{ height: 75, width: '100%', display: 'flex' }}>
         <img
-          src={curSong.coverImage}
+          src={curSong !== undefined ? curSong.coverImage : 'https://icon-library.com/images/60x60-icon/60x60-icon-9.jpg' }
           style={{
             height: '100%',
             borderRadius: 10,
@@ -99,10 +99,10 @@ const NowPlaying = ({ isMaster, curSong }) => {
               textAlign: 'left',
             }}
           >
-            {curSong.title}
+            {curSong !== undefined ? curSong.title : ""}
           </p>
           <p style={{ margin: 0, color: '#c2c2c2', textAlign: 'left' }}>
-            {curSong.artist}
+            {curSong !== undefined ? curSong.artist : ""}
           </p>
         </div>
         {true ? (

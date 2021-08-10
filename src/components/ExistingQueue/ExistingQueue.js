@@ -42,6 +42,7 @@ const ExistingQueue = () => {
       const cSong =  await getNowPlaying()
       if(cSong.title !== curSong.title){
         if(cSong.addedBy === "Spotify" || cSong.addedBy === null || cSong.addedBy === undefined){
+          console.log(curSong.title)
           let addedBy = await getAddedByFromDB(cSong);
           if((addedBy !== null || addedBy !== undefined) && cSong.addedBy){
             cSong.addedBy = addedBy; 
