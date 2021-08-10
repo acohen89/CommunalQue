@@ -80,7 +80,11 @@ function MainQue() {
         };
       fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then((response) => function () {
-        if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
+        if(response.status !== undefined){
+          if(response.status === 401){
+            refreshAccessToken();
+          }
+        } else if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
           localStorage.setItem("noActiveDevice", true);
           alert(ALERT_MESSAGE)
         } else {
@@ -135,9 +139,14 @@ function MainQue() {
       })
     }
     fetch(RM_ENDPOINT, requestOptions)
-    .then()
-      .then((data) => console.log("Removed " + song.title + " from playlist"))
-      
+    .then((data) => {
+      if(data.status !== undefined){
+        if(data.status === 401){
+          refreshAccessToken();
+        }
+        console.log("Removed " + song.title + " from playlist")
+      }    
+    });
   }
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
@@ -167,6 +176,11 @@ function MainQue() {
       addUniqueSongs(playlistID, songsObj, response.data.tracks.items);
     })
     .catch((error) => {
+      if(error.response.status !== undefined){
+        if(error.response.status === 401){
+          refreshAccessToken();
+        }
+      }
       console.log(error + " with getting songs in playlist");
     });
   } 
@@ -186,8 +200,14 @@ function MainQue() {
           body: JSON.stringify({ uris: uriArray }),
         };
         await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
-        .then((response) => response.json())
-        .then((data) => console.log("Added songs: " + printArr(titleArray) + "to playlist"));
+        .then((data) => {
+          if(data.status !== undefined){
+            if(data.status === 401){
+              refreshAccessToken();
+            }
+          }
+          console.log("Added songs: " + printArr(titleArray) + "to playlist")
+        });
       }
     }
     async function getUserID(token) {
@@ -201,6 +221,11 @@ function MainQue() {
         SetUpQueuePlaylist(response.data.id, token);
       })
       .catch((error) => {
+        if(error.response.status !== undefined){
+          if(error.response.status === 401){
+            refreshAccessToken();
+          }
+        }
         console.log(error + '\n with token \n ' + token);
       });
     }
@@ -230,6 +255,11 @@ function MainQue() {
         }
       })
       .catch((error) => {
+        if(error.response.status !== undefined){
+          if(error.response.status === 401){
+            refreshAccessToken();
+          }
+        }
         console.log(error);
       });
     }
@@ -249,8 +279,14 @@ function MainQue() {
       }),
     };
     fetch(PLAYLIST_ENDPOINT, requestOptions)
-    .then((response) => response.json())
-    .then((data) => idToFirebase(data.id, true));
+    .then((data) => {
+      if(data.status !== undefined){
+        if(data.status === 401){
+          refreshAccessToken();
+        }
+      }
+      idToFirebase(data.id, true)
+    });
   }
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
