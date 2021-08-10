@@ -1,11 +1,11 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SearchBarSongs from './SearchBarSongs';
 import '../styles/ZevsStyles.scss';
 import { refreshAccessToken } from '../Home';
 const SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
 
-const SearchBar = ({docRef}) => {
+const SearchBar = ({ docRef }) => {
   const [search, setSearch] = useState('');
   const token = localStorage.getItem('token');
   const [songs, setSongs] = useState([]);
@@ -13,9 +13,37 @@ const SearchBar = ({docRef}) => {
   const onFocus = () => setFocus(true);
   const onBlur = () => setFocus(false);
   const searchID = 'searchBar';
-  function updateSearch() {
-      setSearch((search) => (search = document.getElementById(searchID).value));
+
+  /**
+   * Hook that alerts clicks outside of the passed ref
+   */
+  function useOutsideAlerter(ref) {
+    useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          onBlur();
+        }
+      }
+
+      // Bind the event listener
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [ref]);
   }
+
+  const wrapperRef = useRef(null);
+  useOutsideAlerter(wrapperRef);
+
+  function updateSearch() {
+    setSearch((search) => (search = document.getElementById(searchID).value));
+  }
+
   useEffect(() => {
     if (search !== '') {
       const url = SEARCH_ENDPOINT + '?q=' + search + '&type=track&limit=14';
@@ -32,20 +60,24 @@ const SearchBar = ({docRef}) => {
               title: item.name,
               artist: item.artists[0].name,
               duration: item.duration_ms,
-              coverImage: handleImages(item.album.images)
+              coverImage: handleImages(item.album.images),
             }))
           );
         })
         .catch(function (error) {
           console.log(error);
-          if(error.response.status === 401){
+          if (error.response.status === 401) {
             refreshAccessToken();
           }
         });
     }
   }, [search, token]);
   return (
-    <div className="searchBarContainer" style={{ width: 350, height: 50 }}>
+    <div
+      className="searchBarContainer"
+      ref={wrapperRef}
+      style={{ width: 350, height: 50 }}
+    >
       <input
         className="searchBar"
         autoComplete="off"
@@ -55,9 +87,8 @@ const SearchBar = ({docRef}) => {
         placeholder="Search for a song"
         onChange={updateSearch}
         onFocus={onFocus}
-        onBlur={onBlur}
       />
-      {search !== '' ? (
+      {search !== '' && searchBarFocus ? (
         <div className="searchSuggestions">
           <SearchBarSongs songs={songs} docRef={docRef} />
         </div>
@@ -68,8 +99,8 @@ const SearchBar = ({docRef}) => {
 export function handleImages(imgArr){
   let imgUrl = null;
   let curSmLength = 999999999999999999999999999999;
-  for(let i = 0; i < imgArr.length; i++){
-    if(imgArr[i].height < curSmLength){
+  for (let i = 0; i < imgArr.length; i++) {
+    if (imgArr[i].height < curSmLength) {
       curSmLength = imgArr[i].height;
       imgUrl = imgArr[i].url;
     }

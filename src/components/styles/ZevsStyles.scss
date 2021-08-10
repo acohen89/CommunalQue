@@ -10,6 +10,11 @@ $clr-green: #4caf50;
   padding: 0;
 }
 
+p {
+  color: white;
+  font: 'Montserrat';
+}
+
 .button {
   background-color: $clr-green; /* Green */
   border: none;
@@ -45,8 +50,9 @@ $clr-green: #4caf50;
     rgba(33, 33, 33, 1) 0%,
     rgba(18, 18, 18, 1) 50%
   );
-  height: 100%;
+  min-height: 100%;
   width: 100%;
+  padding-bottom: 200px;
   position: absolute;
 }
 
@@ -165,4 +171,10 @@ $clr-green: #4caf50;
   align-items: center;
   flex-grow: 2;
   padding-right: 10px;
+}
+
+.controlButton {
+  color: white;
+  cursor: pointer;
+  margin: 10;
 }

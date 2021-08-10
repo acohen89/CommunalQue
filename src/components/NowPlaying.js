@@ -108,25 +108,29 @@ const NowPlaying = ({ isMaster, curSong }) => {
         {true ? (
           <div className="controlBox">
             <BsFillSkipStartFill
-              style={{ color: 'white', cursor: 'pointer' }}
+              style={{ margin: 10 }}
+              className="controlButton"
               size={30}
               onClick={() => previousTrack()}
             />
             {isPaused ? (
               <AiFillPlayCircle
-                style={{ color: 'white', cursor: 'pointer' }}
-                size={35}
+                style={{ margin: 10 }}
+                className="controlButton"
+                size={40}
                 onClick={switchPlayPause}
               />
             ) : (
               <AiFillPauseCircle
-                style={{ color: 'white', cursor: 'pointer' }}
-                size={35}
+                style={{ margin: 10 }}
+                className="controlButton"
+                size={40}
                 onClick={switchPlayPause}
               />
             )}
             <BsFillSkipEndFill
-              style={{ color: 'white', cursor: 'pointer' }}
+              style={{ margin: 10 }}
+              className="controlButton"
               size={30}
               onClick={() => skipTrack()}
             />
