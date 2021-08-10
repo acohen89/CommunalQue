@@ -21,6 +21,7 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: add state for now playing and pass in new song when needed
+// TODO: play first song that is not set to true/
 // TODO: add description for app on homepage
 // TODO: add refresh token methods
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
@@ -64,44 +65,67 @@ function MainQue() {
     setInterval(changeCurrentSongToPlayed, 4500);
   }, [])) 
 
-
-  function playPlaylist(){
-      const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
-      const requestOptions = {
-        method: 'PUT',
-        headers: {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(
-          { "context_uri": playlistURI,
-          "offset": {
-            "position": 0
-          },
-          "position_ms": 0 }),
-        };
-      fetch(PLAYBACK_ENDPOINT, requestOptions)
-      .then((response) => function () {
-        if(response.status !== undefined){
-          if(response.status === 401){
-            refreshAccessToken();
+  async function getFirstNotPlayedSong(){
+    let startIndex = 0; 
+   await docRef
+    .get()
+    .then((doc) => {
+        if(doc.data().songs !== undefined){
+          for(let i = 0; doc.data().songs.length; i++){
+            if(doc.data().songs[i].played){
+              startIndex++;
+            } else {
+              break;
+            }
           }
-        } else if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
-          localStorage.setItem("noActiveDevice", true);
-          alert(ALERT_MESSAGE)
-        } else {
-          localStorage.setItem("noActiveDevice", false)
         }
-        
       })
-      .then(function (){
-        if(!localStorage.getItem("noActiveDevice")){
-          disableShuffleandRepeat()
-        } else {
-          localStorage.setItem("noActiveDevice", true);
-          alert(ALERT_MESSAGE);
-        }
-      }).then(changeCurrentSongToPlayed())
+      .catch((error) => {
+      console.log('Error getting document:', error);
+    });
+    return startIndex;
+  }
+  async function playPlaylist(){
+      const playlistURI = "spotify:playlist:" + localStorage.getItem("playlistID");
+      let playIndex = 0;
+      ;(async () => {
+        playIndex = await getFirstNotPlayedSong();
+        const requestOptions = {
+          method: 'PUT',
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+            { "context_uri": playlistURI,
+            "offset": {
+              "position": playIndex
+            },
+            "position_ms": 0 }),
+          };
+        fetch(PLAYBACK_ENDPOINT, requestOptions)
+        .then((response) => function () {
+          if(response.status !== undefined){
+            if(response.status === 401){
+              refreshAccessToken();
+            }
+          } else if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
+            localStorage.setItem("noActiveDevice", true);
+            alert(ALERT_MESSAGE)
+          } else {
+            localStorage.setItem("noActiveDevice", false)
+          }
+          
+        })
+        .then(function (){
+          if(!localStorage.getItem("noActiveDevice")){
+            disableShuffleandRepeat()
+          } else {
+            localStorage.setItem("noActiveDevice", true);
+            alert(ALERT_MESSAGE);
+          }
+        }).then(changeCurrentSongToPlayed())
+      })()
   }
   async function changeCurrentSongToPlayed(){
       ;(async () => {
