@@ -41,8 +41,8 @@ const ExistingQueue = () => {
     ;(async () => {
       const cSong =  await getNowPlaying()
       if(cSong.title !== curSong.title){
+        // change pause button state to being playing 
         if(cSong.addedBy === "Spotify" || cSong.addedBy === null || cSong.addedBy === undefined){
-          console.log(curSong.title)
           let addedBy = await getAddedByFromDB(cSong);
           if((addedBy !== null || addedBy !== undefined) && cSong.addedBy){
             cSong.addedBy = addedBy; 
@@ -164,7 +164,7 @@ const ExistingQueue = () => {
                 Songs in queue
               </p>
             </div>
-            <NowPlaying />
+            <NowPlaying curSong={curSong}/>
             <ExistingQueueSongs songs={songs} docRef={docRef} />
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
