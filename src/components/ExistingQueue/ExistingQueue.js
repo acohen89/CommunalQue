@@ -126,7 +126,7 @@ const ExistingQueue = () => {
               <Button text="Refresh" onClick={refresh} />
             </div>
             <NowPlaying />
-            <ExistingQueueSongs songs={songs} />
+            <ExistingQueueSongs songs={songs} docRef={docRef} />
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
         </div>

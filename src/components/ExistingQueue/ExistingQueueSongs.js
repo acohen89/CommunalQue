@@ -1,16 +1,14 @@
 import React from 'react';
-import EQSong from "./EQSong";
+import EQSong from './EQSong';
 
-
-
-const ExistingQueueSongs = ({songs}) => {
-    function processKey(id) {
-        return id === 'testURi' || id === undefined || id === ''
-          ? 'Random URI' + Math.floor(Math.random() * 999999999)
-          : id;
-      }
-    return (
-        <>
+const ExistingQueueSongs = ({ songs, docRef }) => {
+  function processKey(id) {
+    return id === 'testURi' || id === undefined || id === ''
+      ? 'Random URI' + Math.floor(Math.random() * 999999999)
+      : id;
+  }
+  return (
+    <>
       {songs.map((song) => (
         <EQSong
           uri={processKey(song.uri)}
@@ -19,10 +17,11 @@ const ExistingQueueSongs = ({songs}) => {
           played={song.played}
           duration={song.duration}
           addedBy={song.addedBy}
+          docRef={docRef}
         />
       ))}
     </>
-    )
-}
+  );
+};
 
-export default ExistingQueueSongs
+export default ExistingQueueSongs;
