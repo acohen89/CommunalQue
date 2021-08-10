@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { handleImages } from './SearchBar/SearchBar';
 import testImage from '../assets/test album cover.jpg';
 import { BsFillSkipEndFill, BsFillSkipStartFill } from 'react-icons/bs';
 import { AiFillPlayCircle, AiFillPauseCircle } from 'react-icons/ai';
+import { refreshAccessToken } from './Home';
 const token = localStorage.getItem('token');
 const CURRENTLY_PLAYING_ENDPOINT =
   'https://api.spotify.com/v1/me/player/currently-playing?market=US';
@@ -16,18 +18,19 @@ const PLAY_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
 const PAUSE_ENDPOINT = 'https://api.spotify.com/v1/me/player/pause';
 export const ALERT_MESSAGE =
   'No active player found! Please open Spotify on your device. If error persists, play a random song to get it started.';
-
 //TODO: when device has been found make sure we display shuffle and repeat when play is clicked
-const NowPlaying = ({ isMaster }) => {
+const NowPlaying = ({ isMaster, curSong }) => {
   const [isPaused, setPaused] = useState([true]);
-
   const switchPlayPause = () => {
     if (isPaused) {
+      play();
       setPaused(false);
     } else {
+      pause();
       setPaused(true);
     }
   };
+   
 
   return (
     <div
@@ -62,14 +65,16 @@ const NowPlaying = ({ isMaster }) => {
         >
           Now Playing
         </p>
+         {curSong.addedBy !== undefined && curSong.addedBy !== null ?  <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
+           Added by {curSong.addedBy}
+        </p> : <p>   </p> } 
         <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
-          Added by Ploni Almoni
         </p>
       </div>
 
       <div style={{ height: 75, width: '100%', display: 'flex' }}>
         <img
-          src={testImage}
+          src={curSong.coverImage}
           style={{
             height: '100%',
             borderRadius: 10,
@@ -94,10 +99,10 @@ const NowPlaying = ({ isMaster }) => {
               textAlign: 'left',
             }}
           >
-            Default Title
+            {curSong.title}
           </p>
           <p style={{ margin: 0, color: '#c2c2c2', textAlign: 'left' }}>
-            Default Artist
+            {curSong.artist}
           </p>
         </div>
         {true ? (
@@ -197,7 +202,6 @@ export function skipTrack() {
           alert('No active player found! Please open Spotify on your device.');
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
-          console.log('Skipped Song');
         }
       }
   );
@@ -270,7 +274,11 @@ export async function getNowPlaying() {
         ret = {
           title: response.data.item.name,
           artist: response.data.item.artists[0].name,
+          addedBy: "Spotify",
           uri: response.data.item.uri,
+          duration: response.data.item.duration_ms,
+          coverImage: handleImages(response.data.item.album.images)
+
         };
       } else if (response.status === 204) {
         if (!localStorage.getItem('noActiveDevice')) {
@@ -280,6 +288,11 @@ export async function getNowPlaying() {
       }
     })
     .catch((error) => {
+      if(error.response){
+        if(error.response.status === 401){
+          refreshAccessToken();
+        }
+      }
       console.log(error + ' with getting songs in playlist');
     });
   return ret;

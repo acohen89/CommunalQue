@@ -11,7 +11,7 @@ import MainQueueSongs from './MainQueueSongs';
 const TEST_HASH = '0001';
 const PLAYLIST_NAME = 'Communal Queue';
 const PLAYLIST_DESCRIPTION =
-  'This playlist is automatically created by Communal Que. Please do not delete during a que session.';
+  'This playlist is automatically created by Communal Queue. Please do not delete during a que session.';
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
@@ -21,7 +21,8 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = "https://api.spotify.com/v1/me/player/play";
 
 // TODO: add state for now playing and pass in new song when needed
-// TODO: Delete refresh button
+// TODO: add description for app on homepage
+// TODO: add refresh token methods
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
 // TODO: add custom image for queue playlist
 // TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
@@ -81,7 +82,11 @@ function MainQue() {
         };
       fetch(PLAYBACK_ENDPOINT, requestOptions)
       .then((response) => function () {
-        if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
+        if(response.status !== undefined){
+          if(response.status === 401){
+            refreshAccessToken();
+          }
+        } else if(response.status === 404 && !localStorage.getItem("noActiveDevice")){
           localStorage.setItem("noActiveDevice", true);
           alert(ALERT_MESSAGE)
         } else {
@@ -136,9 +141,14 @@ function MainQue() {
       })
     }
     fetch(RM_ENDPOINT, requestOptions)
-    .then()
-      .then((data) => console.log("Removed " + song.title + " from playlist"))
-      
+    .then((data) => {
+      if(data.status !== undefined){
+        if(data.status === 401){
+          refreshAccessToken();
+        }
+        console.log("Removed " + song.title + " from playlist")
+      }    
+    });
   }
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
@@ -168,6 +178,11 @@ function MainQue() {
       addUniqueSongs(playlistID, songsObj, response.data.tracks.items);
     })
     .catch((error) => {
+      if(error.response.status !== undefined){
+        if(error.response.status === 401){
+          refreshAccessToken();
+        }
+      }
       console.log(error + " with getting songs in playlist");
     });
   } 
@@ -187,8 +202,14 @@ function MainQue() {
           body: JSON.stringify({ uris: uriArray }),
         };
         await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions)
-        .then((response) => response.json())
-        .then((data) => console.log("Added songs: " + printArr(titleArray) + "to playlist"));
+        .then((data) => {
+          if(data.status !== undefined){
+            if(data.status === 401){
+              refreshAccessToken();
+            }
+          }
+          console.log("Added songs: " + printArr(titleArray) + "to playlist")
+        });
       }
     }
     async function getUserID(token) {
@@ -202,6 +223,11 @@ function MainQue() {
         SetUpQueuePlaylist(response.data.id, token);
       })
       .catch((error) => {
+        if(error.response.status !== undefined){
+          if(error.response.status === 401){
+            refreshAccessToken();
+          }
+        }
         console.log(error + '\n with token \n ' + token);
       });
     }
@@ -231,6 +257,11 @@ function MainQue() {
         }
       })
       .catch((error) => {
+        if(error.response.status !== undefined){
+          if(error.response.status === 401){
+            refreshAccessToken();
+          }
+        }
         console.log(error);
       });
     }
@@ -250,8 +281,14 @@ function MainQue() {
       }),
     };
     fetch(PLAYLIST_ENDPOINT, requestOptions)
-    .then((response) => response.json())
-    .then((data) => idToFirebase(data.id, true));
+    .then((data) => {
+      if(data.status !== undefined){
+        if(data.status === 401){
+          refreshAccessToken();
+        }
+      }
+      idToFirebase(data.id, true)
+    });
   }
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
@@ -332,8 +369,7 @@ function MainQue() {
         >
           <p className="queueTitle" style={{ fontSize: 30, color: 'gray' }}>
             Songs
-          </p>
-          <Button text="Refresh" onClick={refresh} />
+          </p>  
         </div>
         <MainQueueSongs songs={songs}/>
       </div>
