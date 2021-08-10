@@ -1,7 +1,7 @@
 import React from 'react';
 import MQSong from './MQSong';
 
-const MainQueueSongs = ({ songs}) => {
+const MainQueueSongs = ({ songs, docRef }) => {
   function processKey(id) {
     return id === 'testURi' || id === undefined || id === ''
       ? 'Random URI' + Math.floor(Math.random() * 999999999)
@@ -15,19 +15,20 @@ const MainQueueSongs = ({ songs}) => {
         alignItems: 'flex-start',
       }}
     >
-          <>
-      {songs.map((song) => (
-        <MQSong
-          uri={processKey(song.uri)}
-          title={song.title}
-          artist={song.artist}
-          coverImage={song.coverImage}
-          played={song.played}
-          duration={song.duration}
-          addedBy={song.addedBy}
-        />
-      ))}
-    </>
+      <>
+        {songs.map((song) => (
+          <MQSong
+            uri={processKey(song.uri)}
+            title={song.title}
+            artist={song.artist}
+            coverImage={song.coverImage}
+            played={song.played}
+            duration={song.duration}
+            addedBy={song.addedBy}
+            docRef={docRef}
+          />
+        ))}
+      </>
     </div>
   );
 };

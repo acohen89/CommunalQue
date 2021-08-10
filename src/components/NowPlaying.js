@@ -18,9 +18,11 @@ const PLAY_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
 const PAUSE_ENDPOINT = 'https://api.spotify.com/v1/me/player/pause';
 export const ALERT_MESSAGE =
   'No active player found! Please open Spotify on your device. If error persists, play a random song to get it started.';
+
 //TODO: when device has been found make sure we display shuffle and repeat when play is clicked
 const NowPlaying = ({ isMaster, curSong }) => {
   const [isPaused, setPaused] = useState([true]);
+
   const switchPlayPause = () => {
     if (isPaused) {
       play();
@@ -30,7 +32,6 @@ const NowPlaying = ({ isMaster, curSong }) => {
       setPaused(true);
     }
   };
-   
 
   return (
     <div
@@ -65,16 +66,22 @@ const NowPlaying = ({ isMaster, curSong }) => {
         >
           Now Playing
         </p>
-         {curSong !== undefined && curSong !== null ?  <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
-           Added by {curSong.addedBy}
-        </p> : <p>   </p> } 
-        <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
-        </p>
+        {curSong !== undefined && curSong !== null ? (
+          <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
+            Added by {curSong.addedBy}
+          </p>
+        ) : (
+          <p> </p>
+        )}
       </div>
 
       <div style={{ height: 75, width: '100%', display: 'flex' }}>
         <img
-          src={curSong !== undefined ? curSong.coverImage : 'https://icon-library.com/images/60x60-icon/60x60-icon-9.jpg' }
+          src={
+            curSong !== undefined
+              ? curSong.coverImage
+              : 'https://icon-library.com/images/60x60-icon/60x60-icon-9.jpg'
+          }
           style={{
             height: '100%',
             borderRadius: 10,
@@ -99,10 +106,10 @@ const NowPlaying = ({ isMaster, curSong }) => {
               textAlign: 'left',
             }}
           >
-            {curSong !== undefined ? curSong.title : ""}
+            {curSong !== undefined ? curSong.title : ''}
           </p>
           <p style={{ margin: 0, color: '#c2c2c2', textAlign: 'left' }}>
-            {curSong !== undefined ? curSong.artist : ""}
+            {curSong !== undefined ? curSong.artist : ''}
           </p>
         </div>
         {true ? (
@@ -274,11 +281,10 @@ export async function getNowPlaying() {
         ret = {
           title: response.data.item.name,
           artist: response.data.item.artists[0].name,
-          addedBy: "Spotify",
+          addedBy: 'Spotify',
           uri: response.data.item.uri,
           duration: response.data.item.duration_ms,
-          coverImage: handleImages(response.data.item.album.images)
-
+          coverImage: handleImages(response.data.item.album.images),
         };
       } else if (response.status === 204) {
         if (!localStorage.getItem('noActiveDevice')) {
@@ -288,8 +294,8 @@ export async function getNowPlaying() {
       }
     })
     .catch((error) => {
-      if(error.response){
-        if(error.response.status === 401){
+      if (error.response) {
+        if (error.response.status === 401) {
           refreshAccessToken();
         }
       }

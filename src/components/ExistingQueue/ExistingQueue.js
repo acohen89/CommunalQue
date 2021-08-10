@@ -20,10 +20,20 @@ localStorage.setItem('queueID', queueID);
 export { docRef };
 
 const ExistingQueue = () => {
-  const [songs, setSongs] = useState([ { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },{ id: '2', title: '', artist: '', inQueue: true },]);
-  const [curSong, setCurSong] = useState({id: '2', title: '', artist: '', inQueue: true, addedBy: "Spotify", duration: 0})
+  const [songs, setSongs] = useState([
+    { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },
+    { id: '2', title: '', artist: '', inQueue: true },
+  ]);
+  const [curSong, setCurSong] = useState({
+    id: '2',
+    title: '',
+    artist: '',
+    inQueue: true,
+    addedBy: 'Spotify',
+    duration: 0,
+  });
 
-  //TODO: @ZEV fix spacing of added by place 
+  // TODO: @ZEV fix spacing of added by place
   // TODO: when song is skipped, update now plaing
   updateNowPlaying();
   useEffect(() => {
@@ -35,41 +45,47 @@ const ExistingQueue = () => {
 
   useEffect(() => {
     setInterval(() => updateNowPlaying(), 5500);
-  }, [])
-  
-  async function updateNowPlaying () {
-    ;(async () => {
-      const cSong =  await getNowPlaying()
-      if(cSong.title !== curSong.title){
-        // change pause button state to being playing 
-        if(cSong.addedBy === "Spotify" || cSong.addedBy === null || cSong.addedBy === undefined){
+  }, []);
+
+  async function updateNowPlaying() {
+    (async () => {
+      const cSong = await getNowPlaying();
+      if (cSong.title !== curSong.title) {
+        // change pause button state to being playing
+
+        if (
+          cSong.addedBy === 'Spotify' ||
+          cSong.addedBy === null ||
+          cSong.addedBy === undefined
+        ) {
           let addedBy = await getAddedByFromDB(cSong);
-          if((addedBy !== null || addedBy !== undefined) && cSong.addedBy){
-            cSong.addedBy = addedBy; 
+          if ((addedBy !== null || addedBy !== undefined) && cSong.addedBy) {
+            cSong.addedBy = addedBy;
           }
         }
-        // TODO: change state of play pause button to a play icon if a new song is playing 
-        setCurSong((curSong) => curSong = cSong);
+        // TODO: change state of play pause button to a play icon if a new song is playing
+        setCurSong((curSong) => (curSong = cSong));
       }
-    })()
+    })();
   }
-  async function getAddedByFromDB(curSong){
+  async function getAddedByFromDB(curSong) {
     let ret = null;
-    await docRef.get()
-    .then((doc) => {
-      if (doc.exists) {
-        for(let i = 0; i < doc.data().songs.length; i++){
-          if(doc.data().songs[i].id === curSong.uri){
-            ret = (doc.data().songs[i].addedBy);
+    await docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          for (let i = 0; i < doc.data().songs.length; i++) {
+            if (doc.data().songs[i].id === curSong.uri) {
+              ret = doc.data().songs[i].addedBy;
+            }
           }
+        } else {
+          console.log('No such document!');
         }
-      } else {
-        console.log('No such document!');
-      }
-    })
-    .catch((error) => {
-      console.log('Error getting document:', error);
-    }); 
+      })
+      .catch((error) => {
+        console.log('Error getting document:', error);
+      });
     return ret;
   }
 
@@ -164,7 +180,7 @@ const ExistingQueue = () => {
                 Songs in queue
               </p>
             </div>
-            <NowPlaying curSong={curSong}/>
+            <NowPlaying curSong={curSong} />
             <ExistingQueueSongs songs={songs} docRef={docRef} />
           </div>
           <p className="credits">Created by Adam Cohen and Zev Ross</p>
