@@ -284,7 +284,7 @@ export async function getNowPlaying() {
         if (!localStorage.getItem('noActiveDevice')) {
           localStorage.setItem('noActiveDevice', true);
           alert(ALERT_MESSAGE);
-        }
+        } 
       }
     })
     .catch((error) => {
