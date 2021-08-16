@@ -22,7 +22,7 @@ const MQSong = ({
   } else {
     // add a place of who the song was added by
     return (
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', width: '100%', alignItems: 'baseline' }}>
         <p className="song" key={uri}>
           {' '}
           {title}

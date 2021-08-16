@@ -16,6 +16,8 @@ import NowPlaying, {
 } from '../NowPlaying';
 import MainQueueSongs from './MainQueueSongs';
 import SearchBar from '../SearchBar/SearchBar';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const TEST_HASH = '0001';
 const PLAYLIST_NAME = 'Communal Queue';
 const PLAYLIST_DESCRIPTION =
@@ -62,6 +64,89 @@ function MainQue() {
       coverImage: null,
     },
   ]);
+
+  const notify = (message, milliseconds) =>
+    toast(message, { autoClose: milliseconds });
+
+  const [curSong, setCurSong] = useState({
+    id: '2',
+    title: '',
+    artist: '',
+    inQueue: true,
+    addedBy: 'Spotify',
+    duration: 0,
+  });
+
+  updateNowPlaying();
+  useEffect(() => {
+    getNameFromSpot();
+    docRef.onSnapshot((doc) => {
+      refresh();
+    });
+  }, []);
+
+  useEffect(() => {
+    setInterval(() => updateNowPlaying(), 5500);
+  }, []);
+
+  async function updateNowPlaying() {
+    (async () => {
+      const cSong = await getNowPlaying();
+      if (cSong.title !== curSong.title) {
+        // change pause button state to being playing
+
+        if (
+          cSong.addedBy === 'Spotify' ||
+          cSong.addedBy === null ||
+          cSong.addedBy === undefined
+        ) {
+          let addedBy = await getAddedByFromDB(cSong);
+          if ((addedBy !== null || addedBy !== undefined) && cSong.addedBy) {
+            cSong.addedBy = addedBy;
+          }
+        }
+        // TODO: change state of play pause button to a play icon if a new song is playing
+        setCurSong((curSong) => (curSong = cSong));
+      }
+    })();
+  }
+  async function getAddedByFromDB(curSong) {
+    let ret = null;
+    await docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          for (let i = 0; i < doc.data().songs.length; i++) {
+            if (doc.data().songs[i].id === curSong.uri) {
+              ret = doc.data().songs[i].addedBy;
+            }
+          }
+        } else {
+          console.log('No such document!');
+        }
+      })
+      .catch((error) => {
+        console.log('Error getting document:', error);
+      });
+    return ret;
+  }
+
+  function getNameFromSpot() {
+    const token = localStorage.getItem('token');
+    axios
+      .get(USER_ID_ENDPOINT, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      })
+      .then((response) => {
+        localStorage.setItem('name', response.data.display_name);
+      })
+      .catch((error) => {
+        console.log(error + '\n with token \n ' + token);
+      });
+  }
+
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
@@ -116,7 +201,7 @@ function MainQue() {
               !localStorage.getItem('noActiveDevice')
             ) {
               localStorage.setItem('noActiveDevice', true);
-              alert(ALERT_MESSAGE);
+              notify(ALERT_MESSAGE, 6000);
             } else {
               localStorage.setItem('noActiveDevice', false);
             }
@@ -127,7 +212,7 @@ function MainQue() {
           disableShuffleandRepeat();
         } else {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         }
       })
       .then(changeCurrentSongToPlayed());
@@ -411,6 +496,7 @@ function MainQue() {
         <MainQueueSongs songs={songs} docRef={docRef} />
       </div>
       <p className="credits">Created by Adam Cohen and Zev Ross</p>
+      <ToastContainer />
     </div>
   );
 }
