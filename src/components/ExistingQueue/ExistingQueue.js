@@ -7,6 +7,8 @@ import ExistingQueueSongs from './ExistingQueueSongs';
 import { HASH_LENGTH } from '../MainQueue/MainQue';
 import NowPlaying, { getNowPlaying } from '../NowPlaying';
 import '../styles/ZevsStyles.scss';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
@@ -46,6 +48,9 @@ const ExistingQueue = () => {
   useEffect(() => {
     setInterval(() => updateNowPlaying(), 5500);
   }, []);
+
+  const notify = (message, milliseconds) =>
+    toast(message, { autoClose: milliseconds });
 
   async function updateNowPlaying() {
     (async () => {
