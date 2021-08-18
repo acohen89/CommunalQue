@@ -178,3 +178,23 @@ p {
   cursor: pointer;
   margin: 10;
 }
+
+.Toastify__toast--default {
+  border: 2px solid $clr-green;
+  border-radius: 30px !important;
+  background: #3b3b3b !important;
+  box-shadow: -10px 10px 20px rgba(0, 0, 0, 0.445) !important;
+}
+
+.Toastify__progress-bar--default {
+  background: $clr-green !important;
+}
+
+.Toastify__toast-body {
+  padding: 10px !important;
+  font-family: 'Montserrat';
+}
+
+.Toastify__toast > button > svg {
+  display: none;
+}

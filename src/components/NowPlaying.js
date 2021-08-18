@@ -5,6 +5,7 @@ import testImage from '../assets/test album cover.jpg';
 import { BsFillSkipEndFill, BsFillSkipStartFill } from 'react-icons/bs';
 import { AiFillPlayCircle, AiFillPauseCircle } from 'react-icons/ai';
 import { refreshAccessToken } from './Home';
+import { notify } from './MainQueue/MainQue';
 const token = localStorage.getItem('token');
 const CURRENTLY_PLAYING_ENDPOINT =
   'https://api.spotify.com/v1/me/player/currently-playing?market=US';
@@ -18,9 +19,11 @@ const PLAY_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
 const PAUSE_ENDPOINT = 'https://api.spotify.com/v1/me/player/pause';
 export const ALERT_MESSAGE =
   'No active player found! Please open Spotify on your device. If error persists, play a random song to get it started.';
+
 //TODO: when device has been found make sure we display shuffle and repeat when play is clicked
 const NowPlaying = ({ isMaster, curSong }) => {
   const [isPaused, setPaused] = useState([true]);
+
   const switchPlayPause = () => {
     if (isPaused) {
       play();
@@ -30,7 +33,6 @@ const NowPlaying = ({ isMaster, curSong }) => {
       setPaused(true);
     }
   };
-   
 
   return (
     <div
@@ -65,16 +67,22 @@ const NowPlaying = ({ isMaster, curSong }) => {
         >
           Now Playing
         </p>
-         {curSong !== undefined && curSong !== null ?  <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
-           Added by {curSong.addedBy}
-        </p> : <p>   </p> } 
-        <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
-        </p>
+        {curSong !== undefined && curSong !== null ? (
+          <p style={{ color: '#c2c2c2', textAlign: 'left' }}>
+            Added by {curSong.addedBy}
+          </p>
+        ) : (
+          <p> </p>
+        )}
       </div>
 
       <div style={{ height: 75, width: '100%', display: 'flex' }}>
         <img
-          src={curSong !== undefined ? curSong.coverImage : 'https://icon-library.com/images/60x60-icon/60x60-icon-9.jpg' }
+          src={
+            curSong !== undefined
+              ? curSong.coverImage
+              : 'https://icon-library.com/images/60x60-icon/60x60-icon-9.jpg'
+          }
           style={{
             height: '100%',
             borderRadius: 10,
@@ -99,10 +107,10 @@ const NowPlaying = ({ isMaster, curSong }) => {
               textAlign: 'left',
             }}
           >
-            {curSong !== undefined ? curSong.title : ""}
+            {curSong !== undefined ? curSong.title : ''}
           </p>
           <p style={{ margin: 0, color: '#c2c2c2', textAlign: 'left' }}>
-            {curSong !== undefined ? curSong.artist : ""}
+            {curSong !== undefined ? curSong.artist : ''}
           </p>
         </div>
         {true ? (
@@ -156,7 +164,7 @@ export function pause() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Paused Song');
@@ -178,7 +186,7 @@ export function play() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Played Song');
@@ -199,7 +207,7 @@ export function skipTrack() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert('No active player found! Please open Spotify on your device.');
+          notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
         }
@@ -219,7 +227,7 @@ export function previousTrack() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+            notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Went back a Song');
@@ -240,7 +248,7 @@ export function disableShuffleandRepeat() {
       function () {
         if (data.status === 404) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (data.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Disabled repeat');
@@ -252,7 +260,7 @@ export function disableShuffleandRepeat() {
       function () {
         if (data.status === 404) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (data.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Disabled shuffle');
@@ -274,22 +282,21 @@ export async function getNowPlaying() {
         ret = {
           title: response.data.item.name,
           artist: response.data.item.artists[0].name,
-          addedBy: "Spotify",
+          addedBy: 'Spotify',
           uri: response.data.item.uri,
           duration: response.data.item.duration_ms,
-          coverImage: handleImages(response.data.item.album.images)
-
+          coverImage: handleImages(response.data.item.album.images),
         };
       } else if (response.status === 204) {
         if (!localStorage.getItem('noActiveDevice')) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
-        } 
+          notify(ALERT_MESSAGE, 6000);
+        }
       }
     })
     .catch((error) => {
-      if(error.response){
-        if(error.response.status === 401){
+      if (error.response) {
+        if (error.response.status === 401) {
           refreshAccessToken();
         }
       }
