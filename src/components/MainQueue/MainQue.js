@@ -215,33 +215,16 @@ function MainQue() {
             })
             .then(changeCurrentSongToPlayed());
           }
-  async function getFirstNotPlayedSong(){
-    let startIndex = 0; 
-   await docRef
-    .get()
-    .then((doc) => {
-        if(doc.data().songs !== undefined){
-          for(let i = 0; doc.data().songs.length; i++){
-            if(doc.data().songs[i].played){
-              startIndex++;
-            } else {
-              break;
-            }
-          }
-        }
-      })
-      .catch((error) => {
-      console.log('Error getting document:', error);
-    });
-    return startIndex;
-  }
-  async function changeCurrentSongToPlayed(){
-      ;(async () => {
-        const nowPlaying = await getNowPlaying();
-        const dbSongs =  await getSongsFromDB();
-        for(let i = 0; i < dbSongs.length; i++){
-          if(nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played){
-            updateDB(dbSongs, nowPlaying);
+          async function changeCurrentSongToPlayed() {
+            (async () => {
+              const nowPlaying = await getNowPlaying();
+              const dbSongs = await getSongsFromDB();
+              for (let i = 0; i < dbSongs.length; i++) {
+                if (nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played) {
+                  updateDB(dbSongs, nowPlaying);
+                }
+              }
+            })();
           }
           function updateDB(dbSongs, songToUpdate) {
     console.log('in update');
@@ -516,8 +499,7 @@ function MainQue() {
   );
 }
 
-export const notify = (message, milliseconds) =>
-  toast(message, { autoClose: milliseconds });
+
 function findUniqueSongs(songsObj, songsAlreadyInPlaylist) {
   let uriArray = [];
   let titleArray = [];
@@ -553,21 +535,23 @@ function makeHash(length) {
   }
   return result;
 }
+export const notify = (message, milliseconds) =>
+toast(message, { autoClose: milliseconds });
 export async function getSongsFromDB() {
-  let data = '';
-  await docRef
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        data = doc.data().songs;
-      } else {
-        console.log('No such document!');
-      }
-    })
-    .catch((error) => {
-      console.log('Error getting document:', error);
-    });
-  return data;
+let data = '';
+await docRef
+  .get()
+  .then((doc) => {
+    if (doc.exists) {
+      data = doc.data().songs;
+    } else {
+      console.log('No such document!');
+    }
+  })
+  .catch((error) => {
+    console.log('Error getting document:', error);
+  });
+return data;
 }
 
 export default MainQue;
