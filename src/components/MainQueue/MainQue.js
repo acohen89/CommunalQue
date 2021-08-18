@@ -240,6 +240,7 @@ function MainQue() {
     });
   }
   function removeSongFromPlaylist(playlistID, song) {
+    console.log("here")
     const RM_ENDPOINT =
     'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
     const requestOptions = {

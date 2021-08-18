@@ -11,7 +11,7 @@ const MQSong = ({
   coverImage,
   addedBy,
   docRef,
-}) => {
+}) => { 
   let artistKey = uri + artist;
   if (uri === 'testURi') {
     uri = 'Random uri ' + Math.floor(Math.random() * 99999);

@@ -18,7 +18,7 @@ const MainQueueSongs = ({ songs, docRef }) => {
       <>
         {songs.map((song) => (
           <MQSong
-            uri={processKey(song.uri)}
+            uri={processKey(song.id)}
             title={song.title}
             artist={song.artist}
             coverImage={song.coverImage}
