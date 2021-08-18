@@ -31,6 +31,7 @@ const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
 
 // TODO: add state for now playing and pass in new song when needed
+// TODO: play first song that is not set to true/
 // TODO: add description for app on homepage
 // TODO: add refresh token methods
 // TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
@@ -167,7 +168,7 @@ function MainQue() {
       setInterval(changeCurrentSongToPlayed, 4500);
     }, [])
     );
-    
+   
     function playPlaylist() {
       const playlistURI =
       'spotify:playlist:' + localStorage.getItem('playlistID');
@@ -214,16 +215,33 @@ function MainQue() {
             })
             .then(changeCurrentSongToPlayed());
           }
-          async function changeCurrentSongToPlayed() {
-            (async () => {
-              const nowPlaying = await getNowPlaying();
-              const dbSongs = await getSongsFromDB();
-              for (let i = 0; i < dbSongs.length; i++) {
-                if (nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played) {
-                  updateDB(dbSongs, nowPlaying);
-                }
-              }
-            })();
+  async function getFirstNotPlayedSong(){
+    let startIndex = 0; 
+   await docRef
+    .get()
+    .then((doc) => {
+        if(doc.data().songs !== undefined){
+          for(let i = 0; doc.data().songs.length; i++){
+            if(doc.data().songs[i].played){
+              startIndex++;
+            } else {
+              break;
+            }
+          }
+        }
+      })
+      .catch((error) => {
+      console.log('Error getting document:', error);
+    });
+    return startIndex;
+  }
+  async function changeCurrentSongToPlayed(){
+      ;(async () => {
+        const nowPlaying = await getNowPlaying();
+        const dbSongs =  await getSongsFromDB();
+        for(let i = 0; i < dbSongs.length; i++){
+          if(nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played){
+            updateDB(dbSongs, nowPlaying);
           }
           function updateDB(dbSongs, songToUpdate) {
     console.log('in update');

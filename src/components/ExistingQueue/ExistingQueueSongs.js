@@ -11,7 +11,7 @@ const ExistingQueueSongs = ({ songs, docRef }) => {
     <>
       {songs.map((song) => (
         <EQSong
-          uri={processKey(song.uri)}
+          uri={processKey(song.id)}
           title={song.title}
           artist={song.artist}
           played={song.played}
