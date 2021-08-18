@@ -64,10 +64,7 @@ function MainQue() {
       coverImage: null,
     },
   ]);
-
-  const notify = (message, milliseconds) =>
-    toast(message, { autoClose: milliseconds });
-
+  
   const [curSong, setCurSong] = useState({
     id: '2',
     title: '',
@@ -76,7 +73,7 @@ function MainQue() {
     addedBy: 'Spotify',
     duration: 0,
   });
-
+  
   updateNowPlaying();
   useEffect(() => {
     getNameFromSpot();
@@ -84,22 +81,22 @@ function MainQue() {
       refresh();
     });
   }, []);
-
+  
   useEffect(() => {
     setInterval(() => updateNowPlaying(), 5500);
   }, []);
-
+  
   async function updateNowPlaying() {
     (async () => {
       const cSong = await getNowPlaying();
       if (cSong.title !== curSong.title) {
         // change pause button state to being playing
-
+        
         if (
           cSong.addedBy === 'Spotify' ||
           cSong.addedBy === null ||
           cSong.addedBy === undefined
-        ) {
+          ) {
           let addedBy = await getAddedByFromDB(cSong);
           if ((addedBy !== null || addedBy !== undefined) && cSong.addedBy) {
             cSong.addedBy = addedBy;
@@ -113,45 +110,45 @@ function MainQue() {
   async function getAddedByFromDB(curSong) {
     let ret = null;
     await docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          for (let i = 0; i < doc.data().songs.length; i++) {
-            if (doc.data().songs[i].id === curSong.uri) {
-              ret = doc.data().songs[i].addedBy;
-            }
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        for (let i = 0; i < doc.data().songs.length; i++) {
+          if (doc.data().songs[i].id === curSong.uri) {
+            ret = doc.data().songs[i].addedBy;
           }
-        } else {
-          console.log('No such document!');
         }
-      })
-      .catch((error) => {
-        console.log('Error getting document:', error);
-      });
+      } else {
+        console.log('No such document!');
+      }
+    })
+    .catch((error) => {
+      console.log('Error getting document:', error);
+    });
     return ret;
   }
-
+  
   function getNameFromSpot() {
     const token = localStorage.getItem('token');
     axios
-      .get(USER_ID_ENDPOINT, {
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      })
-      .then((response) => {
-        localStorage.setItem('name', response.data.display_name);
-      })
-      .catch((error) => {
-        console.log(error + '\n with token \n ' + token);
-      });
+    .get(USER_ID_ENDPOINT, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    .then((response) => {
+      localStorage.setItem('name', response.data.display_name);
+    })
+    .catch((error) => {
+      console.log(error + '\n with token \n ' + token);
+    });
   }
-
+  
   useEffect(() => {
     hashToDB(hash);
     getUserID(token);
   }, []);
-
+  
   const playlistIDProm = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (localStorage.getItem('playlistID') !== null) {
@@ -166,18 +163,18 @@ function MainQue() {
         console.log('New Data!');
         refresh();
       });
-      playPlaylist();
+      // playPlaylist();
       setInterval(changeCurrentSongToPlayed, 4500);
     }, [])
-  );
-
-  function playPlaylist() {
-    const playlistURI =
+    );
+    
+    function playPlaylist() {
+      const playlistURI =
       'spotify:playlist:' + localStorage.getItem('playlistID');
-    const requestOptions = {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -189,9 +186,9 @@ function MainQue() {
       }),
     };
     fetch(PLAYBACK_ENDPOINT, requestOptions)
-      .then(
-        (response) =>
-          function () {
+    .then(
+      (response) =>
+      function () {
             if (response.status !== undefined) {
               if (response.status === 401) {
                 refreshAccessToken();
@@ -199,36 +196,36 @@ function MainQue() {
             } else if (
               response.status === 404 &&
               !localStorage.getItem('noActiveDevice')
-            ) {
-              localStorage.setItem('noActiveDevice', true);
-              notify(ALERT_MESSAGE, 6000);
-            } else {
-              localStorage.setItem('noActiveDevice', false);
+              ) {
+                localStorage.setItem('noActiveDevice', true);
+                notify(ALERT_MESSAGE, 6000);
+              } else {
+                localStorage.setItem('noActiveDevice', false);
+              }
             }
+            )
+            .then(function () {
+              if (!localStorage.getItem('noActiveDevice')) {
+                disableShuffleandRepeat();
+              } else {
+                localStorage.setItem('noActiveDevice', true);
+                notify(ALERT_MESSAGE, 6000);
+              }
+            })
+            .then(changeCurrentSongToPlayed());
           }
-      )
-      .then(function () {
-        if (!localStorage.getItem('noActiveDevice')) {
-          disableShuffleandRepeat();
-        } else {
-          localStorage.setItem('noActiveDevice', true);
-          notify(ALERT_MESSAGE, 6000);
-        }
-      })
-      .then(changeCurrentSongToPlayed());
-  }
-  async function changeCurrentSongToPlayed() {
-    (async () => {
-      const nowPlaying = await getNowPlaying();
-      const dbSongs = await getSongsFromDB();
-      for (let i = 0; i < dbSongs.length; i++) {
-        if (nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played) {
-          updateDB(dbSongs, nowPlaying);
-        }
-      }
-    })();
-  }
-  function updateDB(dbSongs, songToUpdate) {
+          async function changeCurrentSongToPlayed() {
+            (async () => {
+              const nowPlaying = await getNowPlaying();
+              const dbSongs = await getSongsFromDB();
+              for (let i = 0; i < dbSongs.length; i++) {
+                if (nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played) {
+                  updateDB(dbSongs, nowPlaying);
+                }
+              }
+            })();
+          }
+          function updateDB(dbSongs, songToUpdate) {
     console.log('in update');
     let newSongs = dbSongs;
     for (let i = 0; i < newSongs.length; i++) {
@@ -243,7 +240,7 @@ function MainQue() {
   }
   function removeSongFromPlaylist(playlistID, song) {
     const RM_ENDPOINT =
-      'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
+    'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
     const requestOptions = {
       method: 'DELETE',
       headers: {
@@ -266,23 +263,23 @@ function MainQue() {
   const refresh = () => {
     const playlistID = localStorage.getItem('playlistID');
     docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          setSongs((songs) => (songs = doc.data().songs));
-          addSongsToPlaylist(playlistID, doc.data().songs);
-        } else {
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        setSongs((songs) => (songs = doc.data().songs));
+        addSongsToPlaylist(playlistID, doc.data().songs);
+      } else {
           console.log('No such document!');
         }
       })
       .catch((error) => {
         console.log('Error getting document:', error);
       });
-  };
-  async function addSongsToPlaylist(playlistID, songsObj) {
-    const SPECIFIC_PLAYLIST_ENDPOINT =
+    };
+    async function addSongsToPlaylist(playlistID, songsObj) {
+      const SPECIFIC_PLAYLIST_ENDPOINT =
       'https://api.spotify.com/v1/playlists/' + playlistID;
-    await axios
+      await axios
       .get(SPECIFIC_PLAYLIST_ENDPOINT, {
         headers: {
           Authorization: 'Bearer ' + token,
@@ -299,34 +296,34 @@ function MainQue() {
         }
         console.log(error + ' with getting songs in playlist');
       });
-  }
-  async function addUniqueSongs(playlistID, songsObj, songsAlreadyInPlaylist) {
-    let uriAndTitleArray = findUniqueSongs(songsObj, songsAlreadyInPlaylist);
-    const uriArray = uriAndTitleArray[0];
-    const titleArray = uriAndTitleArray[1];
-    if (uriArray.length !== 0) {
-      const ADD_TO_PLAYLIST_ENDPOINT =
-        'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ uris: uriArray }),
-      };
-      await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions).then((data) => {
-        if (data.status !== undefined) {
-          if (data.status === 401) {
-            refreshAccessToken();
-          }
-        }
-        console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
-      });
     }
-  }
-  async function getUserID(token) {
-    await axios
+    async function addUniqueSongs(playlistID, songsObj, songsAlreadyInPlaylist) {
+      let uriAndTitleArray = findUniqueSongs(songsObj, songsAlreadyInPlaylist);
+      const uriArray = uriAndTitleArray[0];
+      const titleArray = uriAndTitleArray[1];
+      if (uriArray.length !== 0) {
+        const ADD_TO_PLAYLIST_ENDPOINT =
+        'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ uris: uriArray }),
+        };
+        await fetch(ADD_TO_PLAYLIST_ENDPOINT, requestOptions).then((data) => {
+          if (data.status !== undefined) {
+            if (data.status === 401) {
+              refreshAccessToken();
+            }
+          }
+          console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
+        });
+      }
+    }
+    async function getUserID(token) {
+      await axios
       .get(USER_ID_ENDPOINT, {
         headers: {
           Authorization: 'Bearer ' + token,
@@ -343,10 +340,10 @@ function MainQue() {
         }
         console.log(error + '\n with token \n ' + token);
       });
-  }
-  function SetUpQueuePlaylist(userID, token) {
-    // checking if playlist has already been created
-    axios
+    }
+    function SetUpQueuePlaylist(userID, token) {
+      // checking if playlist has already been created
+      axios
       .get(PLAYLISTS_ENDPOINT, {
         headers: {
           Authorization: 'Bearer ' + token,
@@ -358,13 +355,13 @@ function MainQue() {
           if (
             response.data.items[i].name === PLAYLIST_NAME &&
             response.data.items[i].description === PLAYLIST_DESCRIPTION
-          ) {
-            found = true;
-            console.log('Playlist already in library, old one being used');
-            idToFirebase(response.data.items[i].id, false);
-            break;
+            ) {
+              found = true;
+              console.log('Playlist already in library, old one being used');
+              idToFirebase(response.data.items[i].id, false);
+              break;
+            }
           }
-        }
         if (!found) {
           createNewPlaylist(userID, token);
         }
@@ -377,19 +374,19 @@ function MainQue() {
         }
         console.log(error);
       });
-  }
-  function createNewPlaylist(userID, token) {
-    const PLAYLIST_ENDPOINT =
+    }
+    function createNewPlaylist(userID, token) {
+      const PLAYLIST_ENDPOINT =
       'https://api.spotify.com/v1/users/' + userID + '/playlists';
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: PLAYLIST_NAME,
-        description: PLAYLIST_DESCRIPTION,
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: PLAYLIST_NAME,
+          description: PLAYLIST_DESCRIPTION,
         public: true,
       }),
     };
@@ -405,31 +402,31 @@ function MainQue() {
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
     db.collection('Active Ques')
-      .doc(TEST_HASH)
-      .update({
-        playlistID: playlistid,
-      })
-      .then((docRef) => {
-        console.log(
-          newPlaylist
-            ? 'Added a new playlist with id ' + playlistid
-            : 'Added old playlist with id ' + playlistid
+    .doc(TEST_HASH)
+    .update({
+      playlistID: playlistid,
+    })
+    .then((docRef) => {
+      console.log(
+        newPlaylist
+        ? 'Added a new playlist with id ' + playlistid
+        : 'Added old playlist with id ' + playlistid
         );
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
       });
-  }
-  const endQue = () => {
-    // migrate data to past ques collection
-    // go to home page
-    localStorage.removeItem('hash');
-    localStorage.removeItem('noActiveDevice');
-    pause();
-    window.location.href = WEB_URL + '/home';
-  };
-  function hashToDB(hash) {
-    db.collection('Active Ques')
+    }
+    const endQue = () => {
+      // migrate data to past ques collection
+      // go to home page
+      localStorage.removeItem('hash');
+      localStorage.removeItem('noActiveDevice');
+      pause();
+      window.location.href = WEB_URL + '/home';
+    };
+    function hashToDB(hash) {
+      db.collection('Active Ques')
       .doc(hash)
       .set({
         Songs: [],
@@ -440,23 +437,23 @@ function MainQue() {
       .catch((error) => {
         console.error('Error adding document: ', error);
       });
-  }
+    }
 
-  const getReturnedParamsFromSpotifyAuth = (hash) => {
-    const stringAfterHashtag = hash.substring(1);
-    const paramsInUrl = stringAfterHashtag.split('&');
-    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-      const [key, value] = currentValue.split('=');
-      accumulater[key] = value;
-      return accumulater;
-    }, {});
-    return paramsSplitUp;
-  };
-  return (
-    <div
+    const getReturnedParamsFromSpotifyAuth = (hash) => {
+      const stringAfterHashtag = hash.substring(1);
+      const paramsInUrl = stringAfterHashtag.split('&');
+      const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
+        const [key, value] = currentValue.split('=');
+        accumulater[key] = value;
+        return accumulater;
+      }, {});
+      return paramsSplitUp;
+    };
+    return (
+      <div
       className="bg"
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-    >
+      >
       <div style={{ position: 'absolute', margin: 30, top: 0, right: 0 }}>
         <SearchBar docRef={docRef} />
       </div>
@@ -479,7 +476,7 @@ function MainQue() {
           alignItems: 'stretch',
           minWidth: 700,
         }}
-      >
+        >
         <div
           style={{
             width: '100%',
@@ -487,7 +484,7 @@ function MainQue() {
             flexGrow: 2,
             justifyContent: 'space-between',
           }}
-        >
+          >
           <p className="queueTitle" style={{ fontSize: 30, color: 'gray' }}>
             Songs
           </p>
@@ -500,6 +497,9 @@ function MainQue() {
     </div>
   );
 }
+
+export const notify = (message, milliseconds) =>
+  toast(message, { autoClose: milliseconds });
 function findUniqueSongs(songsObj, songsAlreadyInPlaylist) {
   let uriArray = [];
   let titleArray = [];

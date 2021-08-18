@@ -5,6 +5,7 @@ import testImage from '../assets/test album cover.jpg';
 import { BsFillSkipEndFill, BsFillSkipStartFill } from 'react-icons/bs';
 import { AiFillPlayCircle, AiFillPauseCircle } from 'react-icons/ai';
 import { refreshAccessToken } from './Home';
+import { notify } from './MainQueue/MainQue';
 const token = localStorage.getItem('token');
 const CURRENTLY_PLAYING_ENDPOINT =
   'https://api.spotify.com/v1/me/player/currently-playing?market=US';
@@ -163,7 +164,7 @@ export function pause() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Paused Song');
@@ -185,7 +186,7 @@ export function play() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Played Song');
@@ -206,7 +207,7 @@ export function skipTrack() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert('No active player found! Please open Spotify on your device.');
+          notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
         }
@@ -226,7 +227,7 @@ export function previousTrack() {
       function () {
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+            notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Went back a Song');
@@ -247,7 +248,7 @@ export function disableShuffleandRepeat() {
       function () {
         if (data.status === 404) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (data.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Disabled repeat');
@@ -259,7 +260,7 @@ export function disableShuffleandRepeat() {
       function () {
         if (data.status === 404) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         } else if (data.status === 200) {
           localStorage.setItem('noActiveDevice', false);
           console.log('Disabled shuffle');
@@ -289,7 +290,7 @@ export async function getNowPlaying() {
       } else if (response.status === 204) {
         if (!localStorage.getItem('noActiveDevice')) {
           localStorage.setItem('noActiveDevice', true);
-          alert(ALERT_MESSAGE);
+          notify(ALERT_MESSAGE, 6000);
         }
       }
     })
