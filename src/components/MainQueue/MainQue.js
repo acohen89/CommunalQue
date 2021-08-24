@@ -39,18 +39,18 @@ function MainQue() {
   const [songs, setSongs] = useState([
     {
       id: '123kf21',
-      title: 'Piano Man',
-      artist: 'Billy Joel',
+      title: '',
+      artist: '',
       played: false,
-      duration: 0,
+      duration: "",
       coverImage: null,
     },
     {
       id: '198213da',
-      title: "She's Always A Woman",
-      artist: 'Billy Joel',
+      title: "",
+      artist: '',
       played: false,
-      duration: 0,
+      duration: "",
       coverImage: null,
     },
   ]);

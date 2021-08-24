@@ -31,7 +31,7 @@ const MQSong = ({
           {' '}
           {artist}
         </p>
-        <p style={{ color: 'white' }}>{convert(duration)}</p>
+        <p style={{ color: 'white' }}>{ duration === "" ? "" : convert(duration)}</p>
         {addedBy === localStorage.getItem('name') ? (
           <div
             style={{
