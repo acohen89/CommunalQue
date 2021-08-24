@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdAdd } from 'react-icons/md';
-import { getSongsFromDB } from './MainQueue/MainQue';
+// import { getSongsFromDB } from './MainQueue/MainQue';
 import { GrFormAdd } from 'react-icons/gr';
 import firebase from './firesbase';
 const db = firebase.firestore();
@@ -125,7 +125,7 @@ export async function removeSong(uri, docRef) {
         console.log(response);
       }
   );
-  const dbSongs = await getSongsFromDB();
+  const dbSongs = await getSongsFromDB(docRef);
   let newSongs = [];
   for (let i = 0; i < dbSongs.length; i++) {
     if (dbSongs[i].id !== uri) {
@@ -138,6 +138,22 @@ export async function removeSong(uri, docRef) {
     songs: newSongs,
   });
 }
+async function getSongsFromDB(docRef) {
+  let data = '';
+  await docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        data = doc.data().songs;
+      } else {
+        console.log('No such document!');
+      }
+    })
+    .catch((error) => {
+      console.log('Error getting document:', error);
+    });
+  return data;
+  }
 Song.defaultProps = {
   uri: 'testURi',
   name: 'TestName',

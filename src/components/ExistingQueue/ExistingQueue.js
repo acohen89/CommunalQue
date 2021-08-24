@@ -38,8 +38,6 @@ const ExistingQueue = () => {
     duration: 0,
   });
 
-  // TODO: @ZEV fix spacing of added by place
-  // TODO: when song is skipped, update now plaing
   updateNowPlaying();
   useEffect(() => {
     getNameFromSpot();
@@ -65,8 +63,6 @@ const ExistingQueue = () => {
     (async () => {
       const cSong = await getNowPlaying();
       if (cSong.title !== curSong.title) {
-        // change pause button state to being playing
-
         if (
           cSong.addedBy === 'Spotify' ||
           cSong.addedBy === null ||
@@ -77,7 +73,6 @@ const ExistingQueue = () => {
             cSong.addedBy = addedBy;
           }
         }
-        // TODO: change state of play pause button to a play icon if a new song is playing
         setCurSong((curSong) => (curSong = cSong));
       }
     })();

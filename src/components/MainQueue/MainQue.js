@@ -174,7 +174,7 @@ function MainQue() {
         console.log('New Data!');
         refresh();
       });
-      // playPlaylist();
+      playPlaylist();
       setInterval(changeCurrentSongToPlayed, 4500);
     }, [])
     );
