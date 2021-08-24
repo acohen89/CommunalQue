@@ -22,6 +22,9 @@ localStorage.setItem('queueID', queueID);
 export { docRef };
 
 const ExistingQueue = () => {
+  
+  const notify = (message, milliseconds) =>
+    toast(message, { autoClose: milliseconds });
   const [songs, setSongs] = useState([
     { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },
     { id: '2', title: '', artist: '', inQueue: true },
@@ -43,14 +46,20 @@ const ExistingQueue = () => {
     docRef.onSnapshot((doc) => {
       refresh();
     });
+    docRef.get().then((doc) => {
+      if (!doc.exists) {
+        alert("Queue with that ID does not exist");
+        window.history.back()
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
   }, []);
 
   useEffect(() => {
     setInterval(() => updateNowPlaying(), 5500);
   }, []);
 
-  const notify = (message, milliseconds) =>
-    toast(message, { autoClose: milliseconds });
 
   async function updateNowPlaying() {
     (async () => {

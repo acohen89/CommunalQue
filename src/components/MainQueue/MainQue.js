@@ -26,26 +26,16 @@ const PLAYLISTS_ENDPOINT = 'https://api.spotify.com/v1/me/playlists';
 const HASH_LENGTH = 4;
 export { HASH_LENGTH };
 const db = firebase.firestore();
-const docRef = db.collection('Active Ques').doc(TEST_HASH);
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
+if (!localStorage.getItem('hash')) {
+  localStorage.setItem('hash', makeHash(HASH_LENGTH));
+}
+const hash = localStorage.getItem('hash');
+const docRef = db.collection('Active Ques').doc(hash);
 
-// TODO: add state for now playing and pass in new song when needed
-// TODO: play first song that is not set to true/
-// TODO: add description for app on homepage
-// TODO: add refresh token methods
-// TODO: don't update db for idToFirebase and hashToDB when page is re rendered or refreshed only on frist load. just add a bool in local storage
-// TODO: add custom image for queue playlist
-// TODO: have an existing que button which checks if there is a hash in local storage (a check for a active que) ending the que would simply delete this
-
-// if song is already played, set a value in the db to true
-// have song component only display songs with this value of false
 
 function MainQue() {
-  if (!localStorage.getItem('hash')) {
-    localStorage.setItem('hash', makeHash(HASH_LENGTH));
-  }
-  const hash = localStorage.getItem('hash');
   const token = localStorage.getItem('token');
   const [songs, setSongs] = useState([
     {

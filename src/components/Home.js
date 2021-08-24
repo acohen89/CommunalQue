@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
-
 import './styles/ZevsStyles.scss';
 import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
 import { PostAdd } from '@material-ui/icons';
-const cors = require('cors');
 const port = 3000;
 const WEB_URL = 'http://localhost:' + port;
 const inputID = 'queueID';
