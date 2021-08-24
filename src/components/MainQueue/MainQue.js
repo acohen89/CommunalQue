@@ -36,7 +36,6 @@ const docRef = db.collection('Active Ques').doc(hash);
 
 
 function MainQue() {
-  const token = localStorage.getItem('token');
   const [songs, setSongs] = useState([
     {
       id: '123kf21',
@@ -64,8 +63,26 @@ function MainQue() {
     addedBy: 'Spotify',
     duration: 0,
   });
+
+  var docExists = false;
+  const token = localStorage.getItem('token');
+  docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        docExists = true;
+      } else {
+        docExists = false;
+        console.log('No such document!');
+      }
+    })
+    .catch((error) => {
+      docExists = false;
+      console.log('Error getting document:', error);
+    });
   
-  updateNowPlaying();
+  
+  if(docExists) updateNowPlaying(); 
   useEffect(() => {
     getNameFromSpot();
     docRef.onSnapshot((doc) => {
@@ -78,6 +95,7 @@ function MainQue() {
   }, []);
   
   async function updateNowPlaying() {
+
     (async () => {
       const cSong = await getNowPlaying();
       if (cSong.title !== curSong.title) {
@@ -104,9 +122,12 @@ function MainQue() {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        for (let i = 0; i < doc.data().songs.length; i++) {
-          if (doc.data().songs[i].id === curSong.uri) {
-            ret = doc.data().songs[i].addedBy;
+        if(doc.data().songs !== undefined){
+          console.log(doc.data().songs)
+          for (let i = 0; i < doc.data().songs.length; i++) {
+            if (doc.data().songs[i].id === curSong.uri) {
+              ret = doc.data().songs[i].addedBy;
+            }
           }
         }
       } else {
@@ -143,7 +164,6 @@ function MainQue() {
   const playlistIDProm = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (localStorage.getItem('playlistID') !== null) {
-        console.log('Resolved promise');
         resolve('playistID');
       }
     }, 2200);
@@ -261,7 +281,7 @@ function MainQue() {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        if(doc.data().songs.length !== 0){
+        if(doc.data().songs !== undefined ){
           setSongs((songs) => (songs = doc.data().songs));
           addSongsToPlaylist(playlistID, doc.data().songs);
         }
@@ -287,7 +307,7 @@ function MainQue() {
       })
       .catch((error) => {
         if (error.response.status !== undefined) {
-          if (error.response.status === 401) {
+            if (error.response.status === 401) {
             refreshAccessToken();
           }
         }
