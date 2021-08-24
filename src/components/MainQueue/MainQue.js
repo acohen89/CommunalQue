@@ -205,13 +205,16 @@ function MainQue() {
             })
             .then(changeCurrentSongToPlayed());
           }
+          // TODO: currently changing so songs are not undefined on blank queue
           async function changeCurrentSongToPlayed() {
             (async () => {
               const nowPlaying = await getNowPlaying();
               const dbSongs = await getSongsFromDB();
-              for (let i = 0; i < dbSongs.length; i++) {
-                if (nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played) {
-                  updateDB(dbSongs, nowPlaying);
+              if(dbSongs !== undefined){
+                for (let i = 0; i < dbSongs.length; i++) {
+                  if (nowPlaying.uri === dbSongs[i].id && !dbSongs[i].played) {
+                    updateDB(dbSongs, nowPlaying);
+                  }
                 }
               }
             })();
@@ -258,8 +261,10 @@ function MainQue() {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        setSongs((songs) => (songs = doc.data().songs));
-        addSongsToPlaylist(playlistID, doc.data().songs);
+        if(doc.data().songs.length !== 0){
+          setSongs((songs) => (songs = doc.data().songs));
+          addSongsToPlaylist(playlistID, doc.data().songs);
+        }
       } else {
           console.log('No such document!');
         }
