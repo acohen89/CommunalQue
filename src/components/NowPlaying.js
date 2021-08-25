@@ -279,14 +279,16 @@ export async function getNowPlaying() {
     })
     .then((response) => {
       if (response.status === 200) {
-        ret = {
-          title: response.data.item.name,
-          artist: response.data.item.artists !== undefined ? response.data.item.artists[0].name : "Not Available" ,
-          addedBy: 'Spotify',
-          uri: response.data.item.uri,
-          duration: response.data.item.duration_ms,
-          coverImage: handleImages(response.data.item.album.images),
-        };
+        if(response.data.item !== null){
+          ret = {
+            title: response.data.item !== null ? response.data.item.name : "No Name",
+            artist: response.data.item !== null  ? response.data.item.artists[0].name : "Not Available" ,
+            addedBy: 'Spotify',
+            uri: response.data.item.uri,
+            duration: response.data.item.duration_ms,
+            coverImage: handleImages(response.data.item.album.images),
+          };
+        } 
       } else if (response.status === 204) {
         if (!localStorage.getItem('noActiveDevice')) {
           localStorage.setItem('noActiveDevice', true);
@@ -300,7 +302,7 @@ export async function getNowPlaying() {
           refreshAccessToken();
         }
       }
-      console.log(error + ' with getting songs in playlist');
+      console.error(error);
     });
   return ret;
 }
