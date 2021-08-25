@@ -428,7 +428,7 @@ function MainQue() {
   function removeAll(songs, id){
     let songsToRemove = [];
     for(let i = 0; i < songs.length; i++){
-      songsToRemove.push({uri: songs[0].track.uri})
+      songsToRemove.push({uri: songs[i].track.uri})
     }
     const RM_ENDPOINT =
     'https://api.spotify.com/v1/playlists/' + id + '/tracks';
