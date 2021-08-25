@@ -83,9 +83,13 @@ const ExistingQueue = () => {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          for (let i = 0; i < doc.data().songs.length; i++) {
-            if (doc.data().songs[i].id === curSong.uri) {
-              ret = doc.data().songs[i].addedBy;
+          if(doc.data().songs !== undefined){
+            if(doc.data().songs.length !== 0){
+              for (let i = 0; i < doc.data().songs.length; i++) {
+                if (doc.data().songs[i].id === curSong.uri) {
+                  ret = doc.data().songs[i].addedBy;
+                }
+              }
             }
           }
         } else {
@@ -118,7 +122,11 @@ const ExistingQueue = () => {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          setSongs((songs) => (songs = doc.data().songs));
+          if(doc.data().songs !== undefined){
+            if(doc.data().songs.length !== 0){
+              setSongs((songs) => (songs = doc.data().songs));
+            }  
+          }
         } else {
           console.log('No such document!');
         }

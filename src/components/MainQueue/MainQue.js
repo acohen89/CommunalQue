@@ -39,18 +39,18 @@ function MainQue() {
   const [songs, setSongs] = useState([
     {
       id: '123kf21',
-      title: '',
-      artist: '',
+      title: 'Piano Man',
+      artist: 'Billy Joel',
       played: false,
-      duration: "",
+      duration: 0,
       coverImage: null,
     },
     {
       id: '198213da',
-      title: "",
-      artist: '',
+      title: "She's Always A Woman",
+      artist: 'Billy Joel',
       played: false,
-      duration: "",
+      duration: 0,
       coverImage: null,
     },
   ]);
@@ -82,7 +82,7 @@ function MainQue() {
     });
   
   
-  if(docExists) updateNowPlaying(); 
+  if(docExists) {updateNowPlaying();} 
   useEffect(() => {
     getNameFromSpot();
     docRef.onSnapshot((doc) => {
@@ -98,9 +98,7 @@ function MainQue() {
 
     (async () => {
       const cSong = await getNowPlaying();
-      if (cSong.title !== curSong.title) {
-        // change pause button state to being playing
-        
+      if (cSong.title !== curSong.title) {        
         if (
           cSong.addedBy === 'Spotify' ||
           cSong.addedBy === null ||
@@ -123,7 +121,6 @@ function MainQue() {
     .then((doc) => {
       if (doc.exists) {
         if(doc.data().songs !== undefined){
-          console.log(doc.data().songs)
           for (let i = 0; i < doc.data().songs.length; i++) {
             if (doc.data().songs[i].id === curSong.uri) {
               ret = doc.data().songs[i].addedBy;
@@ -172,7 +169,7 @@ function MainQue() {
     useEffect(() => {
       docRef.onSnapshot((doc) => {
         console.log('New Data!');
-        refresh();
+        // refresh();
       });
       playPlaylist();
       setInterval(changeCurrentSongToPlayed, 4500);
@@ -276,6 +273,7 @@ function MainQue() {
     });
   }
   const refresh = () => {
+    console.trace("refreshing")
     const playlistID = localStorage.getItem('playlistID');
     docRef
     .get()
@@ -374,7 +372,6 @@ function MainQue() {
             response.data.items[i].description === PLAYLIST_DESCRIPTION
             ) {
               found = true;
-              console.log('Playlist already in library, old one being used');
               idToFirebase(response.data.items[i].id, false);
               break;
             }
@@ -418,22 +415,26 @@ function MainQue() {
   }
   function idToFirebase(playlistid, newPlaylist) {
     localStorage.setItem('playlistID', playlistid);
-    db.collection('Active Ques')
-    .doc(TEST_HASH)
-    .update({
-      playlistID: playlistid,
-    })
-    .then((docRef) => {
-      console.log(
-        newPlaylist
-        ? 'Added a new playlist with id ' + playlistid
-        : 'Added old playlist with id ' + playlistid
-        );
+    if(playlistid !== undefined){
+      db.collection('Active Ques')
+      .doc(hash)
+      .set({
+        playlistID: playlistid,
       })
-      .catch((error) => {
-        console.error('Error adding document: ', error);
-      });
+      .then((docRef) => {
+        console.log(
+          newPlaylist
+          ? 'Added a new playlist with id ' + playlistid
+          : 'Added old playlist with id ' + playlistid
+          );
+        })
+        .catch((error) => {
+          console.error('Error adding document: ', error);
+        });
+    } else {
+      console.error("playlist id undefined")
     }
+  }
     const endQue = () => {
       // migrate data to past ques collection
       // go to home page
@@ -517,6 +518,7 @@ function MainQue() {
 
 
 function findUniqueSongs(songsObj, songsAlreadyInPlaylist) {
+
   let uriArray = [];
   let titleArray = [];
   for (let i = 0; i < songsObj.length; i++) {
