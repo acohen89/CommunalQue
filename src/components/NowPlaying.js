@@ -281,7 +281,7 @@ export async function getNowPlaying() {
       if (response.status === 200) {
         ret = {
           title: response.data.item.name,
-          artist: response.data.item.artists[0].name,
+          artist: response.data.item.artists !== undefined ? response.data.item.artists[0].name : "Not Available" ,
           addedBy: 'Spotify',
           uri: response.data.item.uri,
           duration: response.data.item.duration_ms,
