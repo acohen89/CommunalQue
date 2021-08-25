@@ -1,6 +1,7 @@
 {
   "name": "communal-que",
   "version": "0.1.0",
+  "proxy": "https://api.spotify.com/v1/playlists/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.12.1",

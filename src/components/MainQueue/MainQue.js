@@ -250,7 +250,6 @@ function MainQue() {
     });
   }
   function removeSongFromPlaylist(playlistID, song) {
-    console.log("here")
     const RM_ENDPOINT =
     'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
     const requestOptions = {
@@ -273,7 +272,6 @@ function MainQue() {
     });
   }
   const refresh = () => {
-    console.trace("refreshing")
     const playlistID = localStorage.getItem('playlistID');
     docRef
     .get()
@@ -372,6 +370,7 @@ function MainQue() {
             response.data.items[i].description === PLAYLIST_DESCRIPTION
             ) {
               found = true;
+              clearPlaylist(response.data.items[i].id);
               idToFirebase(response.data.items[i].id, false);
               break;
             }
@@ -411,6 +410,52 @@ function MainQue() {
         }
       }
       idToFirebase(data.id, true);
+    });
+  }
+  function clearPlaylist(id){
+    const SPECIFIC_PLAYLIST_ENDPOINT =
+      'https://api.spotify.com/v1/playlists/' + id;
+      axios
+      .get(SPECIFIC_PLAYLIST_ENDPOINT, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      })
+      .then((response) => {
+        removeAll(response.data.tracks.items, id);
+      })
+      .catch((error) => {
+        if (error.response !== undefined) {
+            if (error.response.status === 401) {
+            refreshAccessToken();
+          }
+        }
+        console.log(error + ' with getting songs in playlist');
+      });
+  }
+  function removeAll(songs, id){
+    let songsToRemove = [];
+    for(let i = 0; i < songs.length; i++){
+      songsToRemove.push({uri: songs[0].track.uri})
+    }
+    const RM_ENDPOINT =
+    'https://api.spotify.com/v1/playlists/' + id + '/tracks';
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        tracks: songsToRemove,
+      }),
+    };
+    fetch(RM_ENDPOINT, requestOptions).then((data) => {
+      if (data.status !== undefined) {
+        if (data.status === 401) {
+          refreshAccessToken();
+        }
+      }
     });
   }
   function idToFirebase(playlistid, newPlaylist) {
