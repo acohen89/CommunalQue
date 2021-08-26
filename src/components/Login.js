@@ -5,8 +5,8 @@ import './styles/ZevsStyles.scss';
 const port = 3000;
 const WEB_URL = 'http://localhost:' + port;
 export { WEB_URL };
-const APP_DESCRIPTION = "Communal Queue allows you to make a queue that both you and your friends can add to. To begin, login to Spotify and click start queue." +  
-"You will be given a queue id that your friends can then use to access the same queue and add songs. "
+const APP_DESCRIPTIONP1 = "Communal Queue allows you to make a queue that both you and your friends can add to. To begin, login to Spotify and click start queue. " 
+const APP_DESCRIPTIONP2 = "You will be given a queue id that your friends can then use to access the same queue and add songs. ";
 const REDIRECT_URL_AFTER_LOGIN = WEB_URL + '/Home';
 const CLIENT_ID = '35135547562945148a4c9129b244dfe8'; // Testing iD
 const SPACE_DELIMITER = '%20';
@@ -37,6 +37,8 @@ const Login = () => {
       <p className="body" style={{ marginBottom: 30 }}>
         Please login to begin
       </p>
+      <p>{APP_DESCRIPTIONP1}</p>
+      <p>{APP_DESCRIPTIONP2}</p>
       <Button text="LOGIN TO SPOTIFY" onClick={login} />
       <p className="credits">Created by Adam Cohen and Zev Ross</p>
     </div>
