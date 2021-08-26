@@ -35,6 +35,8 @@ const docRef = db.collection('Active Ques').doc(hash);
 
 
 function MainQue() {
+  //TODO: use enviroment variables
+  //TODO: don't allow first song in playlist to be previously added song
   const [songs, setSongs] = useState([
     {
       id: '123kf21',
@@ -100,7 +102,6 @@ function MainQue() {
             cSong.addedBy = addedBy;
           }
         }
-        // TODO: change state of play pause button to a play icon if a new song is playing
         setCurSong((curSong) => (curSong = cSong));
       }
     })();
