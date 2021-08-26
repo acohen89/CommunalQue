@@ -213,7 +213,6 @@ function MainQue() {
             })
             .then(changeCurrentSongToPlayed());
           }
-          // TODO: currently changing so songs are not undefined on blank queue
           async function changeCurrentSongToPlayed() {
             (async () => {
               const nowPlaying = await getNowPlaying();
@@ -356,17 +355,17 @@ function MainQue() {
       .then((response) => {
         let found = false;
         for (let i = 0; i < response.data.items.length; i++) {
-          if (
-            response.data.items[i].name === PLAYLIST_NAME &&
-            response.data.items[i].description === PLAYLIST_DESCRIPTION
-            ) {
+          console.log(response.data.items[i])
+          if (response.data.items[i].name === "Communal Queue") {
               found = true;
               clearPlaylist(response.data.items[i].id);
+              console.log("from here")
               idToFirebase(response.data.items[i].id, false);
               break;
             }
           }
         if (!found) {
+          console.log("Creating new")
           createNewPlaylist(userID, token);
         }
       })
@@ -395,6 +394,7 @@ function MainQue() {
       }),
     };
     fetch(PLAYLIST_ENDPOINT, requestOptions).then((data) => {
+      console.log(data)
       if (data.status !== undefined) {
         if (data.status === 401) {
           refreshAccessToken();
