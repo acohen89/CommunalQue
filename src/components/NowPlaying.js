@@ -162,6 +162,7 @@ export function pause() {
   fetch(PAUSE_ENDPOINT, requestOptions).then(
     (response) =>
       function () {
+     
         if (response.status === 204) {
           localStorage.setItem('noActiveDevice', true);
           notify(ALERT_MESSAGE, 6000);

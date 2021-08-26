@@ -32,7 +32,6 @@ const MQSong = ({
           {artist}
         </p>
         <p style={{ color: 'white' }}>{ duration === "" ? "" : convert(duration)}</p>
-        {addedBy === localStorage.getItem('name') ? (
           <div
             style={{
               display: 'flex',
@@ -46,7 +45,6 @@ const MQSong = ({
               onClick={() => removeSong(uri, docRef)}
             />
           </div>
-        ) : null}
       </div>
     );
   }

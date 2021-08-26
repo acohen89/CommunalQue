@@ -355,11 +355,9 @@ function MainQue() {
       .then((response) => {
         let found = false;
         for (let i = 0; i < response.data.items.length; i++) {
-          console.log(response.data.items[i])
           if (response.data.items[i].name === "Communal Queue") {
               found = true;
               clearPlaylist(response.data.items[i].id);
-              console.log("from here")
               idToFirebase(response.data.items[i].id, false);
               break;
             }
@@ -397,7 +395,6 @@ function MainQue() {
     fetch(PLAYLIST_ENDPOINT, requestOptions).
     then(response => response.json())
     .then((data) => {
-      console.log(data)
       if (data.status !== undefined) {
         if (data.status === 401) {
           refreshAccessToken();
