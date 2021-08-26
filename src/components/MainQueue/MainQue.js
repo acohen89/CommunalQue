@@ -384,6 +384,7 @@ function MainQue() {
       const requestOptions = {
         method: 'POST',
         headers: {
+          Accept: "application/json",
           Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
@@ -393,7 +394,9 @@ function MainQue() {
         public: true,
       }),
     };
-    fetch(PLAYLIST_ENDPOINT, requestOptions).then((data) => {
+    fetch(PLAYLIST_ENDPOINT, requestOptions).
+    then(response => response.json())
+    .then((data) => {
       console.log(data)
       if (data.status !== undefined) {
         if (data.status === 401) {
