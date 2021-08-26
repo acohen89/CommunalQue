@@ -18,12 +18,11 @@ import MainQueueSongs from './MainQueueSongs';
 import SearchBar from '../SearchBar/SearchBar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const TEST_HASH = '0001';
 const PLAYLIST_NAME = 'Communal Queue';
 const PLAYLIST_DESCRIPTION =
   'This playlist is automatically created by Communal Queue. Please do not delete during a que session.';
 const PLAYLISTS_ENDPOINT = 'https://api.spotify.com/v1/me/playlists';
-const HASH_LENGTH = 4;
+const HASH_LENGTH = 7;
 export { HASH_LENGTH };
 const db = firebase.firestore();
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
