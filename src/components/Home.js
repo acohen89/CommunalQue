@@ -5,7 +5,7 @@ import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
 import { PostAdd } from '@material-ui/icons';
 const port = 3000;
-const WEB_URL = 'http://localhost:' + port;
+const WEB_URL = "https://communalque.hostman.site";
 const inputID = 'queueID';
 const redirect_uri = WEB_URL + '/Home';
 const client_id = process.env.REACT_APP_CLIENT_ID
@@ -13,6 +13,8 @@ const TOKEN = 'https://accounts.spotify.com/api/token';
 const client_secret = process.env.REACT_APP_SECRET
 export { WEB_URL };
 
+
+const inputID = 'queueID';
 const joinQueue = () => {
   
   const queueID = document.getElementById(inputID).value;
