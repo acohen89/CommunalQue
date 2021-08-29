@@ -1,50 +1,70 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from 'react';
+import axios from 'axios';
 import './styles/ZevsStyles.scss';
 import Button from './Button';
-import { HASH_LENGTH } from './MainQue';
-
-
+import { HASH_LENGTH } from './MainQueue/MainQue';
+import { PostAdd } from '@material-ui/icons';
+const port = 3000;
 const WEB_URL = "https://communalque.hostman.site";
-export {WEB_URL}; 
+const inputID = 'queueID';
+const redirect_uri = WEB_URL + '/Home';
+const client_id = process.env.REACT_APP_CLIENT_ID
+const TOKEN = 'https://accounts.spotify.com/api/token';
+const client_secret = process.env.REACT_APP_SECRET
+export { WEB_URL };
+
 
 const inputID = 'queueID';
 const joinQueue = () => {
+  
   const queueID = document.getElementById(inputID).value;
-  const url = WEB_URL + '/JoinQueue?queueID=' + queueID;
-  window.location = url;
+  if (queueID.length === HASH_LENGTH) {
+    const url = WEB_URL + '/JoinQueue?queueID=' + queueID;
+    window.location = url;
+  } else {
+    alert('Enter a valid QueueID');
+  }
 };
 const startQueue = () => {
   window.location = WEB_URL + '/Queue';
 };
 
 function Home() {
-  const enterPressed = e => {
-  if (e.key === "Enter" && document.getElementById(inputID).value.length === HASH_LENGTH) {
-    joinQueue();
-  }
-};
+  console.log("home")
+  console.log(process.env.REACT_APP_CLIENT_ID)
+  console.log(process.env.REACT_APP_SECRET)
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+
+  useEffect(() => {
+    fetchAccessToken(code);
+  }, []);
+
+  const enterPressed = (e) => {
+    if ( e.key === 'Enter' && document.getElementById(inputID).value.length === HASH_LENGTH) {
+      joinQueue();
+    }
+  };
   const getReturnedParamsFromSpotifyAuth = (hash) => {
     const stringAfterHashtag = hash.substring(1);
-    const paramsInUrl = stringAfterHashtag.split("&");
+    const paramsInUrl = stringAfterHashtag.split('&');
     const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-      const [key, value] = currentValue.split("=");
+      const [key, value] = currentValue.split('=');
       accumulater[key] = value;
       return accumulater;
     }, {});
-    
+
     return paramsSplitUp;
   };
   useEffect(() => {
     const { access_token, expires_in, token_type } = getReturnedParamsFromSpotifyAuth(window.location.hash);
     if(access_token !== undefined && expires_in !== undefined && token_type !== undefined){
-      localStorage.clear();
-      localStorage.setItem("token", access_token);
-      localStorage.setItem("expiresIn", expires_in);
-      localStorage.setItem("tokenType", token_type);
-      window.history.pushState({}, document.title, "/home");
+      localStorage.clear(); 
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('expiresIn', expires_in);
+      localStorage.setItem('tokenType', token_type);
     }
-  }, [])
-  const urlParams = new URLSearchParams(window.location.search);
+  }, []);
   if (urlParams.get('error')) {
     window.location = WEB_URL;
   } else {
@@ -83,6 +103,50 @@ function Home() {
       </div>
     );
   }
+}
+var access_token = null;
+var refresh_token = null;
+
+export function refreshAccessToken() {
+  refresh_token = localStorage.getItem('refresh_token');
+  let body = 'grant_type=refresh_token';
+  body += '&refresh_token=' + refresh_token;
+  body += '&client_id=' + client_id;
+  callAuthorizationApi(body);
+}
+function handleAuthorizationResponse() {
+  if (this.status === 200) {
+    var data = JSON.parse(this.responseText);
+    if (data.access_token !== undefined) {
+      access_token = data.access_token;
+      localStorage.setItem('token', access_token);
+    }
+    if (data.refresh_token !== undefined) {
+      refresh_token = data.refresh_token;
+      localStorage.setItem('refresh_token', refresh_token);
+    }
+  } else {
+    console.log(this.responseText);
+  }
+}
+function fetchAccessToken(code) {
+  let body = 'grant_type=authorization_code';
+  body += '&code=' + code;
+  body += '&redirect_uri=' + encodeURI(redirect_uri);
+  body += '&client_id=' + client_id;
+  body += '&client_secret=' + client_secret;
+  callAuthorizationApi(body);
+}
+function callAuthorizationApi(body) {
+  let xhr = new XMLHttpRequest();
+  xhr.open('POST', TOKEN, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader(
+    'Authorization',
+    'Basic ' + btoa(client_id + ':' + client_secret)
+  );
+  xhr.send(body);
+  xhr.onload = handleAuthorizationResponse;
 }
 
 export default Home;

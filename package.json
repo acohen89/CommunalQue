@@ -1,6 +1,7 @@
 {
   "name": "communal-que",
   "version": "0.1.0",
+  "proxy": "https://api.spotify.com/v1/playlists/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.12.1",
@@ -9,6 +10,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
+    "cors": "^2.8.5",
     "firebase": "^8.7.1",
     "node-sass": "^6.0.1",
     "nodemon": "^2.0.12",
@@ -17,6 +19,7 @@
     "react-icons": "^4.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-toastify": "^7.0.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {

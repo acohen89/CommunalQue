@@ -1,9 +1,9 @@
 import './App.css';
 import Home from "./components/Home";
 import Login from "./components/Login"
-import MainQue from './components/MainQue';
+import MainQue from './components/MainQueue/MainQue';
 import  {BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import ExistingQueue from './components/ExistingQueue';
+import ExistingQueue from './components/ExistingQueue/ExistingQueue';
 
 function App() {
 

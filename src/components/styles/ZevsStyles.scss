@@ -10,6 +10,11 @@ $clr-green: #4caf50;
   padding: 0;
 }
 
+p {
+  color: white;
+  font: 'Montserrat';
+}
+
 .button {
   background-color: $clr-green; /* Green */
   border: none;
@@ -29,11 +34,13 @@ $clr-green: #4caf50;
   font-family: 'Montserrat';
   font-weight: 600;
   font-size: 40px;
+  color: white;
 }
 
 .body {
   font-family: 'Montserrat';
   font-size: 30px;
+  color: white;
 }
 
 .bg {
@@ -43,8 +50,9 @@ $clr-green: #4caf50;
     rgba(33, 33, 33, 1) 0%,
     rgba(18, 18, 18, 1) 50%
   );
-  height: 100%;
+  min-height: 100%;
   width: 100%;
+  padding-bottom: 200px;
   position: absolute;
 }
 
@@ -61,6 +69,8 @@ $clr-green: #4caf50;
 
 .darkContainer p {
   margin: 15px;
+  color: white;
+  font-family: 'Montserrat';
 }
 
 .queueTitle {
@@ -90,12 +100,14 @@ $clr-green: #4caf50;
   font-size: 20px;
   font-weight: bold;
   color: white;
+  text-align: left;
 }
 
 .songArtist {
   font-family: 'Montserrat';
   font-size: 20px;
   color: gray;
+  text-align: left;
 }
 
 .form {
@@ -124,4 +136,65 @@ $clr-green: #4caf50;
       border-color: $clr-green;
     }
   }
+}
+
+.searchBar {
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.25s;
+  padding-left: 20px;
+  background-color: #3b3b3b;
+  color: #c4c4c4;
+  font-size: 1rem;
+  box-shadow: -10px 10px 20px rgba(0, 0, 0, 0.445);
+}
+
+.searchBar:focus {
+  border: 2px solid $clr-green;
+  transform: scale(1.025);
+}
+
+.searchSuggestions {
+  background-color: #212121;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 0 15px 15px;
+}
+
+.controlBox {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-grow: 2;
+  padding-right: 10px;
+}
+
+.controlButton {
+  color: white;
+  cursor: pointer;
+  margin: 10;
+}
+
+.Toastify__toast--default {
+  border: 2px solid $clr-green;
+  border-radius: 30px !important;
+  background: #3b3b3b !important;
+  box-shadow: -10px 10px 20px rgba(0, 0, 0, 0.445) !important;
+}
+
+.Toastify__progress-bar--default {
+  background: $clr-green !important;
+}
+
+.Toastify__toast-body {
+  padding: 10px !important;
+  font-family: 'Montserrat';
+}
+
+.Toastify__toast > button > svg {
+  display: none;
 }
