@@ -1,13 +1,9 @@
 import React from 'react';
 import { MdAdd } from 'react-icons/md';
-// import { getSongsFromDB } from './MainQueue/MainQue';
-import { GrFormAdd } from 'react-icons/gr';
 import firebase from './firesbase';
 const db = firebase.firestore();
 
 const Song = ({ uri, title, artist, inQueue, played, duration }) => {
-  const queueID = localStorage.getItem('queueID');
-  const docRef = db.collection('Active Ques').doc(queueID);
   let artistKey = uri + artist;
   if (uri === 'testURi') {
     uri = 'Random uri ' + Math.floor(Math.random() * 99999);

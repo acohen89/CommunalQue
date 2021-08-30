@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { handleImages } from './SearchBar/SearchBar';
-import testImage from '../assets/test album cover.jpg';
 import { BsFillSkipEndFill, BsFillSkipStartFill } from 'react-icons/bs';
 import { AiFillPlayCircle, AiFillPauseCircle } from 'react-icons/ai';
 import { refreshAccessToken } from './Home';

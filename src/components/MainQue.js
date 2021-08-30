@@ -6,14 +6,7 @@ import '../styles/ZevsStyles.scss';
 import firebase from '../firesbase';
 import { WEB_URL } from '../Home';
 import Button from '../Button';
-import NowPlaying, {
-  getNowPlaying,
-  disableShuffleandRepeat,
-  skipTrack,
-  previousTrack,
-  play,
-  pause,
-} from '../NowPlaying';
+import NowPlaying, {getNowPlaying,disableShuffleandRepeat, pause} from '../NowPlaying';
 import MainQueueSongs from './MainQueueSongs';
 import SearchBar from '../SearchBar/SearchBar';
 import { ToastContainer, toast } from 'react-toastify';
@@ -35,9 +28,6 @@ const docRef = db.collection('Active Ques').doc(hash);
 
 
 function MainQue() {
-  //TODO: use enviroment variables
-
-  //TODO: don't allow first song in playlist to be previously added song
   const [songs, setSongs] = useState([
     {
       id: '123kf21',
@@ -239,28 +229,6 @@ function MainQue() {
     }
     docRef.update({
       songs: newSongs,
-    });
-  }
-  function removeSongFromPlaylist(playlistID, song) {
-    const RM_ENDPOINT =
-    'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
-    const requestOptions = {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        tracks: [{ uri: song.uri }],
-      }),
-    };
-    fetch(RM_ENDPOINT, requestOptions).then((data) => {
-      if (data.status !== undefined) {
-        if (data.status === 401) {
-          refreshAccessToken();
-        }
-        console.log('Removed ' + song.title + ' from playlist');
-      }
     });
   }
   const refresh = () => {
@@ -494,17 +462,6 @@ function MainQue() {
         console.error('Error adding document: ', error);
       });
     }
-
-    const getReturnedParamsFromSpotifyAuth = (hash) => {
-      const stringAfterHashtag = hash.substring(1);
-      const paramsInUrl = stringAfterHashtag.split('&');
-      const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-        const [key, value] = currentValue.split('=');
-        accumulater[key] = value;
-        return accumulater;
-      }, {});
-      return paramsSplitUp;
-    };
     return (
       <div
       className="bg"
