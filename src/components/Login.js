@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React from 'react';
 import Button from './Button';
 import './styles/ZevsStyles.scss';

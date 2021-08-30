@@ -5,9 +5,9 @@ import Button from '../Button';
 import SearchBar from '../SearchBar/SearchBar';
 import ExistingQueueSongs from './ExistingQueueSongs';
 import { HASH_LENGTH } from '../MainQueue/MainQue';
-import NowPlaying, { getNowPlaying } from '../NowPlaying';
+import { getNowPlaying } from '../NowPlaying';
 import '../styles/ZevsStyles.scss';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const urlParams = new URLSearchParams(window.location.search);
 const db = firebase.firestore();
@@ -22,9 +22,7 @@ localStorage.setItem('queueID', queueID);
 export { docRef };
 
 const ExistingQueue = () => {
-  
-  const notify = (message, milliseconds) =>
-    toast(message, { autoClose: milliseconds });
+
   const [songs, setSongs] = useState([
     { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },
     { id: '2', title: '', artist: '', inQueue: true },

@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react'; 
 import './styles/ZevsStyles.scss';
 import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
-import { PostAdd } from '@material-ui/icons';
-const port = 3000;
 const WEB_URL = "https://communalque.hostman.site";
 const inputID = 'queueID';
 const redirect_uri = WEB_URL + '/Home';
