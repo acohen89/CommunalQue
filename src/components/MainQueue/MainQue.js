@@ -64,7 +64,7 @@ function MainQue() {
         docExists = true;
       } else {
         docExists = false;
-        console.log('No such document!');
+        console.error('No such document!');
       }
     })
     .catch((error) => {
@@ -119,7 +119,7 @@ function MainQue() {
           }
         }
       } else {
-        console.log('No such document!');
+        console.error('No such document!');
       }
     })
     .catch((error) => {
@@ -159,7 +159,7 @@ function MainQue() {
   playlistIDProm.then(
     useEffect(() => {
       docRef.onSnapshot((doc) => {
-        console.log('New Data!');
+        // console.log('New Data!');
         // refresh();
       });
       playPlaylist();
@@ -458,11 +458,11 @@ function MainQue() {
         playlistID: playlistid,
       })
       .then((docRef) => {
-        console.log(
-          newPlaylist
-          ? 'Added a new playlist with id ' + playlistid
-          : 'Added old playlist with id ' + playlistid
-          );
+        // console.log(
+        //   newPlaylist
+        //   ? 'Added a new playlist with id ' + playlistid
+        //   : 'Added old playlist with id ' + playlistid
+        //   );
         })
         .catch((error) => {
           console.error('Error adding document: ', error);
@@ -486,7 +486,7 @@ function MainQue() {
         Songs: [],
       })
       .then((docRef) => {
-        console.log('Document with hash ' + hash + ' written sucesfully');
+        // console.log('Document with hash ' + hash + ' written sucesfully');
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
@@ -599,7 +599,7 @@ await docRef
     if (doc.exists) {
       data = doc.data().songs;
     } else {
-      console.log('No such document!');
+      console.error('No such document!');
     }
   })
   .catch((error) => {

@@ -91,7 +91,7 @@ const ExistingQueue = () => {
             }
           }
         } else {
-          console.log('No such document!');
+          console.error('No such document!');
         }
       })
       .catch((error) => {
@@ -126,7 +126,7 @@ const ExistingQueue = () => {
             }  
           }
         } else {
-          console.log('No such document!');
+          console.error('No such document!');
         }
       })
       .catch((error) => {

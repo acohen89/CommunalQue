@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import './styles/ZevsStyles.scss';
 import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
-const WEB_URL = "https://communalque.hostman.site";
+const WEB_URL = "https://communalque.web.app";
 const inputID = 'queueID';
 const redirect_uri = WEB_URL + '/Home';
 const client_id = process.env.REACT_APP_CLIENT_ID
@@ -26,9 +26,6 @@ const startQueue = () => {
 };
 
 function Home() {
-  console.log("home")
-  console.log(process.env.REACT_APP_CLIENT_ID)
-  console.log(process.env.REACT_APP_SECRET)
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
 
@@ -122,7 +119,7 @@ function handleAuthorizationResponse() {
       localStorage.setItem('refresh_token', refresh_token);
     }
   } else {
-    console.log(this.responseText);
+    // console.log(this.responseText);
   }
 }
 function fetchAccessToken(code) {
