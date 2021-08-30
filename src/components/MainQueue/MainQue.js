@@ -20,7 +20,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const PLAYLIST_NAME = 'Communal Queue';
 const PLAYLIST_DESCRIPTION =
-  'This playlist is automatically created by Communal Queue. Please do not delete during a que session.';
+  'This playlist is automatically created by Communal Queue. Please do not delete during a queue session.';
 const PLAYLISTS_ENDPOINT = 'https://api.spotify.com/v1/me/playlists';
 const HASH_LENGTH = 7;
 export { HASH_LENGTH };
