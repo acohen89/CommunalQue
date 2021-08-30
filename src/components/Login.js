@@ -8,7 +8,7 @@ export { WEB_URL };
 const APP_DESCRIPTIONP1 = "Communal Queue allows you to make a queue that both you and your friends can add to. To begin, login to Spotify and click start queue. " 
 const APP_DESCRIPTIONP2 = "You will be given a queue id that your friends can then use to access the same queue and add songs. ";
 const REDIRECT_URL_AFTER_LOGIN = WEB_URL + '/Home';
-const CLIENT_ID = '35135547562945148a4c9129b244dfe8'; // Testing iD
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const SPACE_DELIMITER = '%20';
 const SCOPES = [
   "playlist-modify-private",

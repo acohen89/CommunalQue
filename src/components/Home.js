@@ -8,12 +8,13 @@ const port = 3000;
 const WEB_URL = 'http://localhost:' + port;
 const inputID = 'queueID';
 const redirect_uri = WEB_URL + '/Home';
-const client_id = '35135547562945148a4c9129b244dfe8';
+const client_id = process.env.REACT_APP_CLIENT_ID
 const TOKEN = 'https://accounts.spotify.com/api/token';
-const client_secret = '818c3697a3314a469cf9fb841abe6626';
+const client_secret = process.env.REACT_APP_SECRET
 export { WEB_URL };
 
 const joinQueue = () => {
+  
   const queueID = document.getElementById(inputID).value;
   if (queueID.length === HASH_LENGTH) {
     const url = WEB_URL + '/JoinQueue?queueID=' + queueID;
@@ -27,6 +28,9 @@ const startQueue = () => {
 };
 
 function Home() {
+  console.log("home")
+  console.log(process.env.REACT_APP_CLIENT_ID)
+  console.log(process.env.REACT_APP_SECRET)
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
 
