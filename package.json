@@ -1,5 +1,5 @@
 {
-  "name": "communal-que",
+  "name": "communal-queue",
   "version": "0.1.0",
   "proxy": "https://api.spotify.com/v1/playlists/",
   "private": true,

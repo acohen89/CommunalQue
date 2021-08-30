@@ -57,7 +57,7 @@ function MainQue() {
         docExists = true;
       } else {
         docExists = false;
-        console.log('No such document!');
+        console.error('No such document!');
       }
     })
     .catch((error) => {
@@ -111,7 +111,7 @@ function MainQue() {
           }
         }
       } else {
-        console.log('No such document!');
+        console.error('No such document!');
       }
     })
     .catch((error) => {
@@ -151,7 +151,7 @@ function MainQue() {
   playlistIDProm.then(
     useEffect(() => {
       docRef.onSnapshot((doc) => {
-        console.log('New Data!');
+        // console.log('New Data!');
         // refresh();
       });
       playPlaylist();
@@ -218,12 +218,11 @@ function MainQue() {
               }
             })();
           }
-          function updateDB(dbSongs, songToUpdate) {
-    console.log('in update');
+  function updateDB(dbSongs, songToUpdate) {
     let newSongs = dbSongs;
     for (let i = 0; i < newSongs.length; i++) {
       if (newSongs[i].id === songToUpdate.uri) {
-        console.log('Changing ' + newSongs[i].title + ' to played ');
+        // console.log('Changing ' + newSongs[i].title + ' to played ');
         newSongs[i].played = true;
       }
     }
@@ -242,7 +241,7 @@ function MainQue() {
           addSongsToPlaylist(playlistID, doc.data().songs);
         }
       } else {
-          console.log('No such document!');
+          console.error('No such document!');
         }
       })
       .catch((error) => {
@@ -291,7 +290,7 @@ function MainQue() {
               refreshAccessToken();
             }
           }
-          console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
+          // console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
         });
       }
     }
@@ -333,7 +332,6 @@ function MainQue() {
             }
           }
         if (!found) {
-          console.log("Creating new")
           createNewPlaylist(userID, token);
         }
       })
@@ -343,7 +341,7 @@ function MainQue() {
             refreshAccessToken();
           }
         }
-        console.log(error);
+        console.error(error);
       });
     }
     function createNewPlaylist(userID, token) {
@@ -558,7 +556,7 @@ await docRef
     if (doc.exists) {
       data = doc.data().songs;
     } else {
-      console.log('No such document!');
+      console.error('No such document!');
     }
   })
   .catch((error) => {

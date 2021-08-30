@@ -77,7 +77,7 @@ export const addSong = (artist, title, uri, duration, coverImage, docRef) => {
         }),
       })
       .then(() => {
-        console.log('Added ' + title + ' to database!');
+        // console.log('Added ' + title + ' to database!');
       })
       .catch((error) => {
         console.error('Error updating document: ', error);
@@ -118,7 +118,7 @@ export async function removeSong(uri, docRef) {
   fetch(RM_PLAYLIST_ENDPOINT, requestOptions).then(
     (response) =>
       function () {
-        console.log(response);
+        // console.log(response);
       }
   );
   const dbSongs = await getSongsFromDB(docRef);
@@ -127,7 +127,7 @@ export async function removeSong(uri, docRef) {
     if (dbSongs[i].id !== uri) {
       newSongs.push(dbSongs[i]);
     } else {
-      console.log('Deleted song:  ' + dbSongs[i].title + ' from db');
+      // console.log('Deleted song:  ' + dbSongs[i].title + ' from db');
     }
   }
   docRef.update({
@@ -142,7 +142,7 @@ async function getSongsFromDB(docRef) {
       if (doc.exists) {
         data = doc.data().songs;
       } else {
-        console.log('No such document!');
+        console.error('No such document!');
       }
     })
     .catch((error) => {
