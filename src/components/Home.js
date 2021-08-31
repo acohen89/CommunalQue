@@ -14,7 +14,6 @@ const client_secret = process.env.REACT_APP_SECRET
 export { WEB_URL };
 
 
-const inputID = 'queueID';
 const joinQueue = () => {
   
   const queueID = document.getElementById(inputID).value;
