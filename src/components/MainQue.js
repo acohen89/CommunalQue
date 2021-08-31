@@ -35,8 +35,10 @@ const docRef = db.collection('Active Ques').doc(hash);
 
 
 function MainQue() {
+  console.log("in main")
+  getNameFromSpot();
   //TODO: use enviroment variables
-
+  
   //TODO: don't allow first song in playlist to be previously added song
   const [songs, setSongs] = useState([
     {
@@ -78,6 +80,7 @@ function MainQue() {
   
   if(docExists) {updateNowPlaying();} 
   useEffect(() => {
+    console.log("Here")
     getNameFromSpot();
     docRef.onSnapshot((doc) => {
       refresh();
@@ -139,6 +142,7 @@ function MainQue() {
       },
     })
     .then((response) => {
+      console.log(response.data.display_name)
       localStorage.setItem('name', response.data.display_name);
     })
     .catch((error) => {

@@ -28,9 +28,6 @@ const startQueue = () => {
 };
 
 function Home() {
-  console.log("home")
-  console.log(process.env.REACT_APP_CLIENT_ID)
-  console.log(process.env.REACT_APP_SECRET)
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
 
@@ -144,6 +141,7 @@ function callAuthorizationApi(body) {
     'Basic ' + btoa(client_id + ':' + client_secret)
   );
   xhr.send(body);
+  console.log(body)
   xhr.onload = handleAuthorizationResponse;
 }
 
