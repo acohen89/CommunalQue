@@ -111,7 +111,6 @@ const ExistingQueue = () => {
         },
       })
       .then((response) => {
-        console.log(response.data.display_name)
         localStorage.setItem('name', response.data.display_name);
       })
       .catch((error) => {

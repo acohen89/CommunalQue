@@ -257,7 +257,7 @@ function MainQue() {
         if (data.status === 401) {
           refreshAccessToken();
         }
-        console.log('Removed ' + song.title + ' from playlist');
+        console.log('Removed ' + (song.title !== undefined ? song.name : song.title )+ ' from playlist');
       }
     });
   }
@@ -290,20 +290,7 @@ function MainQue() {
         },
       })
       .then((response) => {
-        for(let k = 0; k < response.data.tracks.items.length; k++){
-          let found = false;
-          for(let i = 0; i < songsOBJ.length; i++){
-            if(songsOBJ[i].id === response.data.tracks.items[k].id){
-              found = true;
-              break;
-            }
-            if(!found){
-              console.log(response.data.tracks.items[k])
-            }
-          }
-          
-          
-        }
+       findSongsToDelete(playlistID, response.data.tracks.items, songsOBJ);
         // removeSongFromPlaylist(playlistID, response.data.tracks.items);
       })
       .catch((error) => {
@@ -314,6 +301,20 @@ function MainQue() {
         }
         console.log(error + ' with getting songs in playlist');
       });
+    }
+    function findSongsToDelete(playlistID, tracks, songsOBJ){
+      for(let k = 0; k < tracks.length; k++){
+        let found = false;
+        for(let i = 0; i < songsOBJ.length; i++){
+          if(songsOBJ[i].id === tracks[k].track.uri){
+            found = true;
+            break;
+          }
+        }
+        if(!found){
+          removeSongFromPlaylist(playlistID, tracks[k].track)
+        }
+      }
     }
     async function addSongsToPlaylist(playlistID, songsObj) {
       const SPECIFIC_PLAYLIST_ENDPOINT =
