@@ -42,7 +42,7 @@ const MQSong = ({
           >
             <FiTrash
               style={{ color: 'gray', marginRight: 20, cursor: 'pointer' }}
-              onClick={() => removeSong(uri, docRef)}
+              onClick={() => removeSong(uri, docRef, false)}
             />
           </div>
       </div>

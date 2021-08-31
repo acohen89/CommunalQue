@@ -34,7 +34,7 @@ const EQSong = ({ uri, title, artist, duration, played, addedBy, docRef }) => {
           >
             <FiTrash
               style={{ color: 'gray', marginRight: 20, cursor: 'pointer' }}
-              onClick={() => removeSong(uri, docRef)}
+              onClick={() => removeSong(uri, docRef, true)}
             />
           </div>
         ) : null}

@@ -63,7 +63,7 @@ const Song = ({ uri, title, artist, inQueue, played, duration }) => {
   }
 };
 export const addSong = (artist, title, uri, duration, coverImage, docRef) => {
-    const name = localStorage.getItem("name") === null || localStorage.getItem("name") === undefined ? "N/A" : localStorage.getItem("name");
+  const name = localStorage.getItem("name") === null || localStorage.getItem("name") === undefined ? "N/A" : localStorage.getItem("name");
     if (artist === '' || title === '' || uri === '') {
       console.error("Can't add an empty song");
       return;
@@ -94,37 +94,39 @@ export function convert(millis) {
     ? minutes + 1 + ':00'
     : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
-export async function removeSong(uri, docRef) {
+export async function removeSong(uri, docRef, inEQ) {
   const playlistID = localStorage.getItem('playlistID');
   const token = localStorage.getItem('token');
-  if (playlistID === null || playlistID === undefined) {
-    console.error('Playist id = ' + playlistID);
-    return;
+  if(!inEQ){
+    if (playlistID === null || playlistID === undefined) {
+      console.error('Playist id = ' + playlistID);
+      return;
+    }
+    if (uri.substring(0, 7) !== 'spotify') {
+      console.error('Invalid uri of ' + uri);
+      return;
+    }
+    if (token === null || token === undefined) {
+      console.error('Invalid token of ' + token);
+      return;
+    }
+    const RM_PLAYLIST_ENDPOINT =
+      'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uris: [uri] }),
+    };
+    fetch(RM_PLAYLIST_ENDPOINT, requestOptions).then(
+      (response) =>
+        function () {
+          console.log(response);
+        }
+    );
   }
-  if (uri.substring(0, 7) !== 'spotify') {
-    console.error('Invalid uri of ' + uri);
-    return;
-  }
-  if (token === null || token === undefined) {
-    console.error('Invalid token of ' + token);
-    return;
-  }
-  const RM_PLAYLIST_ENDPOINT =
-    'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
-  const requestOptions = {
-    method: 'DELETE',
-    headers: {
-      Authorization: 'Bearer ' + token,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ uris: [uri] }),
-  };
-  fetch(RM_PLAYLIST_ENDPOINT, requestOptions).then(
-    (response) =>
-      function () {
-        console.log(response);
-      }
-  );
   const dbSongs = await getSongsFromDB(docRef);
   let newSongs = [];
   for (let i = 0; i < dbSongs.length; i++) {

@@ -270,6 +270,7 @@ function MainQue() {
         if(doc.data().songs !== undefined ){
           setSongs((songs) => (songs = doc.data().songs));
           addSongsToPlaylist(playlistID, doc.data().songs);
+          updatePlaylistState(playlistID, doc.data().songs);
         }
       } else {
           console.log('No such document!');
@@ -279,6 +280,41 @@ function MainQue() {
         console.log('Error getting document:', error);
       });
     };
+    async function updatePlaylistState(playlistID, songsOBJ){
+      const SPECIFIC_PLAYLIST_ENDPOINT =
+      'https://api.spotify.com/v1/playlists/' + playlistID;
+      await axios
+      .get(SPECIFIC_PLAYLIST_ENDPOINT, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      })
+      .then((response) => {
+        for(let k = 0; k < response.data.tracks.items.length; k++){
+          let found = false;
+          for(let i = 0; i < songsOBJ.length; i++){
+            if(songsOBJ[i].id === response.data.tracks.items[k].id){
+              found = true;
+              break;
+            }
+            if(!found){
+              console.log(response.data.tracks.items[k])
+            }
+          }
+          
+          
+        }
+        // removeSongFromPlaylist(playlistID, response.data.tracks.items);
+      })
+      .catch((error) => {
+        if (error.response.status !== undefined) {
+            if (error.response.status === 401) {
+            refreshAccessToken();
+          }
+        }
+        console.log(error + ' with getting songs in playlist');
+      });
+    }
     async function addSongsToPlaylist(playlistID, songsObj) {
       const SPECIFIC_PLAYLIST_ENDPOINT =
       'https://api.spotify.com/v1/playlists/' + playlistID;
@@ -554,7 +590,6 @@ function MainQue() {
 
 
 function findUniqueSongs(songsObj, songsAlreadyInPlaylist) {
-
   let uriArray = [];
   let titleArray = [];
   for (let i = 0; i < songsObj.length; i++) {
