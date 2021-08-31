@@ -5,7 +5,7 @@ import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
 import { PostAdd } from '@material-ui/icons';
 const port = 3000;
-const WEB_URL = "https://communalque.hostman.site";
+const WEB_URL = "http://localhost:3000";
 const inputID = 'queueID';
 const redirect_uri = WEB_URL + '/Home';
 const client_id = process.env.REACT_APP_CLIENT_ID
@@ -126,6 +126,7 @@ function handleAuthorizationResponse() {
   }
 }
 function fetchAccessToken(code) {
+  console.log(redirect_uri)
   let body = 'grant_type=authorization_code';
   body += '&code=' + code;
   body += '&redirect_uri=' + encodeURI(redirect_uri);
