@@ -123,6 +123,7 @@ function handleAuthorizationResponse() {
   }
 }
 function fetchAccessToken(code) {
+  console.log(redirect_uri)
   let body = 'grant_type=authorization_code';
   body += '&code=' + code;
   body += '&redirect_uri=' + encodeURI(redirect_uri);

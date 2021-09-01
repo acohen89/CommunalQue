@@ -28,6 +28,7 @@ const docRef = db.collection('Active Ques').doc(hash);
 
 
 function MainQue() {
+  getNameFromSpot();
   const [songs, setSongs] = useState([
     {
       id: '123kf21',
@@ -68,6 +69,7 @@ function MainQue() {
   
   if(docExists) {updateNowPlaying();} 
   useEffect(() => {
+    console.log("Here")
     getNameFromSpot();
     docRef.onSnapshot((doc) => {
       refresh();
@@ -129,6 +131,7 @@ function MainQue() {
       },
     })
     .then((response) => {
+      console.log(response.data.display_name)
       localStorage.setItem('name', response.data.display_name);
     })
     .catch((error) => {

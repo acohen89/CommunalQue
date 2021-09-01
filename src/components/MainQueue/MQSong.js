@@ -32,6 +32,7 @@ const MQSong = ({
           {artist}
         </p>
         <p style={{ color: 'white' }}>{ duration === "" ? "" : convert(duration)}</p>
+        {artist === 'No songs in queue currently' ? null:  
           <div
             style={{
               display: 'flex',
@@ -42,9 +43,9 @@ const MQSong = ({
           >
             <FiTrash
               style={{ color: 'gray', marginRight: 20, cursor: 'pointer' }}
-              onClick={() => removeSong(uri, docRef)}
+              onClick={() => removeSong(uri, docRef, false)}
             />
-          </div>
+          </div> }
       </div>
     );
   }

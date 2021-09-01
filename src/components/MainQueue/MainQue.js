@@ -27,6 +27,7 @@ export { HASH_LENGTH };
 const db = firebase.firestore();
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
+var firstSongPlayed = false;
 if (!localStorage.getItem('hash')) {
   localStorage.setItem('hash', makeHash(HASH_LENGTH));
 }
@@ -42,6 +43,7 @@ function MainQue() {
       artist: 'No songs in queue currently',
       played: false,
       duration: "",
+      addedBy: 'Spotify',
       coverImage: null,
     },
   ]);
@@ -101,7 +103,7 @@ function MainQue() {
           }
         }
         // TODO: change state of play pause button to a play icon if a new song is playing
-        setCurSong((curSong) => (curSong = cSong));
+        setCurSong((curSong) => (curSong = cSong)); 
       }
     })();
   }
@@ -179,7 +181,7 @@ function MainQue() {
       body: JSON.stringify({
         context_uri: playlistURI,
         offset: {
-          position: 0,
+          position: 1,
         },
         position_ms: 0,
       }),
@@ -257,7 +259,7 @@ function MainQue() {
         if (data.status === 401) {
           refreshAccessToken();
         }
-        console.log('Removed ' + song.title + ' from playlist');
+        console.log('Removed ' + (song.title !== undefined ? song.title : song.name )+ ' from playlist');
       }
     });
   }
@@ -270,6 +272,7 @@ function MainQue() {
         if(doc.data().songs !== undefined ){
           setSongs((songs) => (songs = doc.data().songs));
           addSongsToPlaylist(playlistID, doc.data().songs);
+          updatePlaylistState(playlistID, doc.data().songs);
         }
       } else {
           console.log('No such document!');
@@ -279,6 +282,42 @@ function MainQue() {
         console.log('Error getting document:', error);
       });
     };
+    async function updatePlaylistState(playlistID, songsOBJ){
+      const SPECIFIC_PLAYLIST_ENDPOINT =
+      'https://api.spotify.com/v1/playlists/' + playlistID;
+      await axios
+      .get(SPECIFIC_PLAYLIST_ENDPOINT, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      })
+      .then((response) => {
+       findSongsToDelete(playlistID, response.data.tracks.items, songsOBJ);
+        // removeSongFromPlaylist(playlistID, response.data.tracks.items);
+      })
+      .catch((error) => {
+        if (error.response.status !== undefined) {
+            if (error.response.status === 401) {
+            refreshAccessToken();
+          }
+        }
+        console.log(error + ' with getting songs in playlist');
+      });
+    }
+    function findSongsToDelete(playlistID, tracks, songsOBJ){
+      for(let k = 0; k < tracks.length; k++){
+        let found = false;
+        for(let i = 0; i < songsOBJ.length; i++){
+          if(songsOBJ[i].id === tracks[k].track.uri){
+            found = true;
+            break;
+          }
+        }
+        if(!found){
+          removeSongFromPlaylist(playlistID, tracks[k].track)
+        }
+      }
+    }
     async function addSongsToPlaylist(playlistID, songsObj) {
       const SPECIFIC_PLAYLIST_ENDPOINT =
       'https://api.spotify.com/v1/playlists/' + playlistID;
@@ -322,6 +361,12 @@ function MainQue() {
             }
           }
           console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
+          if(songsObj.length === 1){
+            if(!firstSongPlayed){
+              setTimeout(playPlaylist(), 2200);
+              firstSongPlayed = true;
+            }
+          }
         });
       }
     }
@@ -554,7 +599,6 @@ function MainQue() {
 
 
 function findUniqueSongs(songsObj, songsAlreadyInPlaylist) {
-
   let uriArray = [];
   let titleArray = [];
   for (let i = 0; i < songsObj.length; i++) {
