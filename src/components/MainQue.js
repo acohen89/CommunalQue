@@ -6,14 +6,7 @@ import '../styles/ZevsStyles.scss';
 import firebase from '../firesbase';
 import { WEB_URL } from '../Home';
 import Button from '../Button';
-import NowPlaying, {
-  getNowPlaying,
-  disableShuffleandRepeat,
-  skipTrack,
-  previousTrack,
-  play,
-  pause,
-} from '../NowPlaying';
+import NowPlaying, {getNowPlaying,disableShuffleandRepeat, pause} from '../NowPlaying';
 import MainQueueSongs from './MainQueueSongs';
 import SearchBar from '../SearchBar/SearchBar';
 import { ToastContainer, toast } from 'react-toastify';
@@ -35,11 +28,7 @@ const docRef = db.collection('Active Ques').doc(hash);
 
 
 function MainQue() {
-  console.log("in main")
   getNameFromSpot();
-  //TODO: use enviroment variables
-  
-  //TODO: don't allow first song in playlist to be previously added song
   const [songs, setSongs] = useState([
     {
       id: '123kf21',
@@ -69,7 +58,7 @@ function MainQue() {
         docExists = true;
       } else {
         docExists = false;
-        console.log('No such document!');
+        console.error('No such document!');
       }
     })
     .catch((error) => {
@@ -124,7 +113,7 @@ function MainQue() {
           }
         }
       } else {
-        console.log('No such document!');
+        console.error('No such document!');
       }
     })
     .catch((error) => {
@@ -165,7 +154,7 @@ function MainQue() {
   playlistIDProm.then(
     useEffect(() => {
       docRef.onSnapshot((doc) => {
-        console.log('New Data!');
+        // console.log('New Data!');
         // refresh();
       });
       playPlaylist();
@@ -232,39 +221,16 @@ function MainQue() {
               }
             })();
           }
-          function updateDB(dbSongs, songToUpdate) {
-    console.log('in update');
+  function updateDB(dbSongs, songToUpdate) {
     let newSongs = dbSongs;
     for (let i = 0; i < newSongs.length; i++) {
       if (newSongs[i].id === songToUpdate.uri) {
-        console.log('Changing ' + newSongs[i].title + ' to played ');
+        // console.log('Changing ' + newSongs[i].title + ' to played ');
         newSongs[i].played = true;
       }
     }
     docRef.update({
       songs: newSongs,
-    });
-  }
-  function removeSongFromPlaylist(playlistID, song) {
-    const RM_ENDPOINT =
-    'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks';
-    const requestOptions = {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        tracks: [{ uri: song.uri }],
-      }),
-    };
-    fetch(RM_ENDPOINT, requestOptions).then((data) => {
-      if (data.status !== undefined) {
-        if (data.status === 401) {
-          refreshAccessToken();
-        }
-        console.log('Removed ' + song.title + ' from playlist');
-      }
     });
   }
   const refresh = () => {
@@ -278,7 +244,7 @@ function MainQue() {
           addSongsToPlaylist(playlistID, doc.data().songs);
         }
       } else {
-          console.log('No such document!');
+          console.error('No such document!');
         }
       })
       .catch((error) => {
@@ -327,7 +293,7 @@ function MainQue() {
               refreshAccessToken();
             }
           }
-          console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
+          // console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
         });
       }
     }
@@ -369,7 +335,6 @@ function MainQue() {
             }
           }
         if (!found) {
-          console.log("Creating new")
           createNewPlaylist(userID, token);
         }
       })
@@ -379,7 +344,7 @@ function MainQue() {
             refreshAccessToken();
           }
         }
-        console.log(error);
+        console.error(error);
       });
     }
     function createNewPlaylist(userID, token) {
@@ -498,17 +463,6 @@ function MainQue() {
         console.error('Error adding document: ', error);
       });
     }
-
-    const getReturnedParamsFromSpotifyAuth = (hash) => {
-      const stringAfterHashtag = hash.substring(1);
-      const paramsInUrl = stringAfterHashtag.split('&');
-      const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-        const [key, value] = currentValue.split('=');
-        accumulater[key] = value;
-        return accumulater;
-      }, {});
-      return paramsSplitUp;
-    };
     return (
       <div
       className="bg"
@@ -605,7 +559,7 @@ await docRef
     if (doc.exists) {
       data = doc.data().songs;
     } else {
-      console.log('No such document!');
+      console.error('No such document!');
     }
   })
   .catch((error) => {

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { handleImages } from './SearchBar/SearchBar';
-import testImage from '../assets/test album cover.jpg';
 import { BsFillSkipEndFill, BsFillSkipStartFill } from 'react-icons/bs';
 import { AiFillPlayCircle, AiFillPauseCircle } from 'react-icons/ai';
 import { refreshAccessToken } from './Home';
@@ -168,7 +167,7 @@ export function pause() {
           notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
-          console.log('Paused Song');
+          // console.log('Paused Song');
         }
       }
   );
@@ -190,7 +189,7 @@ export function play() {
           notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
-          console.log('Played Song');
+          // console.log('Played Song');
         }
       }
   );
@@ -231,7 +230,7 @@ export function previousTrack() {
             notify(ALERT_MESSAGE, 6000);
         } else if (response.status === 200) {
           localStorage.setItem('noActiveDevice', false);
-          console.log('Went back a Song');
+          // console.log('Went back a Song');
         }
       }
   );
@@ -252,7 +251,7 @@ export function disableShuffleandRepeat() {
           notify(ALERT_MESSAGE, 6000);
         } else if (data.status === 200) {
           localStorage.setItem('noActiveDevice', false);
-          console.log('Disabled repeat');
+          // console.log('Disabled repeat');
         }
       }
   );
@@ -264,7 +263,7 @@ export function disableShuffleandRepeat() {
           notify(ALERT_MESSAGE, 6000);
         } else if (data.status === 200) {
           localStorage.setItem('noActiveDevice', false);
-          console.log('Disabled shuffle');
+          // console.log('Disabled shuffle');
         }
       }
   );

@@ -1,10 +1,9 @@
-import axios from 'axios';
 import React from 'react';
 import Button from './Button';
 import './styles/ZevsStyles.scss';
 const APP_DESCRIPTIONP1 = "Communal Queue allows you to make a queue that both you and your friends can add to. To begin, login to Spotify and click start queue. " 
 const APP_DESCRIPTIONP2 = "You will be given a queue id that your friends can then use to access the same queue and add songs. ";
-const WEB_URL = "http://localhost:3000";
+const WEB_URL = "https://communalque.web.app";
 export {WEB_URL}; 
 const REDIRECT_URL_AFTER_LOGIN = WEB_URL + '/Home';
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;

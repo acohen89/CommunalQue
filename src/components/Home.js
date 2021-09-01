@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react'; 
 import './styles/ZevsStyles.scss';
 import Button from './Button';
 import { HASH_LENGTH } from './MainQueue/MainQue';
-import { PostAdd } from '@material-ui/icons';
-const port = 3000;
-const WEB_URL = "http://localhost:3000";
+const WEB_URL = "https://communalque.web.app";
 const inputID = 'queueID';
 const redirect_uri = WEB_URL + '/Home';
 const client_id = process.env.REACT_APP_CLIENT_ID
@@ -122,7 +119,7 @@ function handleAuthorizationResponse() {
       localStorage.setItem('refresh_token', refresh_token);
     }
   } else {
-    console.log(this.responseText);
+    // console.log(this.responseText);
   }
 }
 function fetchAccessToken(code) {
