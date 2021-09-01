@@ -26,7 +26,7 @@ const ExistingQueue = () => {
   const notify = (message, milliseconds) =>
     toast(message, { autoClose: milliseconds });
   const [songs, setSongs] = useState([
-    { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true },
+    { id: '1', title: 'No Songs In Queue', artist: '', inQueue: true, addedBy: "no One"  },
     { id: '2', title: '', artist: '', inQueue: true },
   ]);
   const [curSong, setCurSong] = useState({
@@ -125,6 +125,8 @@ const ExistingQueue = () => {
           if(doc.data().songs !== undefined){
             if(doc.data().songs.length !== 0){
               setSongs((songs) => (songs = doc.data().songs));
+            } else {
+              setSongs((songs) => ([{ id: '1', title: 'No Songs In Queue', artist: '', inQueue: true, addedBy: "no One" },{ id: '2', title: '', artist: '', inQueue: true },]));
             }  
           }
         } else {

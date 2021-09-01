@@ -257,7 +257,7 @@ function MainQue() {
         if (data.status === 401) {
           refreshAccessToken();
         }
-        console.log('Removed ' + (song.title !== undefined ? song.name : song.title )+ ' from playlist');
+        console.log('Removed ' + (song.title !== undefined ? song.title : song.name )+ ' from playlist');
       }
     });
   }

@@ -127,18 +127,23 @@ export async function removeSong(uri, docRef, inEQ) {
         }
     );
   }
-  const dbSongs = await getSongsFromDB(docRef);
   let newSongs = [];
-  for (let i = 0; i < dbSongs.length; i++) {
-    if (dbSongs[i].id !== uri) {
-      newSongs.push(dbSongs[i]);
-    } else {
-      console.log('Deleted song:  ' + dbSongs[i].title + ' from db');
+  (async () => {
+    const dbSongs = await getSongsFromDB(docRef);
+    if(dbSongs !== undefined){
+      for (let i = 0; i < dbSongs.length; i++) {
+        if (dbSongs[i].id !== uri) {
+          newSongs.push(dbSongs[i]);
+        } else {
+          console.log('Deleted song:  ' + dbSongs[i].title + ' from db');
+        }
+      }
+      docRef.update({
+        songs: newSongs,
+      });
     }
-  }
-  docRef.update({
-    songs: newSongs,
-  });
+  })();
+  console.log("removing")
 }
 async function getSongsFromDB(docRef) {
   let data = '';
