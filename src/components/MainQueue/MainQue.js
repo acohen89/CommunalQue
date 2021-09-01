@@ -27,6 +27,7 @@ export { HASH_LENGTH };
 const db = firebase.firestore();
 const USER_ID_ENDPOINT = 'https://api.spotify.com/v1/me';
 const PLAYBACK_ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
+var firstSongPlayed = false;
 if (!localStorage.getItem('hash')) {
   localStorage.setItem('hash', makeHash(HASH_LENGTH));
 }
@@ -42,6 +43,7 @@ function MainQue() {
       artist: 'No songs in queue currently',
       played: false,
       duration: "",
+      addedBy: 'Spotify',
       coverImage: null,
     },
   ]);
@@ -101,7 +103,7 @@ function MainQue() {
           }
         }
         // TODO: change state of play pause button to a play icon if a new song is playing
-        setCurSong((curSong) => (curSong = cSong));
+        setCurSong((curSong) => (curSong = cSong)); 
       }
     })();
   }
@@ -179,7 +181,7 @@ function MainQue() {
       body: JSON.stringify({
         context_uri: playlistURI,
         offset: {
-          position: 0,
+          position: 1,
         },
         position_ms: 0,
       }),
@@ -359,6 +361,12 @@ function MainQue() {
             }
           }
           console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
+          if(songsObj.length === 1){
+            if(!firstSongPlayed){
+              setTimeout(playPlaylist(), 2200);
+              firstSongPlayed = true;
+            }
+          }
         });
       }
     }

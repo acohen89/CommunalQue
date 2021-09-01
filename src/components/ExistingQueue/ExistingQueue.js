@@ -22,7 +22,7 @@ localStorage.setItem('queueID', queueID);
 export { docRef };
 
 const ExistingQueue = () => {
-  
+
   const notify = (message, milliseconds) =>
     toast(message, { autoClose: milliseconds });
   const [songs, setSongs] = useState([

@@ -143,7 +143,6 @@ function callAuthorizationApi(body) {
     'Basic ' + btoa(client_id + ':' + client_secret)
   );
   xhr.send(body);
-  console.log(body)
   xhr.onload = handleAuthorizationResponse;
 }
 
