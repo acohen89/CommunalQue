@@ -229,11 +229,10 @@ function MainQue() {
             })();
           }
           function updateDB(dbSongs, songToUpdate) {
-    console.log('in update');
     let newSongs = dbSongs;
     for (let i = 0; i < newSongs.length; i++) {
       if (newSongs[i].id === songToUpdate.uri) {
-        console.log('Changing ' + newSongs[i].title + ' to played ');
+        // console.log('Changing ' + newSongs[i].title + ' to played ');
         newSongs[i].played = true;
       }
     }
@@ -259,7 +258,7 @@ function MainQue() {
         if (data.status === 401) {
           refreshAccessToken();
         }
-        console.log('Removed ' + (song.title !== undefined ? song.title : song.name )+ ' from playlist');
+        // console.log('Removed ' + (song.title !== undefined ? song.title : song.name )+ ' from playlist');
       }
     });
   }
@@ -275,7 +274,7 @@ function MainQue() {
           updatePlaylistState(playlistID, doc.data().songs);
         }
       } else {
-          console.log('No such document!');
+          console.error('No such document!');
         }
       })
       .catch((error) => {
@@ -360,7 +359,7 @@ function MainQue() {
               refreshAccessToken();
             }
           }
-          console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
+          // console.log('Added songs: ' + printArr(titleArray) + 'to playlist');
           if(songsObj.length === 1){
             if(!firstSongPlayed){
               setTimeout(playPlaylist(), 2200);
@@ -408,7 +407,6 @@ function MainQue() {
             }
           }
         if (!found) {
-          console.log("Creating new")
           createNewPlaylist(userID, token);
         }
       })

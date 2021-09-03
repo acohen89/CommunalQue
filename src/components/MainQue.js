@@ -69,7 +69,6 @@ function MainQue() {
   
   if(docExists) {updateNowPlaying();} 
   useEffect(() => {
-    console.log("Here")
     getNameFromSpot();
     docRef.onSnapshot((doc) => {
       refresh();
@@ -131,7 +130,6 @@ function MainQue() {
       },
     })
     .then((response) => {
-      console.log(response.data.display_name)
       localStorage.setItem('name', response.data.display_name);
     })
     .catch((error) => {
@@ -429,11 +427,11 @@ function MainQue() {
         playlistID: playlistid,
       })
       .then((docRef) => {
-        console.log(
-          newPlaylist
-          ? 'Added a new playlist with id ' + playlistid
-          : 'Added old playlist with id ' + playlistid
-          );
+        // console.log(
+        //   newPlaylist
+        //   ? 'Added a new playlist with id ' + playlistid
+        //   : 'Added old playlist with id ' + playlistid
+        //   );
         })
         .catch((error) => {
           console.error('Error adding document: ', error);
@@ -457,7 +455,7 @@ function MainQue() {
         Songs: [],
       })
       .then((docRef) => {
-        console.log('Document with hash ' + hash + ' written sucesfully');
+        // console.log('Document with hash ' + hash + ' written sucesfully');
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
